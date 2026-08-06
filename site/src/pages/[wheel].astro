@@ -110,6 +110,18 @@ const or = (v, unit = "") =>
 
 el("sort").addEventListener("change", (e) => { sortMode = e.target.value; render(); });
 
+function toggleSpecs(id) {
+  const specs = el(`specs-${id}`);
+  const btn = event.target;
+  if (specs.style.display === "none") {
+    specs.style.display = "grid";
+    btn.textContent = "Hide details";
+  } else {
+    specs.style.display = "none";
+    btn.textContent = "Show details";
+  }
+}
+
 function ordered() {
   const l = D.suppliers.slice();
   const by = (get, dir) => l.sort((a, b) => {
@@ -170,27 +182,30 @@ function render() {
           <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}</dd></div>
       </div>
 
-      <dl class="specs">
-        <div><dt>Per wheel</dt><dd>${
-          s.moq === "1 piece" && s.setPrice ? money(s.setPrice / 4)
-          : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
-          : or(null)}</dd></div>
-        <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
-          : s.forged === false ? "no" : or(null)}</dd></div>
-        <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
-        <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
-        <div><dt>Certification</dt><dd>${or(s.cert)}</dd></div>
-        <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
-        <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
-          : s.cnc === false ? "outsourced" : or(null)}</dd></div>
-        <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
-        <div><dt>Damage policy</dt><dd>${or(s.defects)}</dd></div>
-        <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
-        <div><dt>Transit</dt><dd>${or(s.transit)}</dd></div>
-        <div><dt>Min. order</dt><dd>${or(s.moq)}</dd></div>
-      </dl>
+      <div style="margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 12px;">
+        <button class="btn ghost" onclick="toggleSpecs('${s.id}')">Show details</button>
+        <dl class="specs" id="specs-${s.id}" style="display:none;margin-top:12px;">
+          <div><dt>Per wheel</dt><dd>${
+            s.moq === "1 piece" && s.setPrice ? money(s.setPrice / 4)
+            : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
+            : or(null)}</dd></div>
+          <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
+            : s.forged === false ? "no" : or(null)}</dd></div>
+          <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
+          <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
+          <div><dt>Certification</dt><dd>${or(s.cert)}</dd></div>
+          <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
+          <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
+            : s.cnc === false ? "outsourced" : or(null)}</dd></div>
+          <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
+          <div><dt>Damage policy</dt><dd>${or(s.defects)}</dd></div>
+          <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
+          <div><dt>Transit</dt><dd>${or(s.transit)}</dd></div>
+          <div><dt>Min. order</dt><dd>${or(s.moq)}</dd></div>
+        </dl>
+      </div>
 
-      <div class="vf">
+      <div class="vf" style="margin-top:12px;">
         <button class="btn" data-rfq="${s.id}">Write quote request</button>
         ${s.url ? `<a class="btn ghost" href="${s.url}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
         <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>

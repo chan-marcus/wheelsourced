@@ -331,7 +331,9 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          forming, rotary forging or a spun barrel, which mean
                          a CAST centre. NULL if they never addressed it, or
                          said only "forged" with no process detail at all.
-  piece_count            "monoblock" | "2-piece" | "3-piece" | null.
+  piece_count            "monoblock" | "2-piece" | "3-piece" |
+                         ["2-piece", "3-piece"] | null. Array if vendor offers
+                         multiple options (e.g. "available in 2-piece and 3-piece").
                          INDEPENDENT of forging. A cast 3-piece is a real,
                          honest product and a forged monoblock is not
                          "more pieces". Never infer either field from the

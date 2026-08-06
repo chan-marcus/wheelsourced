@@ -141,7 +141,7 @@ function render() {
           <div class="vm" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
             ${s.verified ? `<span class="tag good">verified supplier</span>` : ""}
             <span class="tag">${s.forged === true ? "forged" : s.forged === false ? "not forged" : "forging unconfirmed"}</span>
-            <span class="tag">${s.pieces || "piece count unknown"}</span>
+            ${Array.isArray(s.pieces) ? s.pieces.map(p => `<span class="tag">${p}</span>`).join("") : `<span class="tag">${s.pieces || "piece count unknown"}</span>`}
             ${s.business_type ? `<span class="tag">${s.business_type}</span>` : ""}
           </div>
         </div>

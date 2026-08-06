@@ -92,20 +92,20 @@ from_listing:
   units_sold: null
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
+  price_per_wheel_1set: 430
+  price_per_wheel_4set: 1720
   weight_kg: null
   load_rating_kg: null
   forging_process: null
-  cert_document: null
+  cert_document: promised
   size_chart: null
-  freight_cif_usd: null
+  freight_cif_usd: 250
   is_manufacturer: null
   forged_confirmed: null
-  piece_count: null
+  piece_count: 2-piece
   cnc_inhouse: null
   heat_treat: null
-  payment_terms: null
+  payment_terms: 50% deposit, 50% final balance before shipping
   defect_policy: null
 meta:
   listing_seen: '2026-08-05'
@@ -114,4 +114,14 @@ meta:
   first_reply: '2026-08-06'
   rfq_first_sent: '2026-08-06'
   rfq_round: 1
-flags: []
+  reply_received: '2026-08-06'
+  reply_count: 1
+  questions_answered: 6/14
+  reply_notes:
+  - '2026-08-06: Two-piece wheels quoted at 430 USD/wheel or 1720 USD/4 wheels. Monoblock
+    and three-piece options mentioned but three-piece noted as very expensive with
+    2+ month lead time. Certificates promised via email. No technical specs or forging
+    details provided.'
+flags:
+- no load rating given
+- no size chart supplied

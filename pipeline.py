@@ -263,9 +263,13 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
         def answered(k):
             return rec["from_quote"].get(k) not in (None, "")
 
-        # Round two only once the basics are in. Asking a supplier about
-        # heat treat before they have given you a price reads as a survey.
-        round2 = all(answered(k) for k in ROUND1_CORE)
+        # Round two once the supplier has actually engaged. The gate exists to
+        # keep first contact short, not to withhold questions forever: requiring
+        # every ROUND1_CORE field meant one dodged answer (piece_count, always)
+        # pinned a supplier in round one no matter how many times they replied.
+        # Anyone who has answered a core field or sent a reply has engaged.
+        replied = bool((rec.get("meta") or {}).get("reply_received"))
+        round2 = replied or all(answered(k) for k in ROUND1_CORE)
         pool = {**QUOTE_ONLY, **ROUND2} if round2 else QUOTE_ONLY
 
         missing = [k for k in pool if not answered(k)]

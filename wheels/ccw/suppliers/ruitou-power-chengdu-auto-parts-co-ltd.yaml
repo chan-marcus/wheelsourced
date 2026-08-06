@@ -88,7 +88,7 @@ meta:
   - '2026-08-06: Only price for 18in wheel given; forging process, certification,
     and freight not addressed'
   rfq_first_sent: '2026-08-06'
-  rfq_round: 1
+  rfq_round: 2
 flags:
 - no load rating given
 - piece count not confirmed

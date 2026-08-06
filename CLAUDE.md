@@ -97,10 +97,16 @@ drives the "weight high for forged" flag. Calibrate it against real quotes.
 If honest suppliers keep tripping it, K is too low.
 
 **Two-round questions.** `ROUND2` (cnc_inhouse, heat_treat, payment_terms,
-defect_policy) only sends once `ROUND1_CORE` is answered: price, weight, load
-rating, forged, piece count, freight. Not all of round one, because a
-supplier who withheld only the size chart has still engaged. Sending all
-fourteen at first contact tanks the response rate.
+defect_policy) is held back from first contact: sending all fourteen cold
+tanks the response rate. It unlocks once the supplier has engaged, meaning
+`meta.reply_received` is set or every `ROUND1_CORE` field is answered.
+
+The gate used to require all of `ROUND1_CORE` and nothing else. That was too
+strict in practice: `piece_count` is the field suppliers dodge most, and one
+dodged answer pinned a supplier in round one permanently. Raylan had replied
+four times and still could not be asked about payment terms. The gate is
+there to keep the first message short, not to withhold questions from a
+supplier who is already talking to you.
 
 **Flags are derived, never appended by the caller.** `"changed answer between
 rounds"` used to be tacked on by app.py after `_flags()` returned, so every

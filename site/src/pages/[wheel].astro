@@ -85,6 +85,7 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
       <div><label for="m-wid">Width</label><input id="m-wid" placeholder="9.5J" /></div>
       <div><label for="m-off">Offset</label><input id="m-off" placeholder="ET+22" /></div>
       <div><label for="m-pcd">Bolt pattern</label><input id="m-pcd" placeholder="5x120" /></div>
+      <div><label for="m-pieces">Construction</label><input id="m-pieces" placeholder="2-piece or 3-piece" /></div>
       <div><label for="m-zip">Shipping zip code</label><input id="m-zip" placeholder="90210" /></div>
     </div>
     <div class="mfoot">
@@ -224,11 +225,15 @@ document.addEventListener("click", (e) => {
 function buildMsg(s, spec) {
   const lines = spec
     ? [["Diameter", spec.dia], ["Width", spec.wid],
-       ["Offset", spec.off], ["Bolt pattern", spec.pcd]]
+       ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Construction", spec.pieces]]
         .filter(([, v]) => v).map(([k, v]) => `  ${k.padEnd(13)}${v}`).join("\n")
-    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __";
+    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __\n  Construction  __";
 
   const zipline = spec?.zip ? `\n\nShipping zip code: ${spec.zip}` : "";
+
+  const ask = [];
+  ask.push("Price per wheel (1 set of 4 wheels and for 4 sets if available)");
+  ask.push("Shipping cost to the zip code above");
 
   return `Hello,
 
@@ -237,8 +242,7 @@ I'm interested in your wheels and would like a quote for this spec:
 ${lines}${zipline}
 
 Could you please provide:
-  1. Price per wheel (1 set of 4 wheels and for 4 sets if available)
-  2. Shipping cost to the zip code above
+${ask.map((q, i) => `  ${i + 1}. ${q}`).join("\n")}
 
 Thank you.`;
 }
@@ -248,12 +252,13 @@ const readSpec = () => ({
   wid: el("m-wid").value.trim(),
   off: el("m-off").value.trim(),
   pcd: el("m-pcd").value.trim(),
+  pieces: el("m-pieces").value.trim(),
   zip: el("m-zip").value.trim(),
 });
 
 function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
 
-["m-dia","m-wid","m-off","m-pcd","m-zip"].forEach((id) =>
+["m-dia","m-wid","m-off","m-pcd","m-pieces","m-zip"].forEach((id) =>
   el(id).addEventListener("input", refresh));
 
 const close = () => { el("modal").hidden = true; };

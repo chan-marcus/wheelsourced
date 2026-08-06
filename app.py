@@ -416,16 +416,13 @@ function render(){
   }).join("") || `<div class="hint">Nothing yet. Add listing URLs above and pull.</div>`;
 }
 
-let PARSING=null;
-function toggle(id){if(PARSING) return; OPEN=OPEN===id?null:id;render();}
+function toggle(id){OPEN=OPEN===id?null:id;render();}
 function copyRfq(id){const t=document.getElementById("rfq-"+id);t.select();
   navigator.clipboard.writeText(t.value).catch(()=>document.execCommand("copy"));}
 async function sendReply(id){
   const text=document.getElementById("rep-"+id).value.trim(); if(!text) return;
   const btn=event.target; btn.textContent="Parsing..."; btn.disabled=true;
-  PARSING=id; OPEN=id;
   const r=await post("/api/reply",{wheel:S.wheel,id,text,date:document.getElementById("dt-"+id).value});
-  PARSING=null;
   if(r.ok){S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);}
   render();
 }

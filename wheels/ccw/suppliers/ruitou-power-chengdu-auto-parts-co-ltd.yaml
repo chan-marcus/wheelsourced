@@ -61,13 +61,13 @@ from_listing:
   units_sold: null
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: 462
-  price_per_wheel_4set: 1848
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
   weight_kg: null
   load_rating_kg: null
-  forging_process: not stated clearly
+  forging_process: null
   cert_document: null
-  size_chart: 18in
+  size_chart: null
   freight_cif_usd: null
   is_manufacturer: null
   forged_confirmed: null
@@ -79,19 +79,8 @@ from_quote:
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
-  reply_received: '2026-08-06'
-  questions_answered: 4/9
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze
   first_reply: '2026-08-06'
-  reply_count: 1
-  reply_notes:
-  - '2026-08-06: Only price for 18in wheel given; forging process, certification,
-    and freight not addressed'
   rfq_first_sent: '2026-08-06'
-  rfq_round: 2
-flags:
-- no load rating given
-- piece count not confirmed
-- forging process not actually described
-- dodged the forging question
-- under 3 years listed
+  rfq_round: 1
+flags: []

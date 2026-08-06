@@ -9,7 +9,9 @@ Could you confirm:
 
   1. Price per wheel, for 1 set (4 pcs) and for 4 sets
   2. Actual weight per wheel at this exact size
-  3. Shipping cost to Los Angeles USA, and the HS code you declare
+  3. Is this wheel forged? Please confirm yes or no
+  4. Is it monoblock, 2-piece, or 3-piece?
+  5. Shipping cost to Los Angeles USA, and the HS code you declare
 
 Two extras if you can:
 

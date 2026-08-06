@@ -109,7 +109,7 @@ from_quote:
   defect_policy: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-05'
+  rfq_sent: '2026-08-06'
   reply_received: '2026-08-06'
   questions_answered: 9/9
   reply_note: Supplier will confirm 4pc/16pc pricing later; asked for email to send
@@ -120,5 +120,7 @@ meta:
   reply_notes:
   - '2026-08-06: Only pricing and shipping cost provided; total 1970 USD for 4 wheels
     including freight.'
+  rfq_first_sent: '2026-08-06'
+  rfq_round: 1
 flags:
 - piece count not confirmed

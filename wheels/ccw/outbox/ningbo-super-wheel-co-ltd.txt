@@ -3,21 +3,15 @@ Hello,
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  18x9.5J · ET+22 · 5x114.3 · Polished Silver
+  18x9.5J · ET+22 · 5x114.3 · Bronze
 
 Could you confirm:
 
-  1. Price per wheel, for 1 set (4 pcs) and for 4 sets
-  2. Actual weight per wheel at this exact size
-  3. Load rating per wheel, in kg
-  4. Forged from solid billet, or machined from a forged blank? Which alloy?
-  5. JWL / VIA / TUV certificate PDF, and does it cover this width?
-  6. Shipping cost to Los Angeles USA, and the HS code you declare
-  7. Are you the manufacturer or a trading company? Factory address?
+  1. Is this wheel forged? Please confirm yes or no
+  2. Is it monoblock, 2-piece, or 3-piece?
 
-Two extras if you can:
+An extra if you can:
 
   - A photo of the wheel on a scale, and one showing the back of the spokes
-  - Your full size chart, with the offset range available at each width
 
 Thank you.

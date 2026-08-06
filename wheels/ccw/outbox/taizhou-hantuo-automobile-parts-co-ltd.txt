@@ -7,10 +7,10 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Price per wheel, for 1 set (4 pcs) and for 4 sets
-  2. Shipping cost to Los Angeles USA, and the HS code you declare
+  1. Is this wheel forged? Please confirm yes or no
+  2. Is it monoblock, 2-piece, or 3-piece?
 
-Two extras if you can:
+An extra if you can:
 
   - A photo of the wheel on a scale, and one showing the back of the spokes
 

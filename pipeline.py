@@ -401,6 +401,14 @@ def ingest(wheel):
                 rec["from_quote"][k] = got[k]
                 filled += 1
 
+        # Auto-confirm forging if they described a forging process and didn't
+        # explicitly say "not forged". "Made with forged blanks" = forged.
+        if got.get("forging_process") and rec["from_quote"].get("forged_confirmed") is None:
+            fp = str(got.get("forging_process", "")).lower()
+            if not any(x in fp for x in ("flow form", "flow-form", "rotary forg", "spun", "spinning", "not forged", "cast")):
+                if any(x in fp for x in ("forg", "press", "blank", "billet")):
+                    rec["from_quote"]["forged_confirmed"] = True
+
         # Cumulative across every reply, matching what the GUI reports. A
         # per-reply count made a supplier's second message look like a regression.
         total_filled = sum(1 for k in ALL_FIELDS

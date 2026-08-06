@@ -56,7 +56,7 @@ QUOTE_ONLY = {
 ROUND2 = {
     "cnc_inhouse":    "Do you do the CNC machining in house, or outsource it?",
     "heat_treat":     "What is your heat treat process? Which temper, and how long?",
-    "payment_terms":  "What are your payment terms? Is 50% deposit acceptable?",
+    "payment_terms":  "What are your payment terms? Is it 50% deposit?",
     "defect_policy":  "What happens if a wheel arrives out of round or with finish damage?",
 }
 

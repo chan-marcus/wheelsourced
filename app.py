@@ -324,6 +324,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   </div>
 </header>
 
+<div class="band">0 · Wheel image <span id="imagecount"></span></div>
+<div class="row">
+  <div style="flex:1;min-width:200px">
+    <span class="lbl">Upload image for landing page</span>
+    <input type="file" id="wheelImage" accept="image/*" onchange="uploadImage()">
+  </div>
+</div>
+<div id="imagestatus" style="color:var(--soft);font-family:'IBM Plex Mono';font-size:11px;margin-top:8px"></div>
+
 <div class="band">1 · Listings you picked <span id="pickcount"></span></div>
 <textarea id="picks" rows="5" placeholder="One Alibaba listing URL per line. Find them by photo search first."></textarea>
 <div class="row" style="margin-top:10px">
@@ -385,6 +394,33 @@ async function pull(){
     if(!r.busy){clearInterval(t);document.getElementById("pullbtn").disabled=false;boot(S.wheel);}
   },2000);
 }
+async function uploadImage(){
+  const file = document.getElementById("wheelImage").files[0];
+  if(!file || !S.wheel) return;
+
+  document.getElementById("imagestatus").textContent = "Uploading...";
+
+  const ext = "." + file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const base64 = e.target.result.split(',')[1];
+      const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
+      if(r.ok){
+        document.getElementById("imagestatus").textContent = "Image uploaded successfully";
+        document.getElementById("wheelImage").value = "";
+        setTimeout(() => { document.getElementById("imagestatus").textContent = ""; }, 2000);
+      } else {
+        document.getElementById("imagestatus").textContent = r.error || "Upload failed";
+      }
+    } catch(err) {
+      document.getElementById("imagestatus").textContent = "Upload failed";
+      console.error(err);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 async function genRfq(){
   const r=await post("/api/rfq",{wheel:S.wheel,size:size.value,offset:offset.value,pcd:pcd.value,finish:finish.value});
   S.rfqs=r.rfqs; render();

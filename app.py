@@ -434,6 +434,79 @@ boot("");
 </script></body></html>"""
 
 
+def requests_file():
+    return Path("wheel_requests.json")
+
+
+def load_requests():
+    import json
+    f = requests_file()
+    if f.exists():
+        try:
+            return json.loads(f.read_text())
+        except:
+            return []
+    return []
+
+
+def save_requests(reqs):
+    import json
+    requests_file().write_text(json.dumps(reqs, indent=2))
+
+
+@app.post("/api/request-wheel")
+async def request_wheel(req: Request):
+    data = await req.json()
+    name = data.get("name", "").strip()
+    if not name:
+        return JSONResponse({"ok": False}, status_code=400)
+
+    reqs = load_requests()
+    reqs.append({"name": name, "date": str(date.today())})
+    save_requests(reqs)
+    return JSONResponse({"ok": True})
+
+
+@app.get("/requests", response_class=HTMLResponse)
+def show_requests():
+    reqs = load_requests()
+    rows = "".join(f"<tr><td>{r['name']}</td><td>{r['date']}</td></tr>" for r in reqs)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wheel Requests</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+    body {{ font-family: 'IBM Plex Mono', monospace; background: #f5f5f0; color: #333; padding: 40px 20px; }}
+    h1 {{ font-family: 'Barlow Condensed'; font-size: 36px; font-weight: 700; margin-bottom: 32px; text-transform: uppercase; }}
+    table {{ width: 100%; max-width: 600px; border-collapse: collapse; }}
+    th {{ text-align: left; padding: 12px; border-bottom: 2px solid #333; font-weight: 600; text-transform: uppercase; font-size: 12px; }}
+    td {{ padding: 12px; border-bottom: 1px solid #ddd; }}
+    tr:hover {{ background: #f0f0ea; }}
+    .empty {{ color: #999; font-style: italic; padding: 32px 0; text-align: center; }}
+  </style>
+</head>
+<body>
+  <h1>Wheel Requests</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Wheel Name</th>
+        <th>Date Requested</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows or '<tr><td colspan="2" class="empty">No requests yet</td></tr>'}
+    </tbody>
+  </table>
+</body>
+</html>"""
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     return PAGE

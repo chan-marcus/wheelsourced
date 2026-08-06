@@ -20,11 +20,20 @@ from datetime import date
 import yaml
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 import pipeline as P     # reuse QUOTE_ONLY, _flags, _ask_model, REPLY_SCHEMA
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 LOG: list[str] = []
 BUSY = {"running": False}
 

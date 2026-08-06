@@ -171,7 +171,8 @@ function render() {
       </div>
 
       <dl class="specs">
-        <div><dt>Per wheel</dt><dd>${s.price ? money(s.price)
+        <div><dt>Per wheel</dt><dd>${
+          s.moq === "1 piece" && s.setPrice ? money(s.setPrice / 4)
           : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
           : or(null)}</dd></div>
         <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
@@ -192,8 +193,7 @@ function render() {
       <div class="vf">
         <button class="btn" data-rfq="${s.id}">Write quote request</button>
         ${s.url ? `<a class="btn ghost" href="${s.url}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
-        <span class="seen">${s.answered}/${s.total} answered${
-          s.verified_on ? " · last verified " + s.verified_on : ""}</span>
+        <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>
       </div>
     </article>`).join("");
 }

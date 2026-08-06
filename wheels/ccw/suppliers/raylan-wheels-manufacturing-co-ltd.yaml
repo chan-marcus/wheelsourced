@@ -75,7 +75,7 @@ from_quote:
   size_chart: 18x9.5J, spec chart to be sent via email
   freight_cif_usd: 290
   is_manufacturer: true
-  forged_confirmed: null
+  forged_confirmed: true
   piece_count: null
   cnc_inhouse: null
   heat_treat: null

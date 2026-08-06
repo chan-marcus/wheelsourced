@@ -101,7 +101,7 @@ from_quote:
   size_chart: 18x9.5in referenced with weight/load specs
   freight_cif_usd: 250
   is_manufacturer: true
-  forged_confirmed: null
+  forged_confirmed: true
   piece_count: null
   cnc_inhouse: null
   heat_treat: null

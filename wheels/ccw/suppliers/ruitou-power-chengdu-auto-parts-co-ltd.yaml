@@ -9,7 +9,7 @@ from_listing:
   years_on_platform: 1
   staff_count: 75
   factory_area_sqm: 12000
-  verified_supplier: false
+  verified_supplier: true
   trade_assurance: false
   response_rate: null
   listed_price_low: 395

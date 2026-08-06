@@ -96,7 +96,7 @@ from_quote:
   size_chart: null
   freight_cif_usd: null
   is_manufacturer: true
-  forged_confirmed: null
+  forged_confirmed: true
   piece_count: null
   cnc_inhouse: null
   heat_treat: null

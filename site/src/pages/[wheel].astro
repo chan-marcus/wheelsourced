@@ -182,7 +182,7 @@ function render() {
           <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}</dd></div>
       </div>
 
-      <div style="margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 12px;">
+      <div style="margin-top: 12px;">
         <button class="btn ghost" onclick="toggleSpecs('${s.id}')">Show details</button>
         <dl class="specs" id="specs-${s.id}" style="display:none;margin-top:12px;">
           <div><dt>Per wheel</dt><dd>${

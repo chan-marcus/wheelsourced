@@ -145,7 +145,7 @@ function scoreAll(list) {
     { k: (s) => s.landed ?? s.setPrice, lowerBetter: true,  w: 1.0 },
     { k: (s) => s.store_rating,         lowerBetter: false, w: 1.0 },
     { k: (s) => s.review_count,         lowerBetter: false, w: 1.2 }, // Sample size: confidence in the rating
-    { k: (s) => s.years,                lowerBetter: false, w: 1.0 }, // Medium weight: established vendors are lower risk
+    { k: (s) => s.years,                lowerBetter: false, w: 1.3 }, // Higher weight: longevity is trust; startup risk is real
     { k: (s) => s.respHours,            lowerBetter: true,  w: 0.3 }, // Minor factor: many fast responders still disappoint
     { k: (s) => s.reorderPct,           lowerBetter: false, w: 1.5 }, // Most telling: share of buyers who came back
   ];

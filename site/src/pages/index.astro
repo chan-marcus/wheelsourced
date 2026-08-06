@@ -166,8 +166,12 @@ const wheels = loadWheels();
           <label for="wheel-name" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Wheel name</label>
           <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
         </div>
-        <div>
-          <label for="wheel-email" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Email (optional)</label>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <input id="wheel-alert-checkbox" type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" />
+          <label for="wheel-alert-checkbox" style="font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; cursor: pointer; margin: 0;">Alert me</label>
+        </div>
+        <div id="wheel-email-field" style="display: none;">
+          <label for="wheel-email" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Email</label>
           <input id="wheel-email" type="email" placeholder="you@example.com" style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
           <div style="font-family: 'IBM Plex Mono'; font-size: 11px; color: var(--soft); margin-top: 6px;">We'll alert you once we have vetted vendors for this wheel</div>
         </div>
@@ -205,6 +209,20 @@ function showConfirmation() {
   }, 3000);
 }
 
+function toggleEmailField() {
+  const checkbox = el("wheel-alert-checkbox");
+  const emailField = el("wheel-email-field");
+  const emailInput = el("wheel-email");
+
+  if (checkbox.checked) {
+    emailField.style.display = "block";
+    emailInput.focus();
+  } else {
+    emailField.style.display = "none";
+    emailInput.value = "";
+  }
+}
+
 async function submitWheelRequest(e) {
   e.preventDefault();
   const wheelName = el("wheel-name").value.trim();
@@ -224,6 +242,8 @@ async function submitWheelRequest(e) {
     if (response.ok) {
       el("wheel-name").value = "";
       el("wheel-email").value = "";
+      el("wheel-alert-checkbox").checked = false;
+      el("wheel-email-field").style.display = "none";
       el("request-modal").style.display = "none";
       showConfirmation();
     }
@@ -231,6 +251,8 @@ async function submitWheelRequest(e) {
     console.error("Error submitting request:", err);
   }
 }
+
+el("wheel-alert-checkbox").addEventListener("change", toggleEmailField);
 </script>
 </body>
 </html>

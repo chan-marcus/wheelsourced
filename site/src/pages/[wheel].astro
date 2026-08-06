@@ -81,6 +81,7 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
       <button class="x" id="mclose" aria-label="Close">×</button></div>
     <p class="mhint">Your spec and location will be filled into the message.</p>
     <div class="mgrid">
+      <div><label for="m-car">Car (make, model, year)</label><input id="m-car" placeholder="BMW E36 325i, 1995" /></div>
       <div><label for="m-dia">Diameter</label><input id="m-dia" placeholder="18" /></div>
       <div><label for="m-wid">Width</label><input id="m-wid" placeholder="9.5J" /></div>
       <div><label for="m-off">Offset</label><input id="m-off" placeholder="ET+22" /></div>
@@ -223,6 +224,7 @@ document.addEventListener("click", (e) => {
 });
 
 function buildMsg(s, spec) {
+  const carline = spec?.car ? `My car: ${spec.car}\n\n` : "";
   const lines = spec
     ? [["Diameter", spec.dia], ["Width", spec.wid],
        ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Construction", spec.pieces]]
@@ -237,7 +239,7 @@ function buildMsg(s, spec) {
 
   return `Hello,
 
-I'm interested in your wheels and would like a quote for this spec:
+${carline}I'm interested in your wheels and would like a quote for this spec:
 
 ${lines}${zipline}
 
@@ -248,6 +250,7 @@ Thank you.`;
 }
 
 const readSpec = () => ({
+  car: el("m-car").value.trim(),
   dia: el("m-dia").value.trim(),
   wid: el("m-wid").value.trim(),
   off: el("m-off").value.trim(),
@@ -258,7 +261,7 @@ const readSpec = () => ({
 
 function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
 
-["m-dia","m-wid","m-off","m-pcd","m-pieces","m-zip"].forEach((id) =>
+["m-car","m-dia","m-wid","m-off","m-pcd","m-pieces","m-zip"].forEach((id) =>
   el(id).addEventListener("input", refresh));
 
 const close = () => { el("modal").hidden = true; };

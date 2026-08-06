@@ -1,0 +1,281 @@
+---
+import { loadWheels } from "../lib/data.js";
+import "../styles/global.css";
+
+export async function getStaticPaths() {
+  const wheels = loadWheels();
+  return wheels.map((wheel) => ({
+    params: { wheel: wheel.slug },
+    props: { wheel },
+  }));
+}
+
+const { wheel } = Astro.props;
+
+const refSpec = wheel.suppliers.find((s) => s.ref_spec)?.ref_spec ?? "18x9.5J ET+22 5x114.3";
+const refSize = refSpec.split(" ")[0] ?? "18x9.5J";
+const quoted = wheel.suppliers.filter((s) => s.replies).length;
+const payload = JSON.stringify({ suppliers: wheel.suppliers });
+---
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WheelSourced · {wheel.title}</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <a class="logo" href="/" aria-label="WheelSourced home">
+      <span class="word">Wheel<em>Sourced</em></span>
+    </a>
+    <div class="eyebrow">
+      <span>{wheel.title}</span>
+      <span>{wheel.suppliers.length} suppliers tracked · {quoted} quoted directly</span>
+    </div>
+  </header>
+
+  <div class="preamble">
+    <p><b>Every shop here builds to order.</b> You choose diameter, width, offset
+    and finish when you contact them, so there is nothing to filter. What matters
+    is which vendor is worth talking to.</p>
+    <p class="est">Pricing is a <b>like-for-like estimate quoted at {refSize}</b>,
+    asked of every vendor with the same spec so the figures compare. Your own
+    size and lip depth will move it. Treat this as a ranking, not a quote.</p>
+  </div>
+
+  <section class="block">
+    <div class="band">Suppliers
+      <span>
+        <label class="sortlbl" for="sort">sort</label>
+        <select id="sort">
+          <option value="vetting">best vetted</option>
+          <option value="price">cheapest</option>
+          <option value="rating">store rating</option>
+          <option value="age">store age</option>
+          <option value="response">fastest response</option>
+          <option value="reorder">reorder rate</option>
+        </select>
+        <b id="count"></b>
+      </span>
+    </div>
+    <div id="rows"></div>
+  </section>
+
+  <footer>
+    <p>Landed = quoted price per wheel × 4 + sea freight at the reference spec. Duty and port fees excluded.</p>
+    <p>Store rating, response time, store age and reorder rate are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
+    <p>Best vetted combines price, store rating, store age, response time and reorder rate, then subtracts for each flag. It is scaled by how many of those five a vendor actually has, so a thin record cannot outrank a complete one on a lucky average.</p>
+    <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
+    <p>Wheels are described by construction and geometry, never as another maker's product.</p>
+  </footer>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mhead"><span id="mtitle">Your spec</span>
+      <button class="x" id="mclose" aria-label="Close">×</button></div>
+    <p class="mhint">Filled into the message so the vendor can quote you directly.</p>
+    <div class="mgrid">
+      <div><label for="m-car">Car (make, model, year)</label><input id="m-car" placeholder="BMW E36 325i, 1995" /></div>
+      <div><label for="m-dia">Diameter</label><input id="m-dia" placeholder="18" /></div>
+      <div><label for="m-wid">Width</label><input id="m-wid" placeholder="9.5J" /></div>
+      <div><label for="m-off">Offset</label><input id="m-off" placeholder="ET+22" /></div>
+      <div><label for="m-pcd">Bolt pattern</label><input id="m-pcd" placeholder="5x120" /></div>
+      <div><label for="m-fin">Finish</label><input id="m-fin" placeholder="Brushed silver" /></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" id="mcopy">Copy message</button>
+      <button class="btn ghost" id="mskip">Copy without spec</button>
+    </div>
+    <textarea id="mpreview" spellcheck="false" aria-label="Message preview"></textarea>
+  </div>
+</div>
+
+<script id="data" type="application/json" set:html={payload}></script>
+<script is:inline>
+const D = JSON.parse(document.getElementById("data").textContent);
+const el = (id) => document.getElementById(id);
+let sortMode = "vetting";
+let current = null;
+
+const money = (n) => "$" + Math.round(n).toLocaleString();
+const or = (v, unit = "") =>
+  v === null || v === undefined || v === ""
+    ? `<span class="none">not disclosed</span>` : `${v}${unit}`;
+
+el("sort").addEventListener("change", (e) => { sortMode = e.target.value; render(); });
+
+function ordered() {
+  const l = D.suppliers.slice();
+  const by = (get, dir) => l.sort((a, b) => {
+    const av = get(a), bv = get(b);
+    if (av == null && bv == null) return b.answered - a.answered;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return dir * (av - bv);
+  });
+  switch (sortMode) {
+    case "price":    return by((s) => s.landed ?? s.setPrice, 1);
+    case "rating":   return by((s) => s.store_rating, -1);
+    case "age":      return by((s) => s.years, -1);
+    case "response": return by((s) => s.respHours, 1);
+    case "reorder":  return by((s) => s.reorderPct, -1);
+    default:         return by((s) => s.vetScore, -1);
+  }
+}
+
+function render() {
+  const hit = ordered();
+  el("count").textContent = `${hit.length} suppliers`;
+
+  el("rows").innerHTML = hit.map((s, i) => `
+    <article class="v ${sortMode === "vetting" && i === 0 && !s.flags.length ? "top" : ""}">
+      <div class="vh">
+        <div class="vinfo">
+          <div class="vn">${s.name}</div>
+          <div class="vm">${[
+            s.forged === true ? "forged" : s.forged === false ? "not forged" : "forging unconfirmed",
+            s.pieces || "piece count unknown",
+            s.business_type
+            ].filter(Boolean).join(" · ")}</div>
+        </div>
+        <div class="vp">
+          ${s.landed
+            ? `<b>${money(s.landed)}</b><small>est. landed / set of 4</small>`
+            : s.setPrice
+              ? `<b>${money(s.setPrice)}</b><small>set of 4, before freight</small>
+                 <small class="warnsm">freight not quoted</small>`
+              : `<b class="grey">${s.listed_price ? money(s.listed_price * 4) : "—"}</b>
+                 <small>listed only, not quoted</small>`}
+        </div>
+      </div>
+
+      <div class="headline">
+        <div class="${sortMode === "rating" ? "hl on" : "hl"}">
+          <dt>Store rating</dt><dd>${s.store_rating ? s.store_rating + "/5" : "—"}
+          ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>
+        <div class="${sortMode === "age" ? "hl on" : "hl"}">
+          <dt>Store age</dt><dd>${s.years ? s.years + " yrs" : "—"}</dd></div>
+        <div class="${sortMode === "response" ? "hl on" : "hl"}">
+          <dt>Response</dt><dd>${s.response_time ?? "—"}</dd></div>
+        <div class="${sortMode === "reorder" ? "hl on" : "hl"}">
+          <dt>Reorder rate</dt><dd>${s.reorder ?? "—"}</dd></div>
+        <div class="${sortMode === "vetting" ? "hl on" : "hl"}">
+          <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}</dd></div>
+      </div>
+
+      <div class="tags">
+        ${s.verified ? `<span class="tag good">verified supplier</span>` : ""}
+        ${s.forged === true ? `<span class="tag good">forged confirmed</span>` : ""}
+        ${s.cert === "provided" ? `<span class="tag good">cert on file</span>` : ""}
+        ${s.cnc === true ? `<span class="tag good">CNC in house</span>` : ""}
+        ${s.flags.map((f) => `<span class="tag bad">${f}</span>`).join("")}
+      </div>
+
+      <dl class="specs">
+        <div><dt>Per wheel</dt><dd>${s.price ? money(s.price)
+          : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
+          : or(null)}</dd></div>
+        <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
+          : s.forged === false ? "no" : or(null)}</dd></div>
+        <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
+        <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
+        <div><dt>Certification</dt><dd>${or(s.cert)}</dd></div>
+        <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
+        <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
+          : s.cnc === false ? "outsourced" : or(null)}</dd></div>
+        <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
+        <div><dt>Damage policy</dt><dd>${or(s.defects)}</dd></div>
+        <div><dt>Freight</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
+        <div><dt>Transit</dt><dd>${or(s.transit)}</dd></div>
+        <div><dt>Min. order</dt><dd>${or(s.moq)}</dd></div>
+      </dl>
+
+      <div class="vf">
+        <button class="btn" data-rfq="${s.id}">Write quote request</button>
+        ${s.url ? `<a class="btn ghost" href="${s.url}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
+        <span class="seen">${s.answered}/${s.total} answered${
+          s.verified_on ? " · last verified " + s.verified_on : ""}</span>
+      </div>
+    </article>`).join("");
+}
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-rfq]");
+  if (!b) return;
+  current = D.suppliers.find((x) => x.id === b.dataset.rfq);
+  el("mtitle").textContent = "Your spec for " + current.name;
+  el("modal").hidden = false;
+  refresh();
+  el("m-car").focus();
+});
+
+function buildMsg(s, spec) {
+  const ask = [];
+  if (!s.price) ask.push("Price per wheel, for 1 set (4 pcs) and for 4 sets");
+  if (s.forged === null) ask.push("Is this wheel forged? Please confirm yes or no");
+  if (!s.forging_process) ask.push("Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?");
+  if (!s.pieces) ask.push("Is it monoblock, 2-piece, or 3-piece?");
+  if (!s.weight) ask.push("Actual weight per wheel at this size");
+  if (!s.load_rating) ask.push("Load rating per wheel, in kg");
+  if (s.cert !== "provided") ask.push("JWL / VIA / TUV certificate PDF, and does it cover this width?");
+  if (s.cnc === null) ask.push("Do you do the CNC machining in house, or outsource it?");
+  if (!s.heat_treat) ask.push("What is your heat treat process?");
+  if (!s.payment) ask.push("What are your payment terms? Is 50% deposit acceptable?");
+  if (!s.defects) ask.push("What happens if a wheel arrives out of round or with finish damage?");
+  if (!s.freight) ask.push("Shipping cost to my port, and the HS code you declare");
+  ask.push("A photo of the wheel on a scale, and one showing the back of the spokes");
+
+  const lines = spec
+    ? [["Car", spec.car], ["Diameter", spec.dia], ["Width", spec.wid],
+       ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Finish", spec.fin]]
+        .filter(([, v]) => v).map(([k, v]) => `  ${k.padEnd(13)}${v}`).join("\n")
+    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __\n  Finish        __";
+
+  return `Hello,
+
+I'm looking at your wheels for my own car and would like a quote.
+
+My spec:
+${lines}
+
+Could you confirm:
+
+${ask.map((q, i) => `  ${i + 1}. ${q}`).join("\n")}
+
+Thank you.`;
+}
+
+const readSpec = () => ({
+  car: el("m-car").value.trim(), dia: el("m-dia").value.trim(),
+  wid: el("m-wid").value.trim(), off: el("m-off").value.trim(),
+  pcd: el("m-pcd").value.trim(), fin: el("m-fin").value.trim(),
+});
+
+function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
+
+["m-car","m-dia","m-wid","m-off","m-pcd","m-fin"].forEach((id) =>
+  el(id).addEventListener("input", refresh));
+
+const close = () => { el("modal").hidden = true; };
+el("mclose").addEventListener("click", close);
+el("modal").addEventListener("click", (e) => { if (e.target.id === "modal") close(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
+async function copy(txt, btn, label) {
+  try { await navigator.clipboard.writeText(txt); btn.textContent = "Copied"; }
+  catch { el("mpreview").select(); btn.textContent = "Press ⌘C"; }
+  setTimeout(() => (btn.textContent = label), 2000);
+}
+el("mcopy").addEventListener("click", (e) => copy(buildMsg(current, readSpec()), e.target, "Copy message"));
+el("mskip").addEventListener("click", (e) => copy(buildMsg(current, null), e.target, "Copy without spec"));
+
+render();
+</script>
+</body>
+</html>

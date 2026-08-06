@@ -194,7 +194,10 @@ async function submitWheelRequest(e) {
     if (response.ok) {
       el("wheel-name").value = "";
       el("request-modal").style.display = "none";
-      window.open("http://localhost:8420/requests", "_blank");
+      alert("Wheel request submitted! Opening requests page...");
+      setTimeout(() => {
+        window.open("http://localhost:8420/requests", "_blank");
+      }, 500);
     } else {
       alert("Error submitting request");
     }

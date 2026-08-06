@@ -54,14 +54,16 @@ function normalize(r) {
   const Q = r.from_quote || {};
 
   const price = num(Q.price_per_wheel_1set);
+  const price4quoted = num(Q.price_per_wheel_4set);
   const freight = num(Q.freight_cif_usd);
+  // Set of 4 price, preferring vendor's actual quote over calculated
+  const setPrice = price4quoted ?? (price ? price * 4 : null);
   // The number that actually matters. Null unless BOTH parts are quoted:
   // a landed cost built on a listing price is a made-up number.
   // Only a real landed cost when BOTH parts were quoted. Adding zero for an
   // undisclosed freight cost makes the least forthcoming vendor look like the
   // cheapest, which is exactly backwards.
-  const landed = price && freight !== null ? price * 4 + freight : null;
-  const setPrice = price ? price * 4 : null;
+  const landed = setPrice && freight !== null ? setPrice + freight : null;
 
   const fields = Object.values(Q);
   const answered = fields.filter((v) => v !== null && v !== undefined && v !== "").length;

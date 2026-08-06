@@ -484,7 +484,7 @@ async def request_wheel(req: Request):
 @app.get("/requests", response_class=HTMLResponse)
 def show_requests():
     reqs = load_requests()
-    rows = "".join(f"<tr><td>{r['name']}</td><td>{r['date']}</td></tr>" for r in reqs)
+    rows = "".join(f"<tr><td>{r['name']}</td><td>{r['date']}</td><td>{r.get('email', '')}</td></tr>" for r in reqs)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -497,11 +497,12 @@ def show_requests():
     * {{ margin: 0; padding: 0; box-sizing: border-box; }}
     body {{ font-family: 'IBM Plex Mono', monospace; background: #f5f5f0; color: #333; padding: 40px 20px; }}
     h1 {{ font-family: 'Barlow Condensed'; font-size: 36px; font-weight: 700; margin-bottom: 32px; text-transform: uppercase; }}
-    table {{ width: 100%; max-width: 600px; border-collapse: collapse; }}
+    table {{ width: 100%; max-width: 900px; border-collapse: collapse; }}
     th {{ text-align: left; padding: 12px; border-bottom: 2px solid #333; font-weight: 600; text-transform: uppercase; font-size: 12px; }}
     td {{ padding: 12px; border-bottom: 1px solid #ddd; }}
     tr:hover {{ background: #f0f0ea; }}
     .empty {{ color: #999; font-style: italic; padding: 32px 0; text-align: center; }}
+    .email {{ font-size: 12px; word-break: break-all; }}
   </style>
 </head>
 <body>
@@ -511,10 +512,11 @@ def show_requests():
       <tr>
         <th>Wheel Name</th>
         <th>Date Requested</th>
+        <th>Email</th>
       </tr>
     </thead>
     <tbody>
-      {rows or '<tr><td colspan="2" class="empty">No requests yet</td></tr>'}
+      {rows or '<tr><td colspan="3" class="empty">No requests yet</td></tr>'}
     </tbody>
   </table>
 </body>

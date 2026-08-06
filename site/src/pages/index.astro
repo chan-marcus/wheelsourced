@@ -170,17 +170,41 @@ const wheels = loadWheels();
       </form>
     </div>
   </div>
+
+  <div id="confirmation" style="position: fixed; top: 40px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--stock); padding: 16px 24px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 13px; display: none; z-index: 2000; max-width: 90%; text-align: center; animation: slideDown 0.3s ease-out;">
+    Wheel request submitted
+  </div>
+
+  <style>
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  </style>
 </div>
 
 <script is:inline>
 const el = (id) => document.getElementById(id);
+
+function showConfirmation() {
+  const confirm = el("confirmation");
+  confirm.style.display = "block";
+  setTimeout(() => {
+    confirm.style.display = "none";
+  }, 3000);
+}
 
 async function submitWheelRequest(e) {
   e.preventDefault();
   const wheelName = el("wheel-name").value.trim();
 
   if (!wheelName) {
-    alert("Please enter a wheel name");
     return;
   }
 
@@ -194,16 +218,10 @@ async function submitWheelRequest(e) {
     if (response.ok) {
       el("wheel-name").value = "";
       el("request-modal").style.display = "none";
-      alert("Wheel request submitted! Opening requests page...");
-      setTimeout(() => {
-        window.open("http://localhost:8420/requests", "_blank");
-      }, 500);
-    } else {
-      alert("Error submitting request");
+      showConfirmation();
     }
   } catch (err) {
     console.error("Error submitting request:", err);
-    alert("Error submitting request. Make sure the GUI is running.");
   }
 }
 </script>

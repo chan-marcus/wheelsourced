@@ -34,8 +34,19 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
       <span class="word">Wheel<em>Sourced</em></span>
     </a>
     <div class="eyebrow">
-      <span style="font-size: 28px; font-weight: 700;">{wheel.title}<span style="font-size: 0.6em;">-style</span></span>
-      <span>{wheel.suppliers.length} suppliers tracked</span>
+      <div style="display: flex; gap: 16px; align-items: flex-start;">
+        {wheel.hasImage && (
+          <img
+            src={`/wheels/${wheel.slug}/image${wheel.imageExt}`}
+            alt={wheel.title}
+            style="width: 80px; height: 80px; object-fit: contain;"
+          />
+        )}
+        <div>
+          <span style="font-size: 28px; font-weight: 700;">{wheel.title}<span style="font-size: 0.6em;">-style</span></span>
+          <span>{wheel.suppliers.length} suppliers tracked</span>
+        </div>
+      </div>
     </div>
   </header>
 

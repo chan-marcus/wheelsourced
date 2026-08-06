@@ -79,14 +79,13 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
   <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="mtitle">
     <div class="mhead"><span id="mtitle">Your spec</span>
       <button class="x" id="mclose" aria-label="Close">×</button></div>
-    <p class="mhint">Filled into the message so the vendor can quote you directly.</p>
+    <p class="mhint">Your spec and location will be filled into the message.</p>
     <div class="mgrid">
-      <div><label for="m-car">Car (make, model, year)</label><input id="m-car" placeholder="BMW E36 325i, 1995" /></div>
       <div><label for="m-dia">Diameter</label><input id="m-dia" placeholder="18" /></div>
       <div><label for="m-wid">Width</label><input id="m-wid" placeholder="9.5J" /></div>
       <div><label for="m-off">Offset</label><input id="m-off" placeholder="ET+22" /></div>
       <div><label for="m-pcd">Bolt pattern</label><input id="m-pcd" placeholder="5x120" /></div>
-      <div><label for="m-fin">Finish</label><input id="m-fin" placeholder="Brushed silver" /></div>
+      <div><label for="m-zip">Shipping zip code</label><input id="m-zip" placeholder="90210" /></div>
     </div>
     <div class="mfoot">
       <button class="btn" id="mcopy">Copy message</button>
@@ -223,50 +222,38 @@ document.addEventListener("click", (e) => {
 });
 
 function buildMsg(s, spec) {
-  const ask = [];
-  if (!s.price) ask.push("Price per wheel, for 1 set (4 pcs) and for 4 sets");
-  if (s.forged === null) ask.push("Is this wheel forged? Please confirm yes or no");
-  if (!s.forging_process) ask.push("Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?");
-  if (!s.pieces) ask.push("Is it monoblock, 2-piece, or 3-piece?");
-  if (!s.weight) ask.push("Actual weight per wheel at this size");
-  if (!s.load_rating) ask.push("Load rating per wheel, in kg");
-  if (s.cert !== "provided") ask.push("JWL / VIA / TUV certificate PDF, and does it cover this width?");
-  if (s.cnc === null) ask.push("Do you do the CNC machining in house, or outsource it?");
-  if (!s.heat_treat) ask.push("What is your heat treat process?");
-  if (!s.payment) ask.push("What are your payment terms? Is 50% deposit acceptable?");
-  if (!s.defects) ask.push("What happens if a wheel arrives out of round or with finish damage?");
-  if (!s.freight) ask.push("Shipping cost to my port, and the HS code you declare");
-  ask.push("A photo of the wheel on a scale, and one showing the back of the spokes");
-
   const lines = spec
-    ? [["Car", spec.car], ["Diameter", spec.dia], ["Width", spec.wid],
-       ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Finish", spec.fin]]
+    ? [["Diameter", spec.dia], ["Width", spec.wid],
+       ["Offset", spec.off], ["Bolt pattern", spec.pcd]]
         .filter(([, v]) => v).map(([k, v]) => `  ${k.padEnd(13)}${v}`).join("\n")
-    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __\n  Finish        __";
+    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __";
+
+  const zipline = spec?.zip ? `\n\nShipping zip code: ${spec.zip}` : "";
 
   return `Hello,
 
-I'm looking at your wheels for my own car and would like a quote.
+I'm interested in your wheels and would like a quote for this spec:
 
-My spec:
-${lines}
+${lines}${zipline}
 
-Could you confirm:
-
-${ask.map((q, i) => `  ${i + 1}. ${q}`).join("\n")}
+Could you please provide:
+  1. Price per wheel (1 set of 4 wheels and for 4 sets if available)
+  2. Shipping cost to the zip code above
 
 Thank you.`;
 }
 
 const readSpec = () => ({
-  car: el("m-car").value.trim(), dia: el("m-dia").value.trim(),
-  wid: el("m-wid").value.trim(), off: el("m-off").value.trim(),
-  pcd: el("m-pcd").value.trim(), fin: el("m-fin").value.trim(),
+  dia: el("m-dia").value.trim(),
+  wid: el("m-wid").value.trim(),
+  off: el("m-off").value.trim(),
+  pcd: el("m-pcd").value.trim(),
+  zip: el("m-zip").value.trim(),
 });
 
 function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
 
-["m-car","m-dia","m-wid","m-off","m-pcd","m-fin"].forEach((id) =>
+["m-dia","m-wid","m-off","m-pcd","m-zip"].forEach((id) =>
   el(id).addEventListener("input", refresh));
 
 const close = () => { el("modal").hidden = true; };

@@ -7,12 +7,11 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Is this wheel forged? Please confirm yes or no
-  2. Is it monoblock, 2-piece, or 3-piece?
-  3. Do you do the CNC machining in house, or outsource it?
-  4. What is your heat treat process? Which temper, and how long?
-  5. What are your payment terms? Is 50% deposit acceptable?
-  6. What happens if a wheel arrives out of round or with finish damage?
+  1. Is it monoblock, 2-piece, or 3-piece?
+  2. Do you do the CNC machining in house, or outsource it?
+  3. What is your heat treat process? Which temper, and how long?
+  4. What are your payment terms? Is 50% deposit acceptable?
+  5. What happens if a wheel arrives out of round or with finish damage?
 
 An extra if you can:
 

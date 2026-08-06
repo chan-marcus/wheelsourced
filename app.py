@@ -470,8 +470,13 @@ async def request_wheel(req: Request):
     if not name:
         return JSONResponse({"ok": False}, status_code=400)
 
+    email = data.get("email", "").strip() if data.get("email") else None
+
     reqs = load_requests()
-    reqs.append({"name": name, "date": str(date.today())})
+    entry = {"name": name, "date": str(date.today())}
+    if email:
+        entry["email"] = email
+    reqs.append(entry)
     save_requests(reqs)
     return JSONResponse({"ok": True})
 

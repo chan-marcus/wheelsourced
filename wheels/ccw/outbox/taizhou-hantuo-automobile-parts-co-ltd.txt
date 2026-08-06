@@ -7,11 +7,9 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?
-  2. Are you the manufacturer or a trading company? Factory address?
-  3. Do you do the CNC machining in house, or outsource it?
-  4. What is your heat treat process? Which temper, and how long?
-  5. What happens if a wheel arrives out of round or with finish damage?
+  1. Do you do the CNC machining in house, or outsource it?
+  2. What is your heat treat process? Which temper, and how long?
+  3. What happens if a wheel arrives out of round or with finish damage?
 
 
 

@@ -45,7 +45,7 @@ export function loadWheels() {
 
       // Check if wheel has an image
       const wheelDir = path.join(WHEELS_DIR, slug);
-      const imageExt = [".png", ".jpg", ".jpeg", ".webp", ".gif"].find(ext =>
+      const imageExt = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"].find(ext =>
         fs.existsSync(path.join(wheelDir, `image${ext}`))
       );
 

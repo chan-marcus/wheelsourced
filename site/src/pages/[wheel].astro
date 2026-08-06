@@ -169,14 +169,6 @@ function render() {
           <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}</dd></div>
       </div>
 
-      <div class="tags">
-        ${s.verified ? `<span class="tag good">verified supplier</span>` : ""}
-        ${s.forged === true ? `<span class="tag good">forged confirmed</span>` : ""}
-        ${s.cert === "provided" ? `<span class="tag good">cert on file</span>` : ""}
-        ${s.cnc === true ? `<span class="tag good">CNC in house</span>` : ""}
-        ${s.flags.map((f) => `<span class="tag bad">${f}</span>`).join("")}
-      </div>
-
       <dl class="specs">
         <div><dt>Per wheel</dt><dd>${s.price ? money(s.price)
           : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`

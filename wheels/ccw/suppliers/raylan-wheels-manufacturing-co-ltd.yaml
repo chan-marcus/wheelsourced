@@ -66,17 +66,17 @@ from_listing:
   units_sold: 20
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  weight_kg: null
-  load_rating_kg: null
-  forging_process: null
+  price_per_wheel_1set: 450
+  price_per_wheel_4set: 1800
+  weight_kg: 9
+  load_rating_kg: 850
+  forging_process: machined from a forged blank, 6061-T6 aluminum alloy
   cert_document: null
-  size_chart: null
-  freight_cif_usd: null
-  is_manufacturer: null
-  forged_confirmed: null
-  piece_count: null
+  size_chart: 18x9.5J; 19-inch diameter available in 7J to 14J width
+  freight_cif_usd: 290
+  is_manufacturer: true
+  forged_confirmed: true
+  piece_count: 2-piece
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
@@ -89,5 +89,13 @@ meta:
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze
   factory_address: Shandong Province, China
   rfq_first_sent: '2026-08-06'
-  rfq_round: 1
+  rfq_round: 2
+  reply_received: '2026-08-06'
+  reply_count: 1
+  questions_answered: 9/14
+  reply_notes:
+  - '2026-08-06: Price per single wheel stated as $450; 1 set (4 pcs) $1800; 4 sets
+    (16 pcs) $7100. Freight $290 to Los Angeles, CIF. Spec charts promised to email.
+    Production 30-40 days, transport 25-30 days. No certification document provided
+    or promised.'
 flags: []

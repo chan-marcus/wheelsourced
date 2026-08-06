@@ -7,16 +7,12 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Price per single wheel and price for 1 set (4 pcs)
-  2. Actual weight per wheel at this exact size
-  3. Load rating per wheel, in kg
-  4. Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?
-  5. Is it monoblock, 2-piece, or 3-piece?
-  6. JWL / VIA / TUV certificate PDF, and does it cover this width?
-  7. Shipping cost to 90210 Los Angeles USA, and the HS code you declare
-  8. Are you the manufacturer or a trading company? Factory address?
-  9. Your full size chart, with the offset range available at each width
+  1. Do you do the CNC machining in house, or outsource it?
+  2. What is your heat treat process? Which temper, and how long?
+  3. What are your payment terms? Is it 50% deposit?
 
+An extra if you can:
 
+  - Your full size chart, with the offset range available at each width
 
 Thank you.

@@ -399,73 +399,49 @@ async function uploadImage(){
   const wheelInput = document.getElementById("wheelImage");
   const imagestatus = document.getElementById("imagestatus");
 
-  if(!wheelInput || !wheelInput.files){
-    imagestatus.textContent = "Error: File input not found";
-    return;
-  }
-
-  const file = wheelInput.files[0];
-
   if(!S.wheel){
     imagestatus.textContent = "Please select a wheel first";
     return;
   }
 
-  if(!file){
+  if(!wheelInput || !wheelInput.files || wheelInput.files.length === 0){
     imagestatus.textContent = "Please select an image file";
     return;
   }
 
-  imagestatus.textContent = "Uploading...";
-
+  const file = wheelInput.files[0];
   const fileName = file.name;
-  const fileSize = file.size;
   const ext = "." + fileName.split('.').pop().toLowerCase();
 
-  const reader = new FileReader();
-  reader.onerror = () => {
-    imagestatus.textContent = "Error reading file";
-    console.error("FileReader error:", reader.error);
-  };
-  reader.onload = async (e) => {
-    try {
-      const dataUrl = e.target.result;
-      if(!dataUrl || !dataUrl.includes(',')) {
-        imagestatus.textContent = "Error: Invalid file data";
-        console.error("Invalid data URL:", dataUrl?.substring(0, 100));
-        return;
-      }
-      const base64 = dataUrl.split(',')[1];
-
-      if(!base64 || base64.length < 10){
-        imagestatus.textContent = "Error: File too small or invalid";
-        console.error("Invalid base64, length:", base64?.length);
-        return;
-      }
-
-      console.log("Upload - file:", fileName, "size:", fileSize, "base64 length:", base64.length);
-
-      const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
-      console.log("Upload response:", r);
-
-      if(r.ok){
-        imagestatus.textContent = "✓ Image uploaded successfully";
-        wheelInput.value = "";
-        setTimeout(() => { imagestatus.textContent = ""; }, 3000);
-      } else {
-        imagestatus.textContent = "Error: " + (r.error || "Upload failed");
-      }
-    } catch(err) {
-      imagestatus.textContent = "Error: " + err.message;
-      console.error("Upload error:", err);
-    }
-  };
+  imagestatus.textContent = "Uploading...";
 
   try {
-    reader.readAsDataURL(file);
+    // Use Blob.arrayBuffer() instead of FileReader
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    // Convert to base64
+    let binary = '';
+    for(let i = 0; i < bytes.byteLength; i++){
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+
+    console.log("Uploading:", fileName, "size:", file.size, "bytes, base64 length:", base64.length);
+
+    const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
+    console.log("Response:", r);
+
+    if(r.ok){
+      imagestatus.textContent = "✓ Image uploaded successfully";
+      wheelInput.value = "";
+      setTimeout(() => { imagestatus.textContent = ""; }, 3000);
+    } else {
+      imagestatus.textContent = "Error: " + (r.error || "Upload failed");
+    }
   } catch(err) {
-    imagestatus.textContent = "Error: Cannot read file";
-    console.error("readAsDataURL error:", err);
+    imagestatus.textContent = "Error: " + err.message;
+    console.error("Upload error:", err);
   }
 }
 

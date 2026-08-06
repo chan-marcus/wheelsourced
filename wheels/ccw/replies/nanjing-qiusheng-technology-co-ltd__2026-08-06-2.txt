@@ -1,0 +1,2 @@
+We will calculate the actual weight of the wheel hub when designing the rendering for you.
+The load rating is 850kg.

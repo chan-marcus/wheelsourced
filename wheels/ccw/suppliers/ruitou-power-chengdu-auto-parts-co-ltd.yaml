@@ -1,0 +1,95 @@
+id: ruitou-power-chengdu-auto-parts-co-ltd
+wheel: ccw
+listings:
+- https://www.alibaba.com/product-detail/Custom-17-18-19-20-21_1601905189086.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+supplier_url: https://rettodynamics.en.alibaba.com/company_profile.html
+from_listing:
+  supplier_name: Ruitou Power (Chengdu) Auto Parts Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 1
+  staff_count: 75
+  factory_area_sqm: 12000
+  verified_supplier: false
+  trade_assurance: false
+  response_rate: null
+  listed_price_low: 395
+  listed_price_high: 455
+  moq: 1 piece
+  listed_lead_time: 15-30 days
+  sizes_offered:
+  - '17'
+  - 17"
+  - '18'
+  - 18"
+  - '19'
+  - 19"
+  - '20'
+  - 20"
+  - '21'
+  - 21"
+  bolt_patterns:
+  - 114.3mm
+  - 120.65mm
+  - 127mm
+  - 130mm
+  - 5x114.3
+  - custom
+  offsets_offered:
+  - Custom
+  finishes:
+  - Matte Black
+  - Painting
+  - Plating
+  - Polishing
+  - Powder Coating
+  construction: 2-piece
+  certs_claimed:
+  - DOT
+  - ISO 9001
+  - Intertek
+  - JWL
+  - SFI
+  - TS16949
+  - TUV
+  - VIA
+  main_image_url: null
+  store_rating: 5.0
+  review_count: 2
+  response_time: <=1h
+  on_time_dispatch: '>=100%'
+  reorder_rate: 20%
+  units_sold: null
+  transit_time: Est. 16-23 days
+from_quote:
+  price_per_wheel_1set: 462
+  price_per_wheel_4set: 1848
+  weight_kg: null
+  load_rating_kg: null
+  forging_process: not stated clearly
+  cert_document: null
+  size_chart: 18in
+  freight_cif_usd: null
+  is_manufacturer: null
+  forged_confirmed: null
+  piece_count: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+meta:
+  listing_seen: '2026-08-05'
+  rfq_sent: '2026-08-05'
+  reply_received: '2026-08-06'
+  questions_answered: 4/9
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze
+  first_reply: '2026-08-06'
+  reply_count: 1
+  reply_notes:
+  - '2026-08-06: Only price for 18in wheel given; forging process, certification,
+    and freight not addressed'
+flags:
+- no load rating given
+- piece count not confirmed
+- forging process not actually described
+- dodged the forging question
+- under 3 years listed

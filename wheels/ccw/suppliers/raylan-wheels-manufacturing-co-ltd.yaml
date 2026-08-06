@@ -1,0 +1,123 @@
+id: raylan-wheels-manufacturing-co-ltd
+wheel: ccw
+listings:
+- https://www.alibaba.com/product-detail/Roc-Custom-Polished-Silver-Classic-Forged_1601838257662.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+- https://www.alibaba.com/product-detail/Custom-Classic-Wheels-2-3-Piece_1601460804381.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+supplier_url: https://scpengqin.en.alibaba.com/company_profile.html
+from_listing:
+  supplier_name: Raylan Wheels Manufacturing Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 3
+  staff_count: 200
+  factory_area_sqm: 5544
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: ≤2h
+  listed_price_low: 399
+  listed_price_high: 719
+  moq: 4 pieces
+  listed_lead_time: 30 days (1-4 pieces); negotiable (>4 pieces)
+  sizes_offered:
+  - 17 Inch
+  - 18 Inch
+  - 19 Inch
+  bolt_patterns:
+  - 114.3mm
+  - 120.65mm
+  - 5x114.3
+  - 5x120.65
+  - Custom
+  offsets_offered:
+  - 15 mm
+  - 15mm
+  - 20 mm
+  - 20mm
+  - 30 mm
+  - 30mm
+  - 38 mm
+  - 38 mm - 56 mm
+  - 38mm
+  - 38mm-56mm
+  - 45 mm
+  - 45mm
+  - 50 mm
+  - 50mm
+  - 58 mm
+  - 58mm
+  - Custom
+  finishes:
+  - Polished
+  - Silver
+  construction: 3-piece
+  certs_claimed:
+  - CE
+  - DOT
+  - ECE
+  - IATF
+  - JWL
+  - TUV
+  - VIA
+  main_image_url: null
+  store_rating: 4.6
+  review_count: 381
+  response_time: ≤2h
+  on_time_dispatch: 92.7%
+  reorder_rate: 8%
+  units_sold: 20
+  transit_time: Est. 17-24 days
+from_quote:
+  price_per_wheel_1set: 450
+  price_per_wheel_4set: 443.75
+  weight_kg: 9
+  load_rating_kg: 850
+  forging_process: machined from forged blank
+  cert_document: claimed without document
+  size_chart: 18x9.5J, spec chart to be sent via email
+  freight_cif_usd: 290
+  is_manufacturer: true
+  forged_confirmed: null
+  piece_count: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+meta:
+  listing_seen: '2026-08-05'
+  rfq_sent: '2026-08-05'
+  reply_received: '2026-08-06'
+  questions_answered: 9/9
+  reply_note: Pricing and shipping to LA pending manager confirmation; load rating
+    given as range 750-950kg, upper value recorded.
+  catalog_offered: true
+  first_reply: '2026-08-06'
+  reply_count: 4
+  reply_notes:
+  - '2026-08-06: Unit price $450 matches set price $1800 for 4 wheels; shipping $290
+    includes double customs clearance and door-to-door delivery; production 30-40
+    days, transit 25-30 days.'
+  - '2026-08-06: Unit price $450 per wheel, $1800 for a set of 4 (4x450); shipping
+    $290 includes double customs clearance and door-to-door delivery; production 30-40
+    days, transit 25-30 days.'
+  - '2026-08-06: Unit price $450/wheel, set of 4 = $1800; total with shipping $2090;
+    production 30-40 days, transit 25-30 days; door-to-door with customs clearance
+    included'
+  - '2026-08-06: Sea freight quoted to Los Angeles, USA with HS code 8708709100; price_per_wheel_4set
+    derived from 7100 USD for 16 pcs.'
+  revisions:
+  - '2026-08-06 forging_process: machined from 6061-T6 forged billets -> not stated
+    clearly'
+  - '2026-08-06 size_chart: 18x9.5J, chart offered via email but not attached -> 18in,
+    9.5J only, no range or chart provided'
+  - '2026-08-06 size_chart: 18in, 9.5J only, no range or chart provided -> 18in, 9.5J,
+    single size stated, no chart attached'
+  - '2026-08-06 size_chart: 18in, 9.5J, single size stated, no chart attached -> 18x9.5J,
+    spec chart to be sent via email'
+  - '2026-08-06 price_per_wheel_4set: 1800 -> 443.75'
+  - '2026-08-06 load_rating_kg: 950 -> 850'
+  - '2026-08-06 forging_process: not stated clearly -> machined from forged blank'
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze
+  factory_address: Shandong Province, China
+flags:
+- cert claimed, no document
+- piece count not confirmed
+- changed answer between rounds

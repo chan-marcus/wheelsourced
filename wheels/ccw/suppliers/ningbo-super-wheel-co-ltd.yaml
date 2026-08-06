@@ -1,0 +1,145 @@
+id: ningbo-super-wheel-co-ltd
+wheel: ccw
+listings:
+- https://www.alibaba.com/product-detail/Custom-Polished-3-Piece-Forged-Alloy_1601363897866.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+supplier_url: https://superwheelfactory.en.alibaba.com/company_profile.html
+from_listing:
+  supplier_name: Ningbo Super Wheel Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 3
+  staff_count: null
+  factory_area_sqm: 476
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 400
+  listed_price_high: 590
+  moq: 4 pieces
+  listed_lead_time: 35-45 days
+  sizes_offered:
+  - '18'
+  - 18"
+  - '19'
+  - 19"
+  - '20'
+  - 20"
+  - '21'
+  - 21"
+  - '22'
+  - 22"
+  bolt_patterns:
+  - 100 mm
+  - 108 mm
+  - 112 mm
+  - 115 mm
+  - 120 mm
+  - 5x100
+  - 5x108
+  - 5x112
+  - 5x115
+  - 5x120
+  offsets_offered:
+  - +25mm
+  - +30mm
+  - +35mm
+  - +37mm
+  - +40mm
+  - +42mm
+  - +45mm
+  - 25 mm
+  - 25mm
+  - 30 mm
+  - 30mm
+  - 35 mm
+  - 35mm
+  - 37 mm
+  - 37mm
+  - 40 mm
+  - 40mm
+  - 42 mm
+  - 42mm
+  - 45 mm
+  - 45mm
+  - ET25
+  - ET30
+  - ET35
+  - ET37
+  - ET40
+  - ET42
+  - ET45
+  finishes:
+  - Black
+  - Polished
+  - Silver
+  construction: forged
+  certs_claimed:
+  - DOT
+  - E-mark
+  - E/e-mark
+  - IATF 16949
+  - JWL
+  - TS16949
+  - TUV
+  - VIA
+  main_image_url: null
+  store_rating: 4.8
+  review_count: 107
+  response_time: <=2h
+  on_time_dispatch: '>=96.6%'
+  reorder_rate: 17%
+  units_sold: null
+  transit_time: Est. 17-24 days
+from_quote:
+  price_per_wheel_1set: 480
+  price_per_wheel_4set: 480
+  weight_kg: 13.5
+  load_rating_kg: 825
+  forging_process: processed using forged blanks, 6061-T6 aviation grade aluminium
+  cert_document: claimed without document
+  size_chart: no fixed size chart, fully customizable; recommended 18x9.5J ET+22 for
+    Nissan 350Z, custom-bore to 66.1mm
+  freight_cif_usd: 320
+  is_manufacturer: true
+  forged_confirmed: null
+  piece_count: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+meta:
+  listing_seen: '2026-08-05'
+  rfq_sent: '2026-08-05'
+  reply_received: '2026-08-06'
+  questions_answered: 9/9
+  reply_note: Supplier requested buyer's ZIP code for shipping quote and mentioned
+    a photo of polished barrel/black face design; no price or shipping cost provided.
+  first_reply: '2026-08-06'
+  reply_count: 2
+  reply_notes:
+  - '2026-08-06: Price 1920 USD is for a full 4-wheel set (3-piece wheels); weight
+    given as 13-14kg range; load rating given as 750-900kg range; certification only
+    possible if ordering at least 20 pieces; shipping cost quoted specifically for
+    18-inch wheel set.'
+  - '2026-08-06: Price of 480 USD is per single 3-piece wheel; a full set of 4 is
+    1920 USD (480/wheel), bulk pricing only if specs/colors match across 4 sets; load
+    rating given as range 750-900kg per piece, averaged; shipping cost 320 USD is
+    for one set of 18-inch wheels; certification requires min 20 samples, not currently
+    provided.'
+  factory_address: Zhejiang, China
+  revisions:
+  - '2026-08-06 load_rating_kg: 800 -> 825'
+  - '2026-08-06 forging_process: machined from forged 6061-T6 alloy -> processed using
+    forged blanks (6061-T6 aviation grade aluminium)'
+  - '2026-08-06 cert_document: claimed without document -> promised'
+  - '2026-08-06 price_per_wheel_4set: 1920 -> 480'
+  - '2026-08-06 forging_process: processed using forged blanks (6061-T6 aviation grade
+    aluminium) -> processed using forged blanks, 6061-T6 aviation grade aluminium'
+  - '2026-08-06 cert_document: promised -> claimed without document'
+  - '2026-08-06 size_chart: 18x9.5J ET+22 5x114.3, single spec listed -> no fixed
+    size chart, fully customizable; recommended 18x9.5J ET+22 for Nissan 350Z, custom-bore
+    to 66.1mm'
+flags:
+- cert claimed, no document
+- weight 13.5kg high for forged (listing) at 18x9.5 (expected under 11.8kg)
+- piece count not confirmed
+- changed answer between rounds

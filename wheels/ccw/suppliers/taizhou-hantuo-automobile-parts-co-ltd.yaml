@@ -1,0 +1,124 @@
+id: taizhou-hantuo-automobile-parts-co-ltd
+wheel: ccw
+listings:
+- https://www.alibaba.com/product-detail/HTOR-18-19-20-21-Inch_1601799758663.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+supplier_url: https://chinajsht.m.en.alibaba.com/
+from_listing:
+  supplier_name: Taizhou Hantuo Automobile Parts Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 5
+  staff_count: 40
+  factory_area_sqm: 5555
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 180.2
+  listed_price_high: 323.3
+  moq: 4 pieces
+  listed_lead_time: 15 days
+  sizes_offered:
+  - 16"
+  - 17"
+  - '18'
+  - 18"
+  - '19'
+  - 19"
+  - '20'
+  - 20"
+  - '21'
+  - 21"
+  - 22"
+  - 23"
+  - 24"
+  bolt_patterns:
+  - 100mm
+  - 108mm
+  - 112mm
+  - 114.3mm
+  - 115mm
+  - 120mm
+  - 127mm
+  - 130mm
+  - 5x112
+  offsets_offered:
+  - -20MM
+  - -20mm
+  - 10 mm
+  - 10mm
+  - 15 mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30 mm
+  - 30mm
+  - 35 mm
+  - 35mm
+  - 40 mm
+  - 40mm
+  - 42 mm
+  - 42mm
+  - 45 mm
+  - 45mm
+  - 50 mm
+  - 50mm
+  - 69MM
+  - 69mm
+  finishes:
+  - Brushed
+  - Brushed Silver
+  - Chrome
+  - Chrome Rivets
+  - Polished
+  - Polished Edge
+  construction: 2-piece
+  certs_claimed:
+  - CE
+  - DOT
+  - IATF 16949
+  - IATF16949
+  - ISO 9001
+  - ISO9001
+  - SFI
+  - TUV
+  - VIA
+  - VIA/JWL
+  main_image_url: null
+  store_rating: 4.8
+  review_count: 87
+  response_time: <=2h
+  on_time_dispatch: 95.3%
+  reorder_rate: 20%
+  units_sold: null
+  transit_time: Est. 16-23 days
+from_quote:
+  price_per_wheel_1set: 430
+  price_per_wheel_4set: 1720
+  weight_kg: 9.5
+  load_rating_kg: 800
+  forging_process: forged from 6061-T6 billet
+  cert_document: promised
+  size_chart: 18x9.5in referenced with weight/load specs
+  freight_cif_usd: 250
+  is_manufacturer: true
+  forged_confirmed: null
+  piece_count: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+meta:
+  listing_seen: '2026-08-05'
+  rfq_sent: '2026-08-05'
+  reply_received: '2026-08-06'
+  questions_answered: 9/9
+  reply_note: Supplier will confirm 4pc/16pc pricing later; asked for email to send
+    certs, scale photos, and HS code 8708.70.
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze
+  first_reply: '2026-08-06'
+  reply_count: 1
+  reply_notes:
+  - '2026-08-06: Only pricing and shipping cost provided; total 1970 USD for 4 wheels
+    including freight.'
+flags:
+- piece count not confirmed

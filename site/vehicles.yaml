@@ -1,0 +1,127 @@
+# Permanent manufacturer facts only. Nothing here is a fitment judgment:
+# no "what fits when lowered", no fender advice. Those depend on setup and
+# belong to the owner, not to us.
+#
+# VERIFY EVERY ROW before publishing. Bore and seat type in particular are
+# easy to get wrong and expensive to be wrong about. `verified: false` rows
+# render with a caveat on the page.
+
+- id: e36
+  name: BMW E36 (1990-2000)
+  bolt_pattern: 5x120
+  bore: 72.6
+  seat: ball
+  thread: M12x1.5
+  fastener: bolts
+  stock_example: 16x7 ET47
+  verified: false
+
+- id: e30
+  name: BMW E30 (1982-1994)
+  bolt_pattern: 4x100
+  bore: 57.1
+  seat: ball
+  thread: M12x1.5
+  fastener: bolts
+  stock_example: 14x6 ET35
+  verified: false
+
+- id: e46
+  name: BMW E46 (1998-2006)
+  bolt_pattern: 5x120
+  bore: 72.6
+  seat: ball
+  thread: M12x1.5
+  fastener: bolts
+  stock_example: 17x7 ET47
+  verified: false
+
+- id: s14
+  name: Nissan 240SX S14 (1994-1998)
+  bolt_pattern: 5x114.3
+  bore: 66.1
+  seat: conical
+  thread: M12x1.25
+  fastener: nuts
+  stock_example: 16x6.5 ET40
+  verified: false
+
+- id: z33
+  name: Nissan 350Z Z33 (2002-2009)
+  bolt_pattern: 5x114.3
+  bore: 66.1
+  seat: conical
+  thread: M12x1.25
+  fastener: nuts
+  stock_example: 18x9.5 ET30 rear
+  verified: false
+
+- id: ae86
+  name: Toyota AE86 (1983-1987)
+  bolt_pattern: 4x100
+  bore: 54.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 14x5.5 ET39
+  verified: false
+
+- id: jzx100
+  name: Toyota Chaser JZX100 (1996-2001)
+  bolt_pattern: 5x114.3
+  bore: 60.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 16x6.5 ET50
+  verified: false
+
+- id: fd3s
+  name: Mazda RX-7 FD (1992-2002)
+  bolt_pattern: 5x114.3
+  bore: 67.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 16x8 ET50
+  verified: false
+
+- id: na-nb
+  name: Mazda Miata NA/NB (1989-2005)
+  bolt_pattern: 4x100
+  bore: 54.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 14x6 ET40
+  verified: false
+
+- id: ap1
+  name: Honda S2000 AP1/AP2 (1999-2009)
+  bolt_pattern: 5x114.3
+  bore: 64.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 17x8.5 ET55 rear
+  verified: false
+
+- id: ek
+  name: Honda Civic EG/EK (1992-2000)
+  bolt_pattern: 4x100
+  bore: 56.1
+  seat: conical
+  thread: M12x1.5
+  fastener: nuts
+  stock_example: 14x5.5 ET45
+  verified: false
+
+- id: gc8
+  name: Subaru Impreza GC8 (1992-2000)
+  bolt_pattern: 5x100
+  bore: 56.1
+  seat: conical
+  thread: M12x1.25
+  fastener: nuts
+  stock_example: 16x7 ET55
+  verified: false

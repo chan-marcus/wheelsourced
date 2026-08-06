@@ -1,0 +1,130 @@
+id: nanjing-qiusheng-technology-co-ltd
+wheel: ccw
+listings:
+- https://www.alibaba.com/product-detail/CCW-Custom-Forged-Wheels-1-5x114_1601673844069.html?spm=a2700.image-text-search.normal_offer.d_title.36d967afUydrvb&priceId=be5aa96d643c4f0c8a9e1bd4d1f16b2c
+supplier_url: https://nanjingqs.en.alibaba.com/company_profile.html
+from_listing:
+  supplier_name: Nanjing Qiusheng Technology Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 2
+  staff_count: 350
+  factory_area_sqm: 120728
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 425
+  listed_price_high: 1052
+  moq: 1 piece
+  listed_lead_time: 30 days for 1-4 pieces; negotiable for >4 pieces
+  sizes_offered:
+  - '17'
+  - 17"
+  - '18'
+  - 18"
+  - '19'
+  - 19"
+  - '20'
+  - 20"
+  - '21'
+  - 21"
+  - '22'
+  - 22"
+  - '23'
+  - 23"
+  - '24'
+  - 24"
+  bolt_patterns:
+  - 100mm
+  - 108mm
+  - 112mm
+  - 114.3mm
+  - 115mm
+  - 120.65mm
+  - 120mm
+  - 127mm
+  - 130mm
+  - 139.7mm
+  - 140mm
+  - 150mm
+  - 165.1mm
+  - 5x112
+  - 5x114.3
+  - 5x115
+  - 5x120
+  - 5x120.65
+  - 5x130
+  - 98mm
+  offsets_offered:
+  - 15mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 40mm
+  - 42mm
+  - 45mm
+  finishes:
+  - Gloss Black with Machine Face
+  - Painting
+  - Plating
+  - Polishing
+  - Powder Coating
+  construction: forged
+  certs_claimed:
+  - Approved for Automotive Exports
+  - DOT
+  - ECE
+  - IATF 16949
+  - ISO 9001
+  - TÜV Rheinland
+  - TüVRheinland verified onsite
+  main_image_url: null
+  store_rating: 4.7
+  review_count: 319
+  response_time: <=3h
+  on_time_dispatch: '>=99.6%'
+  reorder_rate: 5%
+  units_sold: 8
+  transit_time: Est. 16-23 days
+from_quote:
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  weight_kg: null
+  load_rating_kg: 850
+  forging_process: forged from 6061-T6 billet
+  cert_document: claimed without document
+  size_chart: null
+  freight_cif_usd: null
+  is_manufacturer: true
+  forged_confirmed: null
+  piece_count: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+meta:
+  listing_seen: '2026-08-05'
+  rfq_sent: '2026-08-05'
+  reply_received: '2026-08-06'
+  questions_answered: 4/9
+  reply_note: Supplier deferred weight, load rating, pricing, and shipping cost to
+    senior manager; claims JWL/VIA certification without offering documents; no catalog,
+    requested vehicle model to check offset range.
+  first_reply: '2026-08-06'
+  reply_count: 2
+  reply_notes:
+  - '2026-08-06: Supplier focuses on material (6061-T6) and detailed coating/paint
+    durability claims (10+ years); no pricing, sizing, weight, load, certification,
+    or shipping info provided.'
+  - '2026-08-06: Weight will be calculated during rendering design; only load rating
+    was stated.'
+  revisions:
+  - '2026-08-06 forging_process: machined from forged blank -> forged from 6061-T6
+    billet'
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze
+flags:
+- cert claimed, no document
+- piece count not confirmed
+- no size chart supplied
+- under 3 years listed
+- changed answer between rounds

@@ -1,0 +1,19 @@
+# Scraper browser profile: live Alibaba session cookies, saved logins and
+# trust tokens. Committing this would put working credentials in git history.
+data/
+
+# Dependencies
+node_modules/
+.venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Build output and generated types
+site/dist/
+.astro/
+site/.astro/
+
+# macOS
+.DS_Store

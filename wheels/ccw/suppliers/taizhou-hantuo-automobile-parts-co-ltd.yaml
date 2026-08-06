@@ -94,14 +94,14 @@ from_listing:
 from_quote:
   price_per_wheel_1set: 430
   price_per_wheel_4set: 1720
-  weight_kg: null
-  load_rating_kg: null
-  forging_process: null
+  weight_kg: 9.5
+  load_rating_kg: 745
+  forging_process: fully forged from 6061-T6 aluminum billets, not flow-formed
   cert_document: promised
-  size_chart: null
+  size_chart: 18x9.5
   freight_cif_usd: 250
-  is_manufacturer: null
-  forged_confirmed: null
+  is_manufacturer: true
+  forged_confirmed: true
   piece_count: 2-piece
   cnc_inhouse: null
   heat_treat: null
@@ -115,13 +115,16 @@ meta:
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
   reply_received: '2026-08-06'
-  reply_count: 1
-  questions_answered: 6/14
+  reply_count: 2
+  questions_answered: 11/14
   reply_notes:
   - '2026-08-06: Two-piece wheels quoted at 430 USD/wheel or 1720 USD/4 wheels. Monoblock
     and three-piece options mentioned but three-piece noted as very expensive with
     2+ month lead time. Certificates promised via email. No technical specs or forging
     details provided.'
+  - '2026-08-06: Weight and load rating given as ranges (9-10kg, 690-800kg); midpoints
+    used. Pricing to be confirmed. Certs promised pending their receipt of buyer''s
+    email.'
+  factory_address: Taizhou, China
 flags:
-- no load rating given
-- no size chart supplied
+- flow formed, cast centre, not press forged

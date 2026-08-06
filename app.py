@@ -329,8 +329,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div class="row">
   <div style="flex:1;min-width:200px">
     <span class="lbl">Upload image for landing page</span>
-    <input type="file" id="wheelImage" accept="image/*" onchange="uploadImage()">
+    <input type="file" id="wheelImage" accept="image/*">
   </div>
+  <button onclick="uploadImage()">Upload</button>
 </div>
 <div id="imagestatus" style="color:var(--soft);font-family:'IBM Plex Mono';font-size:11px;margin-top:8px"></div>
 
@@ -396,15 +397,20 @@ async function pull(){
   },2000);
 }
 async function uploadImage(){
+  console.log("uploadImage called");
   const wheelInput = document.getElementById("wheelImage");
   const imagestatus = document.getElementById("imagestatus");
 
+  console.log("wheelInput:", wheelInput, "files:", wheelInput?.files?.length);
+
   if(!S.wheel){
+    console.log("No wheel selected");
     imagestatus.textContent = "Please select a wheel first";
     return;
   }
 
   if(!wheelInput || !wheelInput.files || wheelInput.files.length === 0){
+    console.log("No file selected");
     imagestatus.textContent = "Please select an image file";
     return;
   }
@@ -413,11 +419,14 @@ async function uploadImage(){
   const fileName = file.name;
   const ext = "." + fileName.split('.').pop().toLowerCase();
 
+  console.log("File selected:", fileName, "size:", file.size, "bytes");
   imagestatus.textContent = "Uploading...";
 
   try {
-    // Use Blob.arrayBuffer() instead of FileReader
+    console.log("Reading file as arrayBuffer...");
     const buffer = await file.arrayBuffer();
+    console.log("Buffer read, size:", buffer.byteLength);
+
     const bytes = new Uint8Array(buffer);
 
     // Convert to base64
@@ -427,21 +436,24 @@ async function uploadImage(){
     }
     const base64 = btoa(binary);
 
-    console.log("Uploading:", fileName, "size:", file.size, "bytes, base64 length:", base64.length);
+    console.log("Base64 created, length:", base64.length);
+    console.log("Sending to API...");
 
     const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
-    console.log("Response:", r);
+    console.log("API Response:", r);
 
     if(r.ok){
-      imagestatus.textContent = "✓ Image uploaded successfully";
+      console.log("Upload successful!");
+      imagestatus.textContent = "✓ Image uploaded successfully - refresh page to see it";
       wheelInput.value = "";
-      setTimeout(() => { imagestatus.textContent = ""; }, 3000);
+      setTimeout(() => { imagestatus.textContent = ""; }, 5000);
     } else {
+      console.log("API returned error:", r);
       imagestatus.textContent = "Error: " + (r.error || "Upload failed");
     }
   } catch(err) {
-    imagestatus.textContent = "Error: " + err.message;
     console.error("Upload error:", err);
+    imagestatus.textContent = "Error: " + err.message;
   }
 }
 

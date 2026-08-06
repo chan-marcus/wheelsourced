@@ -424,7 +424,6 @@ async function sendReply(id){
   const text=document.getElementById("rep-"+id).value.trim(); if(!text) return;
   const btn=event.target; btn.textContent="Parsing..."; btn.disabled=true;
   PARSING=id; OPEN=id;
-  render();
   const r=await post("/api/reply",{wheel:S.wheel,id,text,date:document.getElementById("dt-"+id).value});
   PARSING=null;
   if(r.ok){S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);}

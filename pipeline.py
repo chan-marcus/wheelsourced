@@ -27,7 +27,7 @@ from datetime import date, datetime
 import yaml
 from anthropic import Anthropic
 
-MODEL = "claude-sonnet-5"
+MODEL = "claude-haiku-4-5-20251001"
 client = Anthropic()
 TODAY = date.today().isoformat()
 

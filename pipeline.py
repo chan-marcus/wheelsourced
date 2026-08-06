@@ -38,7 +38,7 @@ TODAY = date.today().isoformat()
 # ever stand in for the other. `forging_process` keeps their claim verbatim,
 # which is what lets the flag logic tell press forging from flow forming.
 QUOTE_ONLY = {
-    "price_per_wheel_1set":  "Price per wheel, for 1 set (4 pcs) and for 4 sets",
+    "price_per_wheel_1set":  "Price per single wheel and price for 1 set (4 pcs)",
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
     "weight_kg":             "Actual weight per wheel at this exact size",
     "load_rating_kg":        "Load rating per wheel, in kg",

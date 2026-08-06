@@ -200,7 +200,6 @@ function render() {
           <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
           <div><dt>Damage policy</dt><dd>${or(s.defects)}</dd></div>
           <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
-          <div><dt>Transit</dt><dd>${or(s.transit)}</dd></div>
           <div><dt>Min. order</dt><dd>${or(s.moq)}</dd></div>
         </dl>
       </div>

@@ -7,14 +7,12 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Actual weight per wheel at this exact size
-  2. Load rating per wheel, in kg
-  3. JWL / VIA / TUV certificate PDF, and does it cover this width?
-  4. Are you the manufacturer or a trading company? Factory address?
-  5. Do you do the CNC machining in house, or outsource it?
-  6. What is your heat treat process? Which temper, and how long?
-  7. What are your payment terms? Is it 50% deposit?
-  8. What happens if a wheel arrives out of round or with finish damage?
+  1. JWL / VIA / TUV certificate PDF, and does it cover this width?
+  2. Are you the manufacturer or a trading company? Factory address?
+  3. Do you do the CNC machining in house, or outsource it?
+  4. What is your heat treat process? Which temper, and how long?
+  5. What are your payment terms? Is it 50% deposit?
+  6. What happens if a wheel arrives out of round or with finish damage?
 
 
 

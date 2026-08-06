@@ -40,14 +40,11 @@ TODAY = date.today().isoformat()
 QUOTE_ONLY = {
     "price_per_wheel_1set":  "Price per single wheel and price for 1 set (4 pcs)",
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
-    "weight_kg":             "Actual weight per wheel at this exact size",
-    "load_rating_kg":        "Load rating per wheel, in kg",
     "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
-    "piece_count":           "Is it monoblock, 2-piece, or 3-piece?",
+    "piece_count":           "Is it monoblock, 2-piece, or 3-piece? or all options available?",
     "cert_document":         "JWL / VIA / TUV certificate PDF, and does it cover this width?",
     "freight_cif_usd":       "Shipping cost to 90210 Los Angeles USA, and the HS code you declare",
     "is_manufacturer":       "Are you the manufacturer or a trading company? Factory address?",
-    "size_chart":            "Your full size chart, with the offset range available at each width",
 }
 
 # Round two. These matter when you are close to ordering, not at first

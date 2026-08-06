@@ -396,9 +396,19 @@ async function pull(){
 }
 async function uploadImage(){
   const file = document.getElementById("wheelImage").files[0];
-  if(!file || !S.wheel) return;
+  const imagestatus = document.getElementById("imagestatus");
 
-  document.getElementById("imagestatus").textContent = "Uploading...";
+  if(!S.wheel){
+    imagestatus.textContent = "Please select a wheel first";
+    return;
+  }
+
+  if(!file){
+    imagestatus.textContent = "Please select an image file";
+    return;
+  }
+
+  imagestatus.textContent = "Uploading...";
 
   const ext = "." + file.name.split('.').pop().toLowerCase();
   const reader = new FileReader();
@@ -407,14 +417,14 @@ async function uploadImage(){
       const base64 = e.target.result.split(',')[1];
       const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
       if(r.ok){
-        document.getElementById("imagestatus").textContent = "Image uploaded successfully";
+        imagestatus.textContent = "✓ Image uploaded successfully";
         document.getElementById("wheelImage").value = "";
-        setTimeout(() => { document.getElementById("imagestatus").textContent = ""; }, 2000);
+        setTimeout(() => { imagestatus.textContent = ""; }, 3000);
       } else {
-        document.getElementById("imagestatus").textContent = r.error || "Upload failed";
+        imagestatus.textContent = "Error: " + (r.error || "Upload failed");
       }
     } catch(err) {
-      document.getElementById("imagestatus").textContent = "Upload failed";
+      imagestatus.textContent = "Error: " + err.message;
       console.error(err);
     }
   };

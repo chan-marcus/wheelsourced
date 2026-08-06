@@ -282,8 +282,8 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
 
         qs = "\n".join(f"  {i}. {pool[k]}" for i, k in enumerate(numbered, 1))
 
-        ex = [PHOTO_ASK] + [pool[k] for k in extras]
-        ex_block = "\n".join(f"  - {e}" for e in ex)
+        ex = [pool[k] for k in extras]
+        ex_block = "\n".join(f"  - {e}" for e in ex) if ex else ""
 
         body = f"""Hello,
 
@@ -296,11 +296,9 @@ Could you confirm:
 
 {qs}
 
-{"An extra if you can:" if len(ex) == 1 else "Two extras if you can:"}
+{f"An extra if you can:{chr(10)}{chr(10)}{ex_block}" if ex else ""}
 
-{ex_block}
-
-Thank you."""
+Thank you.""".strip() + "\n"
         (out / f"{rec['id']}.txt").write_text(body, encoding="utf-8")
         # rfq_sent is the latest ask, which is what reply_days measures from.
         # Keep the first ask separately so re-running this does not erase when

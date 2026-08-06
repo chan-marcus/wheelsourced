@@ -396,8 +396,15 @@ async function pull(){
   },2000);
 }
 async function uploadImage(){
-  const file = document.getElementById("wheelImage").files[0];
+  const wheelInput = document.getElementById("wheelImage");
   const imagestatus = document.getElementById("imagestatus");
+
+  if(!wheelInput || !wheelInput.files){
+    imagestatus.textContent = "Error: File input not found";
+    return;
+  }
+
+  const file = wheelInput.files[0];
 
   if(!S.wheel){
     imagestatus.textContent = "Please select a wheel first";
@@ -411,25 +418,55 @@ async function uploadImage(){
 
   imagestatus.textContent = "Uploading...";
 
-  const ext = "." + file.name.split('.').pop().toLowerCase();
+  const fileName = file.name;
+  const fileSize = file.size;
+  const ext = "." + fileName.split('.').pop().toLowerCase();
+
   const reader = new FileReader();
+  reader.onerror = () => {
+    imagestatus.textContent = "Error reading file";
+    console.error("FileReader error:", reader.error);
+  };
   reader.onload = async (e) => {
     try {
-      const base64 = e.target.result.split(',')[1];
+      const dataUrl = e.target.result;
+      if(!dataUrl || !dataUrl.includes(',')) {
+        imagestatus.textContent = "Error: Invalid file data";
+        console.error("Invalid data URL:", dataUrl?.substring(0, 100));
+        return;
+      }
+      const base64 = dataUrl.split(',')[1];
+
+      if(!base64 || base64.length < 10){
+        imagestatus.textContent = "Error: File too small or invalid";
+        console.error("Invalid base64, length:", base64?.length);
+        return;
+      }
+
+      console.log("Upload - file:", fileName, "size:", fileSize, "base64 length:", base64.length);
+
       const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
+      console.log("Upload response:", r);
+
       if(r.ok){
         imagestatus.textContent = "✓ Image uploaded successfully";
-        document.getElementById("wheelImage").value = "";
+        wheelInput.value = "";
         setTimeout(() => { imagestatus.textContent = ""; }, 3000);
       } else {
         imagestatus.textContent = "Error: " + (r.error || "Upload failed");
       }
     } catch(err) {
       imagestatus.textContent = "Error: " + err.message;
-      console.error(err);
+      console.error("Upload error:", err);
     }
   };
-  reader.readAsDataURL(file);
+
+  try {
+    reader.readAsDataURL(file);
+  } catch(err) {
+    imagestatus.textContent = "Error: Cannot read file";
+    console.error("readAsDataURL error:", err);
+  }
 }
 
 async function genRfq(){

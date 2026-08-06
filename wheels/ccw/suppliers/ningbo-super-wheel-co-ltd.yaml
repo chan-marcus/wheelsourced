@@ -90,27 +90,38 @@ from_listing:
   units_sold: null
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  weight_kg: null
-  load_rating_kg: null
-  forging_process: null
-  cert_document: null
+  price_per_wheel_1set: 480
+  price_per_wheel_4set: 1920
+  weight_kg: 13.5
+  load_rating_kg: 825
+  forging_process: machined from a forged blank, 6061-T6 aviation grade aluminium
+  cert_document: claimed without document
   size_chart: null
-  freight_cif_usd: null
-  is_manufacturer: null
-  forged_confirmed: null
-  piece_count: null
+  freight_cif_usd: 320
+  is_manufacturer: true
+  forged_confirmed: true
+  piece_count: 3-piece
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
-  defect_policy: null
+  defect_policy: 3-year structural warranty for custom products; strict packaging
+    with double-layered cartons and foam rings; insurance purchased for goods during
+    shipping
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
   first_reply: '2026-08-06'
-  factory_address: Zhejiang, China
+  factory_address: Zhejiang
   rfq_first_sent: '2026-08-06'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze
-flags: []
+  reply_received: '2026-08-06'
+  reply_count: 1
+  questions_answered: 10/14
+  reply_notes:
+  - '2026-08-06: Price 480 USD per wheel, 1920 USD per set (4 wheels); weight 13-14kg;
+    load capacity 750-900kg per wheel; fully customizable, no fixed size chart; certification
+    requires minimum 20 samples; freight quote 320 USD for one set of 18-inch wheels'
+flags:
+- cert claimed, no document
+- no size chart supplied

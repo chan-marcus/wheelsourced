@@ -45,7 +45,7 @@ QUOTE_ONLY = {
     "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
     "piece_count":           "Is it monoblock, 2-piece, or 3-piece?",
     "cert_document":         "JWL / VIA / TUV certificate PDF, and does it cover this width?",
-    "freight_cif_usd":       "Shipping cost to Los Angeles USA, and the HS code you declare",
+    "freight_cif_usd":       "Shipping cost to 90210 Los Angeles USA, and the HS code you declare",
     "is_manufacturer":       "Are you the manufacturer or a trading company? Factory address?",
     "size_chart":            "Your full size chart, with the offset range available at each width",
 }
@@ -71,7 +71,7 @@ ROUND1_CORE = ("price_per_wheel_1set", "weight_kg", "load_rating_kg",
 # Rendered as bullets at the end rather than numbered questions. These are
 # nice-to-haves, and burying them keeps the numbered list short enough that
 # suppliers actually answer all of it.
-EXTRAS = {"size_chart"}
+EXTRAS = set()  # No extras currently
 
 # Rough weight model for a forged monoblock: kg ~= K * diameter * width.
 # K = 0.055 puts an 18x9.5 at about 9.4 kg, which matches the light end of

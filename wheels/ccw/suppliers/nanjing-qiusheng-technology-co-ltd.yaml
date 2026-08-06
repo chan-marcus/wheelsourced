@@ -90,13 +90,13 @@ from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
   weight_kg: null
-  load_rating_kg: null
-  forging_process: null
-  cert_document: null
+  load_rating_kg: 850
+  forging_process: 6061-T6 aerospace-grade aluminum, top-tier forging technology
+  cert_document: provided
   size_chart: null
   freight_cif_usd: null
-  is_manufacturer: null
-  forged_confirmed: null
+  is_manufacturer: true
+  forged_confirmed: true
   piece_count: null
   cnc_inhouse: null
   heat_treat: null
@@ -108,5 +108,16 @@ meta:
   first_reply: '2026-08-06'
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze
   rfq_first_sent: '2026-08-06'
-  rfq_round: 1
-flags: []
+  rfq_round: 2
+  reply_received: '2026-08-06'
+  reply_count: 1
+  questions_answered: 4/14
+  reply_notes:
+  - '2026-08-06: TUV certificate PDF attached (德国TUV认证资料 南国秋声.pdf). Weight to be calculated
+    during design rendering; actual weight not yet provided. No pricing, shipping
+    cost, or size chart provided. No piece count stated.'
+  factory_address: Nanjing
+flags:
+- piece count not confirmed
+- no size chart supplied
+- under 3 years listed

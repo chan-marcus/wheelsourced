@@ -128,8 +128,6 @@ const wheels = loadWheels();
 
   <div class="landing-content">
     <h1>Wheel<em>Sourced</em></h1>
-    <p>Vetted sourcing from Chinese wheel factories. Pick a wheel to see supplier rankings.</p>
-    <a href="http://localhost:8420" target="_blank" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; cursor: pointer; transition: all 0.2s; margin-top: 20px;">Open Sourcing GUI</a>
   </div>
 
   {wheels.length > 0 ? (
@@ -151,6 +149,11 @@ const wheels = loadWheels();
       <p>Add wheel data by running the pipeline and refresh this page.</p>
     </div>
   )}
+
+  <div class="landing-content" style="margin-top: 80px;">
+    <p style="font-size: 18px; color: var(--soft);">Don't see a wheel you're interested in?</p>
+    <button onclick="window.open('http://localhost:8420', '_blank')" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; cursor: pointer; transition: all 0.2s;">Request here</button>
+  </div>
 </div>
 </body>
 </html>

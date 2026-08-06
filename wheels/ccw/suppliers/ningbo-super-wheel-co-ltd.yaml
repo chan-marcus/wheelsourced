@@ -91,7 +91,7 @@ from_listing:
   transit_time: Est. 17-24 days
 from_quote:
   price_per_wheel_1set: 480
-  price_per_wheel_4set: 480
+  price_per_wheel_4set: 1920
   weight_kg: 13.5
   load_rating_kg: 825
   forging_process: processed using forged blanks, 6061-T6 aviation grade aluminium

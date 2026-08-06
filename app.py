@@ -16,16 +16,15 @@ in. Everything else is convenience.
 import re, threading
 from pathlib import Path
 from datetime import date
+import base64
 
 import yaml
-from fastapi import FastAPI, Request, File, UploadFile
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 import pipeline as P     # reuse QUOTE_ONLY, _flags, _ask_model, REPLY_SCHEMA
-
-from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -37,9 +36,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount wheels directory for static file access
-Path("wheels").mkdir(exist_ok=True)
-app.mount("/wheels", StaticFiles(directory="wheels"), name="wheels")
+# Static wheel file serving
+@app.get("/wheels/{wheel:path}")
+async def get_wheel_file(wheel: str):
+    wheel_path = Path("wheels") / wheel
+    if wheel_path.exists() and wheel_path.is_file():
+        return FileResponse(wheel_path)
+    return JSONResponse({"error": "not found"}, status_code=404)
+
 LOG: list[str] = []
 BUSY = {"running": False}
 
@@ -105,28 +109,23 @@ async def new_wheel(req: Request):
 
 
 @app.post("/api/wheel-image")
-async def upload_wheel_image(wheel: str, file: UploadFile = File(...)):
+async def upload_wheel_image(req: Request):
+    data = await req.json()
+    wheel = data.get("wheel")
+    image_data = data.get("data")  # base64 encoded image
+    ext = data.get("ext", ".png")  # file extension
+
+    if not wheel or not image_data:
+        return JSONResponse({"ok": False, "error": "missing wheel or data"}, status_code=400)
+
     wheel_dir = Path("wheels") / wheel
     wheel_dir.mkdir(parents=True, exist_ok=True)
 
-    # Save with original extension
-    ext = Path(file.filename).suffix if file.filename else ".png"
     image_path = wheel_dir / f"image{ext}"
-
-    contents = await file.read()
+    contents = base64.b64decode(image_data)
     image_path.write_bytes(contents)
 
-    return {"ok": True, "path": f"/api/wheel-image/{wheel}"}
-
-
-@app.get("/api/wheel-image/{wheel}")
-def get_wheel_image(wheel: str):
-    wheel_dir = Path("wheels") / wheel
-    for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]:
-        image_path = wheel_dir / f"image{ext}"
-        if image_path.exists():
-            return FileResponse(image_path)
-    return JSONResponse({"error": "not found"}, status_code=404)
+    return {"ok": True, "path": f"/wheels/{wheel}/image{ext}"}
 
 
 @app.get("/api/picks")

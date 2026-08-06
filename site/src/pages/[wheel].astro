@@ -168,7 +168,7 @@ function render() {
         </div>
       </div>
 
-      <div class="headline">
+      <div class="headline" onclick="toggleSpecs('${s.id}')" style="cursor: pointer;">
         <div class="${sortMode === "rating" ? "hl on" : "hl"}">
           <dt>Store rating</dt><dd>${s.store_rating ? s.store_rating + "/5" : "—"}
           ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>

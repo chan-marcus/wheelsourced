@@ -18,12 +18,14 @@ from pathlib import Path
 from datetime import date
 
 import yaml
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, Request, File, UploadFile
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 import pipeline as P     # reuse QUOTE_ONLY, _flags, _ask_model, REPLY_SCHEMA
+
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -34,6 +36,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount wheels directory for static file access
+Path("wheels").mkdir(exist_ok=True)
+app.mount("/wheels", StaticFiles(directory="wheels"), name="wheels")
 LOG: list[str] = []
 BUSY = {"running": False}
 
@@ -96,6 +102,31 @@ async def new_wheel(req: Request):
         (Path("wheels") / name / sub).mkdir(parents=True, exist_ok=True)
     (Path("wheels") / name / "picks.txt").touch()
     return {"ok": True, "wheel": name}
+
+
+@app.post("/api/wheel-image")
+async def upload_wheel_image(wheel: str, file: UploadFile = File(...)):
+    wheel_dir = Path("wheels") / wheel
+    wheel_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save with original extension
+    ext = Path(file.filename).suffix if file.filename else ".png"
+    image_path = wheel_dir / f"image{ext}"
+
+    contents = await file.read()
+    image_path.write_bytes(contents)
+
+    return {"ok": True, "path": f"/api/wheel-image/{wheel}"}
+
+
+@app.get("/api/wheel-image/{wheel}")
+def get_wheel_image(wheel: str):
+    wheel_dir = Path("wheels") / wheel
+    for ext in [".png", ".jpg", ".jpeg", ".webp", ".gif"]:
+        image_path = wheel_dir / f"image{ext}"
+        if image_path.exists():
+            return FileResponse(image_path)
+    return JSONResponse({"error": "not found"}, status_code=404)
 
 
 @app.get("/api/picks")

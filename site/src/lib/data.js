@@ -43,7 +43,19 @@ export function loadWheels() {
           return b.answered - a.answered;
         });
 
-      return { slug, title: titleize(slug), suppliers: scoreAll(suppliers) };
+      // Check if wheel has an image
+      const wheelDir = path.join(WHEELS_DIR, slug);
+      const imageExt = [".png", ".jpg", ".jpeg", ".webp", ".gif"].find(ext =>
+        fs.existsSync(path.join(wheelDir, `image${ext}`))
+      );
+
+      return {
+        slug,
+        title: titleize(slug),
+        suppliers: scoreAll(suppliers),
+        hasImage: !!imageExt,
+        imageExt: imageExt || ""
+      };
     })
     .filter((w) => w && w.suppliers.length);
 }

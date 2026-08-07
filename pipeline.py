@@ -21,6 +21,7 @@ Layout:
 """
 
 import argparse, json, re, sys, time, random, hashlib
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from datetime import date, datetime
 
@@ -379,22 +380,85 @@ Output ONLY JSON.
 """
 
 
-def ingest(wheel):
+def _reply_hash(text):
+    """One definition, so mark_parsed and ingest can never disagree and turn
+    a cache hit into a silent miss (or worse, a silent skip)."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def mark_parsed(wheel):
+    """Record every reply's hash without calling the model.
+
+    Adopting the cache on an existing archive would otherwise cost one last
+    full re-parse, and a re-parse is not free of consequences: the model is
+    not deterministic, so re-reading a reply rewrites its extracted values
+    with a slightly different wording every time. This says "what is already
+    stored is what these replies said" and starts the cache from there.
+    """
+    rep, n = wdir(wheel) / "replies", 0
+    for target in sorted(sdir(wheel).glob("*.yaml")):
+        rec = yaml.safe_load(target.read_text())
+        seen = rec.setdefault("meta", {}).setdefault("parsed_replies", {})
+        for f in sorted(rep.glob(f"{target.stem}__*.txt")):
+            seen[f.name] = _reply_hash(f.read_text(encoding="utf-8"))
+            n += 1
+        target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+    print(f"  marked {n} reply(s) as already parsed. ingest will now only read new ones.")
+
+
+def ingest(wheel, force=False, workers=6):
     rep = wdir(wheel) / "replies"
     if not rep.exists():
         raise SystemExit(f"put raw replies in {rep}/ named supplier-id__YYYY-MM-DD.txt")
 
+    # Work out what actually needs the model before calling it. Ingest used to
+    # re-parse every reply on every run, so the cost grew with the whole
+    # archive rather than with what you just pasted: 23 files, one new, 23
+    # calls. The hash is of the file's content, so an edited reply reparses on
+    # its own. `--force` exists because adding a field to ALL_FIELDS means
+    # backfilling it from the stored replies, which needs the full re-read.
+    todo, skipped = [], 0
     for f in sorted(rep.glob("*.txt")):
         sid, _, datestr = f.stem.partition("__")
         target = sdir(wheel) / f"{sid}.yaml"
         if not target.exists():
             print(f"  no record for '{sid}', skipping {f.name}")
             continue
+        text = f.read_text(encoding="utf-8")
+        digest = _reply_hash(text)
+        if not force:
+            seen = (yaml.safe_load(target.read_text()).get("meta") or {}).get("parsed_replies") or {}
+            if seen.get(f.name) == digest:
+                skipped += 1
+                continue
+        todo.append((f, sid, datestr, target, text, digest))
 
+    if skipped:
+        print(f"  {skipped} reply(s) unchanged, skipping. --force to re-read all.")
+    if not todo:
+        print("  nothing new to parse.")
+        return
+
+    # The model calls are independent, so they overlap. Applying the results
+    # does NOT: one supplier can have a dozen replies and each is folded into
+    # the same YAML cumulatively, so parallel read-modify-write would drop
+    # answers. Fan out the parsing, then apply in sorted order exactly as
+    # before.
+    parsed = {}
+    if len(todo) > 1 and workers > 1:
+        with ThreadPoolExecutor(max_workers=min(workers, len(todo))) as pool:
+            futs = {pool.submit(_ask_model, t[4], REPLY_SCHEMA): t[0] for t in todo}
+            for fut in as_completed(futs):
+                parsed[futs[fut]] = fut.result()
+    else:
+        for t in todo:
+            parsed[t[0]] = _ask_model(t[4], REPLY_SCHEMA)
+
+    for f, sid, datestr, target, text, digest in todo:
         rec = yaml.safe_load(target.read_text())
         for k in ALL_FIELDS:
             rec["from_quote"].setdefault(k, None)
-        got = _ask_model(f.read_text(encoding="utf-8"), REPLY_SCHEMA)
+        got = parsed[f]
 
         filled = 0
         for k in ALL_FIELDS:
@@ -432,6 +496,9 @@ def ingest(wheel):
             rec["meta"]["factory_address"] = got["factory_address"]
 
         rec["flags"] = _flags(rec)
+        # Recorded only after everything above succeeded, so a crash mid-parse
+        # leaves the file looking unparsed and it gets retried next run.
+        rec["meta"].setdefault("parsed_replies", {})[f.name] = digest
         target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
         print(f"  {sid}: +{filled} this reply, {total_filled}/{len(ALL_FIELDS)} total  {rec['flags'] or ''}")
 
@@ -441,6 +508,26 @@ def _ref_size(rec):
     m = re.search(r"(\d{2})\s*[xX]\s*(\d+\.?\d*)",
                   str((rec.get("meta") or {}).get("ref_spec") or "18x9.5"))
     return (float(m.group(1)), float(m.group(2))) if m else (18.0, 9.5)
+
+
+# Principle 5 says a false accusation against an honest supplier is the worst
+# thing this file can produce, and a bare `"flow-form" in fp` produces one:
+# Taizhou Hantuo wrote "fully forged from 6061-T6 billets, not flow-formed"
+# and got flagged for the exact process it ruled out. Match the claim only
+# where the supplier did not negate it.
+_NEGATOR = re.compile(
+    r"\b(not|never|no|non|isn'?t|aren'?t|doesn'?t|don'?t|rather than|instead of|"
+    r"as opposed to|without)\b[\s,\-]*$"
+)
+
+
+def _asserted(text, keywords, window=30):
+    """True if a keyword appears in text without a negation just before it."""
+    for k in keywords:
+        for m in re.finditer(re.escape(k), text):
+            if not _NEGATOR.search(text[max(0, m.start() - window):m.start()]):
+                return True
+    return False
 
 
 def _flags(rec):
@@ -487,7 +574,7 @@ def _flags(rec):
     # Every forged wheel is machined from a forged blank -- that IS the
     # process, so it is not a red flag. The actual fraud vector is a cast
     # centre with a spun barrel being sold as forged.
-    if any(k in fp for k in ("flow form", "flow-form", "rotary forg", "spun", "spinning")):
+    if _asserted(fp, ("flow form", "flow-form", "rotary forg", "spun", "spinning")):
         fl.append("flow formed, cast centre, not press forged")
     if fp and not any(k in fp for k in ("press", "forg", "ton", "flow", "rotary", "spun")):
         fl.append("forging process not actually described")
@@ -536,14 +623,19 @@ def check(wheel):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("pull", "ask", "ingest", "check"):
+    for name in ("pull", "ask", "ingest", "check", "mark-parsed"):
         p = sub.add_parser(name); p.add_argument("--wheel", required=True)
         if name == "ask":
             p.add_argument("--size", default="18x9.5J"); p.add_argument("--offset", default="ET+22")
             p.add_argument("--pcd", default="5x114.3"); p.add_argument("--finish", default="Bronze")
+        if name == "ingest":
+            p.add_argument("--force", action="store_true",
+                           help="re-read every reply, not just changed ones. Needed after adding a field to ALL_FIELDS.")
+            p.add_argument("--workers", type=int, default=6)
     a = ap.parse_args()
 
     if a.cmd == "pull": pull(a.wheel)
     elif a.cmd == "ask": ask(a.wheel, a.size, a.offset, a.pcd, a.finish)
-    elif a.cmd == "ingest": ingest(a.wheel)
+    elif a.cmd == "ingest": ingest(a.wheel, a.force, a.workers)
+    elif a.cmd == "mark-parsed": mark_parsed(a.wheel)
     elif a.cmd == "check": check(a.wheel)

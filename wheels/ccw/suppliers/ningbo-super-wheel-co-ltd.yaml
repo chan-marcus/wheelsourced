@@ -107,6 +107,7 @@ from_quote:
   defect_policy: 3-year structural warranty for custom products; strict packaging
     with double-layered cartons and foam rings; insurance purchased for goods during
     shipping
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -122,6 +123,9 @@ meta:
   - '2026-08-06: Price 480 USD per wheel, 1920 USD per set (4 wheels); weight 13-14kg;
     load capacity 750-900kg per wheel; fully customizable, no fixed size chart; certification
     requires minimum 20 samples; freight quote 320 USD for one set of 18-inch wheels'
+  parsed_replies:
+    ningbo-super-wheel-co-ltd__2026-08-06-2.txt: 7163f8c07a9c0975
+    ningbo-super-wheel-co-ltd__2026-08-06.txt: 8b950f809aee2b73
 flags:
 - cert claimed, no document
 - no size chart supplied

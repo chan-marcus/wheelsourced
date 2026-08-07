@@ -76,6 +76,7 @@ from_quote:
   heat_treat: null
   payment_terms: null
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -92,6 +93,8 @@ meta:
     no PDF provided. Load rating stated as vehicle-model-dependent, not provided.
     Postcode requested for shipping quote.'
   factory_address: Tianjin
+  parsed_replies:
+    ruitou-power-chengdu-auto-parts-co-ltd__2026-08-06.txt: 31bca46b95d29a4e
 flags:
 - cert claimed, no document
 - no load rating given

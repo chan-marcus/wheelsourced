@@ -81,6 +81,7 @@ from_quote:
   heat_treat: null
   payment_terms: null
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -98,4 +99,6 @@ meta:
     (16 pcs) $7100. Freight $290 to Los Angeles, CIF. Spec charts promised to email.
     Production 30-40 days, transport 25-30 days. No certification document provided
     or promised.'
+  parsed_replies:
+    raylan-wheels-manufacturing-co-ltd__2026-08-06.txt: b79f81d4129b0128
 flags: []

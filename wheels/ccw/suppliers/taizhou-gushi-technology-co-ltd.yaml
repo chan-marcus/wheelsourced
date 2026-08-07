@@ -93,6 +93,7 @@ from_quote:
   heat_treat: null
   payment_terms: null
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -107,6 +108,10 @@ meta:
   - '2026-08-06: Price stated as $380 per wheel (1 set) and $1520 for 4 wheels; shipping
     $280 USD stated separately; size range 15-30 inches mentioned as capability.'
   factory_address: 1424 34th Ave, San Francisco, CA 94121
+  parsed_replies:
+    taizhou-gushi-technology-co-ltd__2026-08-06-2.txt: 347eaa896d532f0b
+    taizhou-gushi-technology-co-ltd__2026-08-06.txt: e37808883ef73dec
+    taizhou-gushi-technology-co-ltd__2026-08-07.txt: c36acf1367327e86
 flags:
 - no load rating given
 - under 3 years listed

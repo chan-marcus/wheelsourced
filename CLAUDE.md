@@ -41,6 +41,13 @@ Conversely, "machined from a forged blank" IS normal forging and must not
 be flagged. We got this wrong once and it produced a false accusation
 against an honest supplier.
 
+Then we got it wrong a second way. The flag was a bare substring test, so
+"fully forged from 6061-T6 billets, **not** flow-formed" matched on
+`flow-form` and accused Taizhou Hantuo of the one process it had explicitly
+ruled out. Match through `_asserted()`, which ignores a keyword preceded by a
+negation. Any new claim-detection flag must go through it too: suppliers
+answer this question in the negative constantly, because we ask them to.
+
 **6. Name wheels by geometry, never by another maker's product.**
 "Mesh 5-spoke, 3-piece" not "OZ Futura replica". This keeps the site out of
 the takedown pipeline and is more accurate anyway.
@@ -90,7 +97,31 @@ restart Astro.
 `ALL_FIELDS` (not the record) and calls setdefault, so new keys backfill
 automatically and stale keys are ignored. But old keys linger in the YAML
 until cleaned, and backfilling *values* for a newly added field means
-re-running `ingest` over the stored replies in `replies/`.
+`ingest --wheel <w> --force` over the stored replies in `replies/`. Plain
+`ingest` will not do it: it now skips replies it has already read.
+
+**Ingest is incremental, and a re-parse is not free.** Each reply's content
+hash is stored in `meta.parsed_replies`; unchanged files are skipped and the
+rest are parsed concurrently (`--workers`, default 6). It used to re-read the
+whole archive every run, so one pasted reply cost 23 model calls and about a
+minute, growing with the archive.
+
+The cost that mattered was not the minute. The model is not deterministic, so
+re-reading a reply rewrites its extracted values with slightly different
+wording every time: `heat_treat` drifted `6061-T6` -> `T6`, a factory address
+changed city, and a `not flow-formed` qualifier vanished from a forging
+claim. Every ingest run was quietly churning the whole dataset. Skipping
+unchanged replies is what stops that, and it is the real reason for the
+cache.
+
+So do not reach for `--force` casually. It re-reads everything and will move
+values that nobody asked it to move. `mark-parsed` is the safe way to adopt
+the cache on an existing archive: it records the hashes without calling the
+model, meaning "what is stored is what these replies said".
+
+Writes stay sequential on purpose. One supplier can have a dozen replies
+folded into the same YAML cumulatively, so only the model calls fan out; the
+results are applied in sorted order exactly as before.
 
 **`FORGED_K = 0.055`** in pipeline.py is an estimate, not a measurement. It
 drives the "weight high for forged" flag. Calibrate it against real quotes.

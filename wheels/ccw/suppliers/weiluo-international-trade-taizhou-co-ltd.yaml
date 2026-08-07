@@ -106,6 +106,7 @@ from_quote:
   heat_treat: 6061-T6
   payment_terms: null
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -123,6 +124,9 @@ meta:
     each. DOT & VIA certified claimed without document provided. Shipping $340 door-to-door.
     Weight and load rating given for unspecified size; exact specs for 18x9.5J still
     pending confirmation. No digital catalog; size chart promised.'
+  parsed_replies:
+    weiluo-international-trade-taizhou-co-ltd__2026-08-06-2.txt: 9899d49d7a72f90a
+    weiluo-international-trade-taizhou-co-ltd__2026-08-06.txt: 2689ff961abafb30
 flags:
 - cert claimed, no document
 - piece count not confirmed

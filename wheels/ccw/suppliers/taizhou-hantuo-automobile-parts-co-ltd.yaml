@@ -107,6 +107,7 @@ from_quote:
   heat_treat: null
   payment_terms: 50% deposit, 50% final balance before shipping
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -126,5 +127,7 @@ meta:
     used. Pricing to be confirmed. Certs promised pending their receipt of buyer''s
     email.'
   factory_address: Taizhou, China
-flags:
-- flow formed, cast centre, not press forged
+  parsed_replies:
+    taizhou-hantuo-automobile-parts-co-ltd__2026-08-06-2.txt: 83f600c180efb53c
+    taizhou-hantuo-automobile-parts-co-ltd__2026-08-06.txt: b5933183944c0a89
+flags: []

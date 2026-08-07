@@ -102,6 +102,7 @@ from_quote:
   heat_treat: null
   payment_terms: null
   defect_policy: null
+  hs_code: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-06'
@@ -117,6 +118,19 @@ meta:
     during design rendering; actual weight not yet provided. No pricing, shipping
     cost, or size chart provided. No piece count stated.'
   factory_address: Nanjing
+  parsed_replies:
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-10.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-11.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-12.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-2.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-3.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-4.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-5.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-6.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-7.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-8.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-9.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06.txt: ba6ca586e24ed94d
 flags:
 - piece count not confirmed
 - no size chart supplied

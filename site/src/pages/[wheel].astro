@@ -252,7 +252,6 @@ function render() {
       <div class="vf" style="margin-top:12px;">
         <button class="btn" data-rfq="${s.id}">Write quote request</button>
         ${s.url ? `<a class="btn ghost" href="${s.url}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
-        <button class="btn ghost" data-reset="${s.id}" style="font-size:9.5px;padding:5px 9px;letter-spacing:.09em;" title="Clear quoted data and parsing cache to re-parse from replies">Reset data</button>
         <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>
       </div>
     </article>`).join("");

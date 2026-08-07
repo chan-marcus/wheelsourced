@@ -84,7 +84,7 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
 .tag.bad{border-color:var(--chop);color:var(--chop)}
 
 .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px 16px;
-  margin:14px 0 0;padding-top:13px;border-top:1px solid var(--rule);
+  margin:14px 0 0;padding-top:13px;
   animation:fadeIn var(--trans-smooth)}
 .specs dt{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--soft);margin-bottom:3px}
@@ -161,8 +161,7 @@ h1{display:none}
 
 /* ---- headline metrics ---- */
 .headline{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
-  gap:10px 14px;margin-top:14px;padding:12px 0;border-top:1px solid var(--rule);
-  border-bottom:1px solid var(--rule)}
+  gap:10px 14px;margin-top:14px;padding:12px 0;border-top:1px solid var(--rule)}
 .hl dt{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--soft);margin-bottom:3px}
 .hl dd{margin:0;font-family:var(--cond);font-weight:600;font-size:21px;letter-spacing:.005em}

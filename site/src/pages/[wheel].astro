@@ -33,19 +33,15 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
     <a class="logo" href="/" aria-label="WheelSourced home">
       <span class="word">Wheel<em>Sourced</em></span>
     </a>
-    <div class="eyebrow" style="display: flex; gap: 16px; align-items: flex-start; justify-content: space-between;">
-      <span style="font-size: 28px; font-weight: 700;">{wheel.title}<span style="font-size: 0.6em;">-style</span></span>
-      <span style="text-align: right;">{wheel.suppliers.length} suppliers tracked</span>
+    <div class="eyebrow" style="display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; width: 100%;">
+      <span style="font-size: 28px; font-weight: 700; flex: 1;">{wheel.title}<span style="font-size: 0.6em;">-style</span></span>
+      <span style="text-align: right; white-space: nowrap;">{wheel.suppliers.length} suppliers tracked</span>
     </div>
   </header>
 
   <div class="preamble">
-    <p><b>Every shop here builds to order.</b> You choose diameter, width, offset
-    and finish when you contact them, so there is nothing to filter. What matters
-    is which vendor is worth talking to.</p>
-    <p class="est">Pricing is a <b>like-for-like estimate quoted at {refSize}</b>,
-    asked of every vendor with the same spec so the figures compare. Your own
-    size and lip depth will move it. Treat this as a ranking, not a quote. Shipping costs are based on quotes to Los Angeles, CA.</p>
+    <p><b>Every shop here builds to order.</b> You choose diameter, width, offset and finish when you contact them, so there is nothing to filter. What matters is which vendor is worth talking to.</p>
+    <p class="est">Pricing is a <b>like-for-like estimate quoted at 18x9.5J</b>, asked of every vendor with the same spec so the figures compare. Your own size and lip depth will move it. Treat this as a ranking, not a quote. Shipping costs are based on quotes to Los Angeles, CA.</p>
   </div>
 
   <section class="block">

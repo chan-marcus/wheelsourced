@@ -199,15 +199,33 @@ seven dimensions. A vendor missing a dimension is scored on the rest rather
 than pushed to last place. Flags are computed and stored but do not affect
 the vetting score.
 
-Dimensions come in two kinds and this distinction matters:
+**The score is out of 100 against fixed anchors, and only price is relative.**
+Landed cost is min-maxed because it genuinely is comparative: these are
+like-for-like quotes at one reference spec, so the cheapest really is the best
+price on offer. Everything else is scored against a constant.
 
-- **Relative** (min-max across the set): landed cost, response time, reorder
-  rate, transit time. These only mean anything against the peers.
-- **Absolute** (fixed scale): store rating, store age, review count. Min-max
-  scored the worst vendor in the set at zero and everyone else on a curve, so
-  a one-year-old shop only looked bad because a peer happened to be five. When
-  every vendor ties on a dimension min-max gives them all full marks, which
-  reads as everyone excelling at something none of them has.
+Min-max scored the worst vendor in the set at zero and everyone else on a
+curve, so a one-year-old shop only looked bad because a peer happened to be
+five. When every vendor ties on a dimension min-max gives them all full marks,
+which reads as everyone excelling at something none of them has.
+
+Reorder rate was the worst case: min-maxed while carrying the heaviest weight
+of all, a quarter of the score. Exactly one supplier could ever score full
+marks on it and the rest were dragged toward zero however good their actual
+rate was. That alone flattened the whole field into 37-58.
+
+The anchors (TRUSTED_YEARS, TRUSTED_REVIEWS, RATING_FLOOR/CEIL,
+STRONG_REORDER_PCT, the response and transit bounds) are set to excellence a
+real supplier can reach, not to perfection. Pitched at the theoretical best
+case they made the best available supplier read like a bare pass. Never set
+them from the current set's max: that is min-max in a different hat.
+
+Expect real scores in the 40s to 60s. 100 means excellent on every axis at
+once and nothing real clears it.
+
+Two things still move when the set changes, both deliberate: the landed
+min-max, and the rating prior, which is the set mean. A fixed prior of 4.7
+costs about a point per vendor if that drift ever becomes a problem.
 
 **Ratings are credibility-weighted before scoring.** A rating is shrunk toward
 the set mean in proportion to how few reviews back it (`RATING_PRIOR_WEIGHT`,

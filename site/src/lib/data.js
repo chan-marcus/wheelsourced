@@ -178,24 +178,55 @@ export function loadVehicles() {
 
 // How many reviews a rating needs before it mostly speaks for itself.
 const RATING_PRIOR_WEIGHT = 25;
-// Where longevity and sample size stop earning further credit.
-const TRUSTED_YEARS = 6;
-const TRUSTED_REVIEWS = 150;
+
+// The absolute anchors. 100 means "excellent on every axis", and these are set
+// to excellence a real Alibaba supplier can actually reach, not perfection.
+// They were previously pitched at the theoretical best case (a 5.0 credible
+// rating, six years, best-in-set on every price axis), which nothing real
+// clears, so the whole field compressed into 37-58 and the best supplier
+// available read like a bare pass.
+//
+// Do NOT set these from the current set's max. That is min-max wearing a
+// different hat: it pins the worst vendor at zero and the best at full marks
+// however good either actually is, and every score then moves whenever a
+// supplier is added. These are fixed judgements about the trade.
+const TRUSTED_YEARS = 5;
+const TRUSTED_REVIEWS = 120;
+// Ratings below this are indistinguishable on Alibaba, where almost nobody
+// sits under 4.3. Measuring from 4.0 spent a third of the scale on a band no
+// supplier occupies and made a shaky 4.4 look close to a solid 4.8.
+const RATING_FLOOR = 4.3;
+const RATING_CEIL = 4.9;
+// A reorder rate this high is a strong signal on its own terms.
+const STRONG_REORDER_PCT = 35;
+// Response and transit, in hours and days: the point where each stops
+// counting against a supplier, and the point where it stops earning credit.
+const SLOW_RESPONSE_H = 5;
+const FAST_RESPONSE_H = 1;
+const SLOW_TRANSIT_D = 32;
+const FAST_TRANSIT_D = 15;
 
 const clamp01 = (n) => Math.max(0, Math.min(1, n));
 
-// Composite "best vetted". Dimensions come in two kinds, deliberately:
+// Composite "best vetted", scored out of 100 against fixed anchors.
 //
-//   relative  landed cost, response, reorder, transit. These only mean
-//             anything against the rest of the set, so they are min-max
-//             normalised.
-//   absolute  rating, store age, review count. These mean something on their
-//             own. Min-max hid that: it scores the worst vendor in the set at
-//             zero and everyone else on a curve, so a one-year-old shop only
-//             looked bad because a peer happened to be five. Worse, when
-//             every vendor ties, min-max hands them all full marks, so a set
-//             where nobody has a track record would read as though everybody
-//             did.
+// Only landed cost is relative now. It is the one figure that genuinely only
+// means something against the peers: these are like-for-like quotes for the
+// same wheel at the same reference spec, so the cheapest really is the best
+// price on offer.
+//
+// Everything else is absolute, measured against the anchors above rather than
+// against whoever happens to be in the set. Min-max hid that: it scores the
+// worst vendor at zero and everyone else on a curve, so a one-year-old shop
+// only looked bad because a peer happened to be five. Worse, when every
+// vendor ties, min-max hands them all full marks, so a set where nobody has a
+// track record would read as though everybody did.
+//
+// Reorder rate in particular was min-maxed while carrying the heaviest weight
+// of all, a quarter of the score. That forced the field flat: exactly one
+// supplier could ever score full marks on it and everyone else was dragged
+// toward zero however good their actual reorder rate was. A 20% reorder rate
+// is a real, respectable number and now scores like one.
 //
 // The rating is credibility-weighted before it is scored. 5.0 from two
 // reviews is not a better rating than 4.8 from eighty-seven, it is a less
@@ -223,11 +254,15 @@ function scoreAll(list) {
     // made you look cheaper than the vendors who disclosed it. That is the
     // same bug as defaulting a missing freight cost to zero, wearing a hat.
     { k: (s) => s.landed,               lowerBetter: true,  w: 1.0 },
-    { k: (s) => s.respHours,            lowerBetter: true,  w: 0.3 }, // Minor factor: many fast responders still disappoint
-    { k: (s) => s.reorderPct,           lowerBetter: false, w: 2.0 }, // Most telling: share of buyers who came back
-    { k: (s) => transitDays(s.transit), lowerBetter: true,  w: 0.3 },
-    // Absolute. Alibaba ratings all sit between 4.4 and 5.0, so anchor at 4.
-    { k: credibleRating,     w: 1.5, abs: (v) => clamp01(v - 4) },
+    // Minor factor: many fast responders still disappoint.
+    { k: (s) => s.respHours, w: 0.3,
+      abs: (h) => clamp01((SLOW_RESPONSE_H - h) / (SLOW_RESPONSE_H - FAST_RESPONSE_H)) },
+    // Most telling: the share of buyers who came back.
+    { k: (s) => s.reorderPct, w: 2.0, abs: (v) => clamp01(v / STRONG_REORDER_PCT) },
+    { k: (s) => transitDays(s.transit), w: 0.3,
+      abs: (d) => clamp01((SLOW_TRANSIT_D - d) / (SLOW_TRANSIT_D - FAST_TRANSIT_D)) },
+    { k: credibleRating, w: 1.5,
+      abs: (v) => clamp01((v - RATING_FLOOR) / (RATING_CEIL - RATING_FLOOR)) },
     { k: (s) => s.years,     w: 1.5, abs: (v) => clamp01(v / TRUSTED_YEARS) },
     { k: (s) => s.review_count, w: 1.3, abs: (v) => clamp01(v / TRUSTED_REVIEWS) },
   ];

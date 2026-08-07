@@ -198,7 +198,7 @@ function render() {
           <dt>Store rating</dt><dd>${s.store_rating ? s.store_rating + "/5" : "—"}
           ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>
         <div class="${sortMode === "age" ? "hl on" : "hl"}">
-          <dt>Store age</dt><dd>${s.years ? s.years + " yrs" : "—"}</dd></div>
+          <dt>Store age</dt><dd>${s.years ? s.years + (s.years === 1 ? " yr" : " yrs") : "—"}</dd></div>
         <div class="${sortMode === "response" ? "hl on" : "hl"}">
           <dt>Response</dt><dd>${s.response_time ?? "—"}</dd></div>
         <div class="${sortMode === "reorder" ? "hl on" : "hl"}">

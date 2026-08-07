@@ -184,9 +184,9 @@ export function loadVehicles() {
 function scoreAll(list) {
   const dims = [
     { k: (s) => s.landed ?? s.setPrice, lowerBetter: true,  w: 1.0 },
-    { k: (s) => s.store_rating,         lowerBetter: false, w: 1.0 },
-    { k: (s) => s.review_count,         lowerBetter: false, w: 1.2 }, // Sample size: confidence in the rating
-    { k: (s) => s.years,                lowerBetter: false, w: 1.3 }, // Higher weight: longevity is trust; startup risk is real
+    { k: (s) => s.store_rating,         lowerBetter: false, w: 1.2 },
+    { k: (s) => s.review_count,         lowerBetter: false, w: 1.5 }, // Sample size: low review counts = uncertain rating
+    { k: (s) => s.years,                lowerBetter: false, w: 1.5 }, // Startup risk: young stores are red flags
     { k: (s) => s.respHours,            lowerBetter: true,  w: 0.3 }, // Minor factor: many fast responders still disappoint
     { k: (s) => s.reorderPct,           lowerBetter: false, w: 2.0 }, // Most telling: share of buyers who came back
     { k: (s) => transitDays(s.transit), lowerBetter: true,  w: 0.3 }, // How long wheels take to arrive: lower is better

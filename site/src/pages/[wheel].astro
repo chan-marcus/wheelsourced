@@ -77,11 +77,16 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
     <div id="rows"></div>
   </section>
 
-  <footer>
-    <p>Store rating, response time, store age and reorder rate are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
-    <p>Best vetted combines price, store rating, store age, response time and reorder rate, then subtracts for each flag. It is scaled by how many of those five a vendor actually has, so a thin record cannot outrank a complete one on a lucky average.</p>
-    <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
-    <p>Wheels are described by construction and geometry, never as another maker's product.</p>
+  <footer style="margin-top: 60px; padding: 40px 20px; border-top: 1px solid var(--ink); color: var(--soft);">
+    <div style="max-width: 900px; margin-left: auto; margin-right: auto;">
+      <p>Store rating, response time, store age and reorder rate are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
+      <p>Best vetted combines price, store rating, store age, response time and reorder rate, then subtracts for each flag. It is scaled by how many of those five a vendor actually has, so a thin record cannot outrank a complete one on a lucky average.</p>
+      <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
+      <p>Wheels are described by construction and geometry, never as another maker's product.</p>
+    </div>
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--ink); text-align: center; font-family: 'IBM Plex Mono'; font-size: 11px;">
+      © 2026 WheelSourced. Specs and supplier data updated quarterly.
+    </div>
   </footer>
 </div>
 

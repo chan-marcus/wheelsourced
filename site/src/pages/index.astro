@@ -56,7 +56,7 @@ const wheels = loadWheels();
     border: 2px solid var(--ink);
     padding: 32px 24px;
     background: transparent;
-    transition: all 0.2s;
+    transition: background var(--trans-smooth),transform var(--trans-smooth),box-shadow var(--trans-smooth);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -66,10 +66,15 @@ const wheels = loadWheels();
     height: 80px;
     object-fit: contain;
     margin-bottom: 12px;
+    transition: transform var(--trans-smooth);
   }
   .wheel-card:hover {
     background: var(--stock2);
     transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .wheel-card:hover .wheel-image {
+    transform: scale(1.05);
   }
   .wheel-card h2 {
     font-family: 'Barlow Condensed';

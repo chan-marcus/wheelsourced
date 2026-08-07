@@ -18,6 +18,8 @@
   --stock:#E2E5DE; --stock2:#D7DBD3; --stock3:#CCD1C8;
   --ink:#1B211C; --soft:#5A6259; --rule:#A9AFA5;
   --chop:#B0301F; --bronze:#8A6A2F;
+  --trans-fast:150ms cubic-bezier(0.4,0,0.2,1);
+  --trans-smooth:250ms cubic-bezier(0.4,0,0.2,1);
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--stock);color:var(--ink);
@@ -52,7 +54,8 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
 
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-family:'IBM Plex Mono';font-size:13px;padding:7px 11px;border:1px solid var(--rule);
-  background:transparent;color:var(--ink);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+  background:transparent;color:var(--ink);cursor:pointer;display:inline-flex;gap:7px;align-items:center;
+  transition:border-color var(--trans-fast),background var(--trans-fast),color var(--trans-fast)}
 .chip i{font-style:normal;font-size:10px;color:var(--soft)}
 .chip:hover{border-color:var(--ink)}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--stock)}
@@ -60,7 +63,9 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
 .chip.dead{opacity:.35}
 .chip:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
 
-.v{border:1px solid var(--rule);background:var(--stock2);padding:15px;margin-bottom:11px}
+.v{border:1px solid var(--rule);background:var(--stock2);padding:15px;margin-bottom:11px;
+  transition:box-shadow var(--trans-smooth)}
+.v:hover{box-shadow:0 4px 16px rgba(0,0,0,0.06)}
 .v.top{border:2px solid var(--ink);background:var(--stock3)}
 .vh{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 20px;align-items:start}
 .vinfo{min-width:0}
@@ -79,7 +84,8 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
 .tag.bad{border-color:var(--chop);color:var(--chop)}
 
 .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px 16px;
-  margin:14px 0 0;padding-top:13px;border-top:1px solid var(--rule)}
+  margin:14px 0 0;padding-top:13px;border-top:1px solid var(--rule);
+  animation:fadeIn var(--trans-smooth)}
 .specs dt{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--soft);margin-bottom:3px}
 .specs dd{margin:0;font-family:'IBM Plex Mono';font-size:13.5px;font-weight:500}
@@ -95,8 +101,13 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
   padding-top:12px;border-top:1px solid var(--rule)}
 .btn{font-family:'IBM Plex Mono';font-size:11px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;padding:9px 13px;border:1px solid var(--ink);background:var(--ink);
-  color:var(--stock);cursor:pointer;text-decoration:none;display:inline-block}
+  color:var(--stock);cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background var(--trans-fast),color var(--trans-fast),transform var(--trans-fast),box-shadow var(--trans-fast);
+}
+.btn:hover{background:var(--stock);color:var(--ink);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.btn:active{transform:translateY(0);box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--stock2)}
 /* The details toggle is a secondary control sitting above the primary
    actions, so it reads smaller than Write quote request. Scoped to the
    toggle rather than .ghost, which Open listing and the modal also use. */
@@ -180,3 +191,11 @@ h1{display:none}
 #mpreview{width:100%;min-height:240px;font-family:'IBM Plex Mono';font-size:12px;
   line-height:1.65;padding:12px;border:1px solid var(--rule);background:var(--stock2);
   color:var(--ink);resize:vertical}
+
+/* Animations */
+.modal{animation:fadeIn var(--trans-smooth)}
+.modal[hidden]{animation:none}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}

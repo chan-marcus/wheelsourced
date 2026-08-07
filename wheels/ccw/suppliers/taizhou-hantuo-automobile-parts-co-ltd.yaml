@@ -92,26 +92,23 @@ from_listing:
   units_sold: null
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: 430
-  price_per_wheel_4set: 1720
-  weight_kg: 9.5
-  load_rating_kg: 745
-  forging_process: forged from 6061-T6 aluminum billets
-  cert_document: promised
-  size_chart: 18x9.5 mentioned
-  freight_cif_usd: 250
-  is_manufacturer: true
-  forged_confirmed: true
-  piece_count:
-  - monoblock
-  - 2-piece
-  - 3-piece
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  forging_process: null
+  piece_count: null
+  cert_document: null
+  freight_cif_usd: null
+  hs_code: null
+  is_manufacturer: null
   cnc_inhouse: null
   heat_treat: null
-  payment_terms: 50% deposit, 50% on completion before shipping
+  payment_terms: null
   defect_policy: null
-  hs_code: null
-  quote_construction: 2-piece
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: null
+  size_chart: null
+  quote_construction: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
@@ -135,17 +132,11 @@ meta:
     discounts but does not provide specs on forging, weight, load rating, or certifications.
     No mention of 2-piece alternative despite customer inquiry.'
   factory_address: Taizhou, China
-  parsed_replies:
-    taizhou-hantuo-automobile-parts-co-ltd__2026-08-06-2.txt: 83f600c180efb53c
-    taizhou-hantuo-automobile-parts-co-ltd__2026-08-06.txt: b5933183944c0a89
-    taizhou-hantuo-automobile-parts-co-ltd__2026-08-07.txt: 4d5dfb3389240ef8
+  parsed_replies: {}
   reply_days: 1
   reply_note: Supplier mentions 3-piece style but does not address 2-piece construction
     details. Price includes tax avoidance option. Freight cost of 288 USD stated separately.
-  off_basis_quotes:
-  - construction: 3-piece
-    seen: '2026-08-07'
-    price_per_wheel_1set: 550
-    price_per_wheel_4set: 2200
-    freight_cif_usd: 288
-flags: []
+flags:
+- no load rating given
+- constructions offered not confirmed
+- no size chart supplied

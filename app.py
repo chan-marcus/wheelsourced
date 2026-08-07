@@ -321,6 +321,33 @@ async def edit_field(req: Request):
     return {"ok": True, "record": rec}
 
 
+@app.post("/api/reset-supplier/{supplier_id:path}")
+async def reset_supplier(supplier_id: str):
+    """Clear quoted data and parsing cache for a supplier so you can re-parse."""
+    # Infer the wheel from the first supplier directory we find. This is a
+    # little shaky but reset is dev-only and the tool pane only uses it per
+    # wheel anyway.
+    wheels_dir = Path("wheels")
+    for wheel_dir in wheels_dir.iterdir():
+        if not wheel_dir.is_dir():
+            continue
+        sup_file = wheel_dir / "suppliers" / f"{supplier_id}.yaml"
+        if not sup_file.exists():
+            continue
+        rec = yaml.safe_load(sup_file.read_text())
+        # Clear all from_quote fields so they start empty.
+        rec["from_quote"] = {k: None for k in P.STORED_FIELDS}
+        # Clear the parsing cache so ingest will re-read everything.
+        rec.setdefault("meta", {})["parsed_replies"] = {}
+        # Clear off-basis quotes (prices for other constructions).
+        rec["meta"].pop("off_basis_quotes", None)
+        # Recompute flags on the clean slate.
+        rec["flags"] = P._flags(rec)
+        sup_file.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        return {"ok": True}
+    return JSONResponse({"ok": False, "error": f"supplier not found: {supplier_id}"}, status_code=404)
+
+
 # --------------------------------------------------------------------------
 # ui
 # --------------------------------------------------------------------------
@@ -377,6 +404,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   <div style="display:flex;gap:10px;align-items:flex-end">
     <div><span class="lbl">Wheel</span><select id="wheel" onchange="boot(this.value)"></select></div>
     <button class="ghost" onclick="newWheel()">New</button>
+    <button class="ghost" onclick="window.location.href='http://localhost:4321'">View sourcing sheet</button>
   </div>
 </header>
 
@@ -546,6 +574,7 @@ function render(){
           <div style="max-width:170px"><span class="lbl">Date received</span>
             <input id="dt-${s.id}" value="${new Date().toISOString().slice(0,10)}"></div>
           <button data-send="${s.id}" onclick="sendReply('${s.id}', this)">Parse reply</button>
+          <button class="ghost" onclick="resetSupplier('${s.id}', this)">Reset data</button>
         </div>
         <span class="lbl">Quoted data · dashed border means still unanswered</span>
         <div class="grid" style="margin-top:8px">${fields}</div>
@@ -582,6 +611,24 @@ async function sendReply(id, btn){
 async function setField(id,key,value){
   const r=await post("/api/field",{wheel:S.wheel,id,key,value});
   if(r.ok){S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);render();}
+}
+async function resetSupplier(id,btn){
+  if(!confirm("Clear all data for this supplier and re-parse from replies?"))return;
+  const label=btn.textContent;
+  btn.textContent="Resetting...";btn.disabled=true;
+  try{
+    const r=await post("/api/reset-supplier/"+id,{wheel:S.wheel});
+    if(r&&r.ok){
+      S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);
+      render();
+    }else{
+      alert("Reset failed: "+(r&&r.error||"unknown error"));
+    }
+  }catch(e){
+    alert("Reset failed: "+e.message);
+  }finally{
+    if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
+  }
 }
 boot("");
 </script></body></html>"""

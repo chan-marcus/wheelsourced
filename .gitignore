@@ -20,3 +20,9 @@ site/.astro/
 
 # Wheel images mirrored out of wheels/ at build time by site/src/lib/data.js
 site/public/wheels/
+
+# Supplier suggestions captured by the local GUI. Holds email addresses typed
+# into a public form by people who are not us, so it does not go into git.
+# Production submissions live in Cloudflare KV; this file is only what came in
+# while the GUI was running locally.
+supplier_suggestions.json

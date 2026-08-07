@@ -136,6 +136,7 @@ the takedown pipeline and is more accurate anyway.
       outbox/       generated RFQ messages
       replies/      raw pasted vendor replies, never edited
     site/           Astro static site, reads ../wheels at BUILD time
+      functions/    Cloudflare Pages Functions, one per public form
 
 ---
 
@@ -199,12 +200,52 @@ If you add a field to `REPLY_SCHEMA`, add it to `QUOTE_ONLY`/`ROUND2` if it
 should be asked, or to `EXTRACTED_ONLY` if it should only be kept. A field in
 the schema and in neither is a field you parse and discard.
 
-**Stored records show listing certifications until their replies are
-re-read.** `certs_claimed` was added after the archive existed, so every
-record except Weiluo has it null on the quote side and the sheet falls back to
-the grey listing claim. Backfilling means `ingest --wheel ccw --force` over
-the stored replies, with all the churn that carries. `recompute.py` does
-canonicalise the tags both sides, since that needs no model call.
+**The two public forms post to a different place in dev than in a build.**
+"Request a wheel" on the index and "Suggest a supplier" at the foot of each
+sheet both resolve their endpoint the same way: `PUBLIC_*_ENDPOINT` if set,
+else `localhost:8420` under `astro dev`, else same-origin. Hardcoding the
+localhost URL is how the request form used to fail on the live domain, and it
+failed silently: the host is unreachable from a visitor's machine, and a
+browser blocks http from an https page as mixed content anyway.
+
+In production each is a Pages Function in `site/functions/api/`, appending to
+Cloudflare KV. Deliberately not a backend: the sourcing dataset stays in YAML
+in git, and these only ever append to a list. **Each needs its KV namespace
+bound** (`WHEEL_REQUESTS`, `SUPPLIER_SUGGESTIONS`) or the endpoint returns 503,
+which is on purpose. A form that silently drops submissions is worse than one
+that says it is down.
+
+Suggestions are restricted to alibaba.com and 1688.com hosts, matched on the
+registrable domain rather than as a substring, or `alibaba.com.evil.tld` gets
+in. That allowlist is written twice, in `_listing_host_ok` in app.py and
+`listingHostOk` in the Function, because the two serve the same route in dev
+and in production. Keep them in step.
+
+Locally the GUI writes `supplier_suggestions.json`, which is **gitignored**: it
+holds email addresses typed into a public form by people who are not us.
+`wheel_requests.json` predates that decision and is tracked, and it already has
+an address in it.
+
+**`backfill` fills one field from the archive without churning the rest.**
+Adding a field to `REPLY_SCHEMA` leaves it null on every record parsed before
+it existed, and `ingest --force` is a bad way to fix that: it re-reads every
+reply and rewrites every extracted value, which is the non-determinism problem
+above. `backfill --wheel ccw --field certs_claimed` reads the same replies with
+the same schema and writes only the named field, clearing it first so it
+rebuilds the column rather than unioning onto a previous run.
+
+It leaves `meta.parsed_replies` alone, because those hashes say these replies
+were read and that stays true. It does redo `questions_answered` when the field
+is in `ALL_FIELDS`, since that fraction counts populated fields and would
+otherwise be stale. It does NOT recompute flags: run `recompute.py` after.
+
+**The Certification column is quoted-only, with no listing fallback.** The
+listing side sprays: one listing claims eight certifications where the
+supplier, asked directly, named two. Rendering the long unvetted list beside
+the short honest one rewards the vendor whose listing overclaims, which is
+principle 3, and the product here is the vetting. A supplier who has not
+answered reads "not disclosed" like any other field. `from_listing.certs_claimed`
+is still stored and still canonicalised, it just does not reach the sheet.
 
 **`PHOTO_ASK` is dead.** It is defined and never referenced, so nothing asks
 for the scale photo. Weight arrives only when a supplier volunteers it.

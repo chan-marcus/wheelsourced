@@ -8,13 +8,12 @@ Reference spec for all pricing:
 Could you confirm:
 
   1. For the 2-PIECE construction: price per single wheel, and price for 1 set (4 pcs)
-  2. Which constructions can you make: monoblock (single-piece), 2-piece, 3-piece? List every one you offer, not just this listing
-  3. Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse
-  4. HS code / tariff classification for your wheels
-  5. Do you do the CNC machining in house, or outsource it?
-  6. What is your heat treat process? Which temper, and how long?
-  7. What are your payment terms? Is it 50% deposit?
-  8. What happens if a wheel arrives out of round or with finish damage?
+  2. Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?
+  3. Which constructions can you make: monoblock (single-piece), 2-piece, 3-piece? List every one you offer, not just this listing
+  4. Which certifications do you have? (DOT, JWL, VIA, TUV, etc.) Does it cover this width? Certificate PDF?
+  5. Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse
+  6. HS code / tariff classification for your wheels
+  7. Are you the manufacturer or a trading company? Factory address?
 
 
 

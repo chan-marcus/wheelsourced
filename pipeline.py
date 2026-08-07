@@ -279,6 +279,30 @@ def merge_certs(prev, new, text=None):
     return [c for c in CERTS if c in keep] or None
 
 
+# Fields holding a SET the supplier adds to over time rather than a single
+# answer that replaces the last one. A later answer is never a contradiction
+# of an earlier one here: learning that a supplier also builds 3-piece, or
+# also holds VIA, is new information. Recording either as a revision put
+# "changed answer between rounds" on Hantuo for answering what we had just
+# asked, so these skip revision tracking by construction.
+SET_FIELDS = ("piece_count", "certs_claimed")
+
+
+def merge_field(k, prev, value, text=None):
+    """Fold one extracted value into what is already stored.
+
+    The one place that knows a field's merge rule. Ingest, the GUI paste
+    handler and backfill all come through here, because three hand-copied
+    versions of this branch is exactly how the GUI and the CLI end up
+    disagreeing about what a record should say.
+    """
+    if k == "piece_count":
+        return merge_constructions(prev, value)
+    if k == "certs_claimed":
+        return merge_certs(prev, value, text)
+    return value
+
+
 # Round two unlocks once these are known. Not the whole of round one: a
 # supplier who answered everything except the size chart has clearly engaged,
 # and holding the detail questions back over one soft field wastes a round.
@@ -738,17 +762,12 @@ def ingest(wheel, force=False, workers=6):
         filled = 0
         for k in STORED_FIELDS:
             if got.get(k) not in (None, ""):
-                if k == "piece_count":
-                    rec["from_quote"][k] = merge_constructions(
-                        rec["from_quote"].get(k), got[k])
-                elif k == "certs_claimed":
+                if k == "certs_claimed":
                     dropped = unasserted_certs(got[k], text)
                     if dropped:
                         print(f"  {sid}: reply does not assert {', '.join(dropped)}, not stored")
-                    rec["from_quote"][k] = merge_certs(
-                        rec["from_quote"].get(k), got[k], text)
-                else:
-                    rec["from_quote"][k] = got[k]
+                rec["from_quote"][k] = merge_field(
+                    k, rec["from_quote"].get(k), got[k], text)
                 if k in ALL_FIELDS:
                     filled += 1
 
@@ -787,6 +806,91 @@ def ingest(wheel, force=False, workers=6):
         rec["meta"].setdefault("parsed_replies", {})[f.name] = digest
         target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
         print(f"  {sid}: +{filled} this reply, {total_filled}/{len(ALL_FIELDS)} total  {rec['flags'] or ''}")
+
+
+def backfill(wheel, field, workers=6):
+    """Rebuild ONE field from the stored replies, leaving everything else alone.
+
+    Adding a field to REPLY_SCHEMA leaves it null on every record parsed
+    before it existed, and the documented cure is `ingest --force`. That
+    re-reads every reply and rewrites every extracted value, and the model is
+    not deterministic: heat_treat has drifted "6061-T6" to "T6", a factory
+    address changed city, and a "not flow-formed" qualifier vanished from a
+    forging claim. Paying that across the whole dataset to fill one column is
+    a bad trade, and it is why --force carries a warning.
+
+    So this reads the same replies with the same schema and writes only the
+    field it was asked for. Everything else in the record, including
+    meta.parsed_replies, is untouched: those hashes say these replies were
+    read, and that stays true.
+
+    The field is cleared first, so this rebuilds the column rather than
+    unioning onto whatever a previous run left behind.
+    """
+    if field not in STORED_FIELDS:
+        raise SystemExit(f"unknown field '{field}'.\n  one of: {', '.join(STORED_FIELDS)}")
+
+    rep = wdir(wheel) / "replies"
+    todo = []
+    for f in sorted(rep.glob("*.txt")):
+        sid = f.stem.split("__")[0]
+        target = sdir(wheel) / f"{sid}.yaml"
+        if target.exists():
+            todo.append((f, sid, target, f.read_text(encoding="utf-8")))
+    if not todo:
+        print("  no replies to read.")
+        return
+
+    print(f"  reading {len(todo)} reply(s) for '{field}' only")
+    parsed = {}
+    if len(todo) > 1 and workers > 1:
+        with ThreadPoolExecutor(max_workers=min(workers, len(todo))) as pool:
+            futs = {pool.submit(_ask_model, t[3], REPLY_SCHEMA): t[0] for t in todo}
+            for fut in as_completed(futs):
+                parsed[futs[fut]] = fut.result()
+    else:
+        for t in todo:
+            parsed[t[0]] = _ask_model(t[3], REPLY_SCHEMA)
+
+    before = {}
+    for target in {t[2] for t in todo}:
+        rec = yaml.safe_load(target.read_text())
+        before[target] = rec["from_quote"].get(field)
+        rec["from_quote"][field] = None
+        target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+
+    # Sequential and in sorted order, like ingest: one supplier's replies fold
+    # into the same record cumulatively.
+    for f, sid, target, text in todo:
+        got = parsed[f]
+        if got.get(field) in (None, ""):
+            continue
+        if field == "certs_claimed":
+            dropped = unasserted_certs(got[field], text)
+            if dropped:
+                print(f"  {sid}: reply does not assert {', '.join(dropped)}, not stored")
+        rec = yaml.safe_load(target.read_text())
+        rec["from_quote"][field] = merge_field(
+            field, rec["from_quote"].get(field), got[field], text)
+        target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+
+    # questions_answered is the count of ALL_FIELDS that are populated, so
+    # filling one of them leaves the stored fraction wrong until it is redone.
+    # Derived from the record, not from what this run happened to change.
+    if field in ALL_FIELDS:
+        for target in before:
+            rec = yaml.safe_load(target.read_text())
+            n = sum(1 for k in ALL_FIELDS if rec["from_quote"].get(k) not in (None, ""))
+            rec["meta"]["questions_answered"] = f"{n}/{len(ALL_FIELDS)}"
+            target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+
+    print()
+    for target in sorted(before):
+        rec = yaml.safe_load(target.read_text())
+        now, was = rec["from_quote"].get(field), before[target]
+        mark = " " if now == was else "*"
+        print(f"  {mark} {target.stem[:44]:<46} {was or '-'}  ->  {now or '-'}")
+    print("\n  Flags are not recomputed here. Run recompute.py if this field feeds one.")
 
 
 def _ref_size(rec):
@@ -944,7 +1048,7 @@ def check(wheel):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("pull", "ask", "ingest", "check", "mark-parsed"):
+    for name in ("pull", "ask", "ingest", "check", "mark-parsed", "backfill"):
         p = sub.add_parser(name); p.add_argument("--wheel", required=True)
         if name == "ask":
             p.add_argument("--size", default="18x9.5J"); p.add_argument("--offset", default="ET+22")
@@ -953,10 +1057,15 @@ if __name__ == "__main__":
             p.add_argument("--force", action="store_true",
                            help="re-read every reply, not just changed ones. Needed after adding a field to ALL_FIELDS.")
             p.add_argument("--workers", type=int, default=6)
+        if name == "backfill":
+            p.add_argument("--field", required=True,
+                           help="the one field to rebuild from the stored replies. Everything else is left alone.")
+            p.add_argument("--workers", type=int, default=6)
     a = ap.parse_args()
 
     if a.cmd == "pull": pull(a.wheel)
     elif a.cmd == "ask": ask(a.wheel, a.size, a.offset, a.pcd, a.finish)
     elif a.cmd == "ingest": ingest(a.wheel, a.force, a.workers)
     elif a.cmd == "mark-parsed": mark_parsed(a.wheel)
+    elif a.cmd == "backfill": backfill(a.wheel, a.field, a.workers)
     elif a.cmd == "check": check(a.wheel)

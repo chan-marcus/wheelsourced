@@ -247,25 +247,19 @@ async def do_reply(req: Request):
             continue
         prev = rec["from_quote"].get(k)
 
-        # piece_count is a capability set, so it accumulates and is never a
-        # revision: learning a supplier also does 3-piece is new information,
-        # not a contradiction. Recording it as one put "changed answer between
-        # rounds" on Hantuo for answering the question we asked them.
-        if k == "piece_count":
-            merged = P.merge_constructions(prev, v)
+        # The set-valued fields accumulate and are never a revision: learning
+        # a supplier also does 3-piece, or also holds VIA, is new information
+        # rather than a contradiction. Recording it as one put "changed answer
+        # between rounds" on Hantuo for answering what we had just asked, so
+        # they return before the revision tracking below ever sees them.
+        if k in P.SET_FIELDS:
+            if k == "certs_claimed":
+                dropped = P.unasserted_certs(v, b["text"])
+                if dropped:
+                    log(f"{sid}: reply does not assert {', '.join(dropped)}, not stored")
             if prev in (None, "") and k in P.ALL_FIELDS:
                 new_this_round += 1
-            rec["from_quote"][k] = merged
-            continue
-
-        # Same shape: a set of tags that only grows, gated on the supplier's
-        # own words actually asserting the name. Both halves matter here, see
-        # merge_certs. Not a revision either, for the piece_count reason.
-        if k == "certs_claimed":
-            dropped = P.unasserted_certs(v, b["text"])
-            if dropped:
-                log(f"{sid}: reply does not assert {', '.join(dropped)}, not stored")
-            rec["from_quote"][k] = P.merge_certs(prev, v, b["text"])
+            rec["from_quote"][k] = P.merge_field(k, prev, v, b["text"])
             continue
 
         if prev in (None, ""):
@@ -797,10 +791,100 @@ async def request_wheel(req: Request):
     return JSONResponse({"ok": True})
 
 
+def suggestions_file():
+    return Path("supplier_suggestions.json")
+
+
+def load_suggestions():
+    import json
+    f = suggestions_file()
+    if f.exists():
+        try:
+            return json.loads(f.read_text())
+        except:
+            return []
+    return []
+
+
+def save_suggestions(sugs):
+    import json
+    suggestions_file().write_text(json.dumps(sugs, indent=2))
+
+
+# Discovery is alibaba.com and s.1688.com, so a suggestion from anywhere else
+# is not something this workflow can act on. The endpoint is public and
+# unauthenticated, and an open "post us any link" box is a spam target, so the
+# host check is the filter. Kept in step with the Pages Function that serves
+# the same route in production.
+SUGGEST_HOSTS = ("alibaba.com", "1688.com")
+MAX_URL, MAX_EMAIL = 600, 254
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s.]+\.[^@\s]+$")
+
+
+def _listing_host_ok(url):
+    from urllib.parse import urlparse
+    try:
+        u = urlparse(url)
+    except ValueError:
+        return False
+    if u.scheme not in ("http", "https") or not u.hostname:
+        return False
+    host = u.hostname.lower()
+    # Match the registrable domain, not a substring: "alibaba.com.evil.tld"
+    # contains the string and is not Alibaba.
+    return any(host == d or host.endswith("." + d) for d in SUGGEST_HOSTS)
+
+
+@app.post("/api/suggest-supplier")
+async def suggest_supplier(req: Request):
+    data = await req.json()
+    url = str(data.get("url") or "").strip()[:MAX_URL]
+    if not url:
+        return JSONResponse({"ok": False, "error": "A listing URL is required."}, status_code=400)
+    if not _listing_host_ok(url):
+        return JSONResponse(
+            {"ok": False, "error": "Only alibaba.com and 1688.com listings can be vetted."},
+            status_code=400)
+
+    raw_email = str(data.get("email") or "").strip()[:MAX_EMAIL]
+    # A junk address is worse than none: it reads as a contactable lead and is
+    # not one. Same rule as the wheel request endpoint.
+    email = raw_email if _EMAIL_RE.match(raw_email) else None
+
+    entry = {"url": url, "wheel": str(data.get("wheel") or "").strip()[:80] or None,
+             "date": str(date.today())}
+    if email:
+        entry["email"] = email
+
+    sugs = load_suggestions()
+    # The same listing suggested twice is one listing to vet. Keep the first,
+    # and take an alert address if the duplicate carried one and the original
+    # did not.
+    for s in sugs:
+        if s.get("url") == url:
+            if email and not s.get("email"):
+                s["email"] = email
+                save_suggestions(sugs)
+            return JSONResponse({"ok": True, "duplicate": True})
+
+    sugs.append(entry)
+    save_suggestions(sugs)
+    return JSONResponse({"ok": True})
+
+
 @app.get("/requests", response_class=HTMLResponse)
 def show_requests():
+    from html import escape
     reqs = load_requests()
     rows = "".join(f"<tr><td>{r['name']}</td><td>{r['date']}</td><td>{r.get('email', '')}</td></tr>" for r in reqs)
+    # Escaped, unlike the wheel rows above: these values are a URL and an
+    # address straight off a public form, and this page renders them as HTML.
+    sug_rows = "".join(
+        f'<tr><td class="email"><a href="{escape(s["url"], quote=True)}" rel="nofollow noopener" '
+        f'target="_blank">{escape(s["url"])}</a></td>'
+        f'<td>{escape(s.get("wheel") or "")}</td><td>{escape(s["date"])}</td>'
+        f'<td class="email">{escape(s.get("email", ""))}</td></tr>'
+        for s in load_suggestions())
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -833,6 +917,21 @@ def show_requests():
     </thead>
     <tbody>
       {rows or '<tr><td colspan="3" class="empty">No requests yet</td></tr>'}
+    </tbody>
+  </table>
+
+  <h1 style="margin-top:56px;">Supplier suggestions</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Listing</th>
+        <th>Wheel</th>
+        <th>Date</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {sug_rows or '<tr><td colspan="4" class="empty">No suggestions yet</td></tr>'}
     </tbody>
   </table>
 </body>

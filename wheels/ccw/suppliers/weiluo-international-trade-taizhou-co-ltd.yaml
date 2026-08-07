@@ -109,7 +109,9 @@ from_quote:
   forged_confirmed: true
   size_chart: null
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - DOT
+  - VIA
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
@@ -119,15 +121,20 @@ meta:
   parsed_replies: {}
   first_reply: '2026-08-07'
   reply_received: '2026-08-07'
-  reply_count: 1
+  reply_count: 2
   questions_answered: 6/12
   reply_notes:
   - '2026-08-07: Price $350 stated as ''each'' for 1.18 inch wheel; polishing add
     $30 each; DOT & VIA certified claimed but no document provided; shipping $340
     is door-to-door; 4-set pricing awaited from manager; they make monoblock and 2-piece,
     explicitly do not make 3-piece'
+  - '2026-08-07: Price $350 stated per wheel as single item; monoblock and 2-piece
+    capabilities confirmed; 3-piece explicitly ruled out; polishing adds $30/wheel;
+    freight $340 appears to be door-to-door cost; DOT & VIA certificates claimed but
+    document not provided; weight and load for 18x9.5J specs requested but final confirmation
+    pending manager approval'
   factory_address: No. 99, Industrial Concentration Zone, Zhangdian Town, Taizhou,
-    China; also stated as jiangsu province taizhou city
+    China; also listed as jiangsu province taizhou city
 flags:
 - cert claimed, no document
 - no size chart supplied

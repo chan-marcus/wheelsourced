@@ -12,6 +12,14 @@ export async function getStaticPaths() {
 
 const { wheel } = Astro.props;
 
+// Where the supplier suggestion posts. Same arrangement as the wheel request
+// form on the index: the local GUI in dev, a same-origin Pages Function in a
+// build. Never a hardcoded localhost URL, which is unreachable from a
+// visitor's machine and blocked as mixed content from https regardless.
+const SUGGEST_ENDPOINT =
+  import.meta.env.PUBLIC_SUGGEST_ENDPOINT ||
+  (import.meta.env.DEV ? "http://localhost:8420/api/suggest-supplier" : "/api/suggest-supplier");
+
 const refSpec = wheel.suppliers.find((s) => s.ref_spec)?.ref_spec ?? "18x9.5J ET+22 5x114.3";
 const refSize = refSpec.split(" ")[0] ?? "18x9.5J";
 const quoted = wheel.suppliers.filter((s) => s.replies).length;
@@ -70,6 +78,12 @@ const payload = JSON.stringify({
     <div id="rows"></div>
   </section>
 
+  <section style="margin-top: 48px; padding: 28px 20px; border: 1px solid var(--ink); text-align: center;">
+    <h2 style="font-family: 'Barlow Condensed'; font-size: 22px; font-weight: 700; text-transform: uppercase; margin: 0 0 8px;">Know a factory we have missed?</h2>
+    <p style="max-width: 560px; margin: 0 auto 16px; color: var(--soft);">Send an Alibaba or 1688 listing making this wheel and it joins the vetting queue. Suggestions are not published until they have been through the same questions as everything above.</p>
+    <button class="btn" id="sgopen">Suggest a supplier</button>
+  </section>
+
   <footer style="margin-top: 60px; padding: 40px 20px; border-top: 1px solid var(--ink); color: var(--soft);">
     <div style="max-width: 900px; margin-left: auto; margin-right: auto;">
       <p>Store rating, response time, store age, reorder rate and transit time are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
@@ -107,6 +121,35 @@ const payload = JSON.stringify({
   </div>
 </div>
 
+<div id="sgmodal" class="modal" hidden>
+  <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="sgtitle" style="max-width:520px;">
+    <div class="mhead"><span id="sgtitle">Suggest a supplier</span>
+      <button class="x" id="sgclose" aria-label="Close">×</button></div>
+    <p class="mhint">An Alibaba or 1688 listing for this wheel. We do the vetting, so the listing is a starting point rather than a recommendation.</p>
+    <form id="sgform" data-endpoint={SUGGEST_ENDPOINT} data-wheel={wheel.slug}>
+      <div class="mgrid">
+        <div><label for="sg-url">Listing URL</label>
+          <input id="sg-url" type="url" required placeholder="https://www.alibaba.com/product-detail/..." /></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+        <input id="sg-alert" type="checkbox" style="width:16px;height:16px;cursor:pointer;" />
+        <label for="sg-alert" style="font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me when it is vetted</label>
+      </div>
+      <div id="sg-emailfield" class="mgrid" style="display:none;margin-top:12px;">
+        <div><label for="sg-email">Email</label>
+          <input id="sg-email" type="email" placeholder="you@example.com" />
+          <div style="font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:6px;">Used once, to tell you the verdict on this listing.</div></div>
+      </div>
+      <div id="sg-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--chop);border:1px solid var(--chop);padding:8px 10px;margin-top:14px;"></div>
+      <div class="mfoot"><button class="btn" type="submit">Send suggestion</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="sgconfirm" hidden style="position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--stock);padding:14px 22px;font-family:'IBM Plex Mono';font-size:12.5px;z-index:2000;max-width:90%;text-align:center;">
+  Suggestion received. It goes into the vetting queue.
+</div>
+
 <script id="data" type="application/json" set:html={payload}></script>
 <script is:inline>
 const D = JSON.parse(document.getElementById("data").textContent);
@@ -124,6 +167,11 @@ const moqCount = (v) =>
 // Whether the certificate itself ever arrived, shown grey beside the names
 // because it qualifies them rather than answering for them. "DOT, VIA" with
 // nothing attached is a claim, and the sheet has to keep saying so.
+//
+// Short forms only when they follow the names, where "claimed" would just
+// repeat the names being right there. Standing alone the stored phrase is
+// left long, because it has to describe itself: a bare "no document" would
+// not say that a certification was claimed at all.
 const CERT_DOC = {
   "provided": "on file",
   "promised": "promised",
@@ -243,9 +291,7 @@ function render() {
           <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
           <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
           <div><dt>Certification</dt><dd>${
-            s.certs ? s.certs.join(", ") + certDoc(s.cert)
-            : s.listing_certs ? `<span class="grey">${s.listing_certs.join(", ")} listed</span>`
-            : or(s.cert)}</dd></div>
+            s.certs ? s.certs.join(", ") + certDoc(s.cert) : or(s.cert)}</dd></div>
           <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
           <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
             : s.cnc === false ? "outsourced" : or(null)}</dd></div>
@@ -326,7 +372,79 @@ function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
 const close = () => { el("modal").hidden = true; };
 el("mclose").addEventListener("click", close);
 el("modal").addEventListener("click", (e) => { if (e.target.id === "modal") close(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
+// Suggest a supplier. Same shape as the RFQ modal above so the two behave
+// identically, and the endpoint arrives on a data attribute for the reason
+// documented on the index form: define:vars would close over the handler.
+const sgform = el("sgform");
+const SUGGEST_ENDPOINT = sgform.dataset.endpoint;
+const SUGGEST_WHEEL = sgform.dataset.wheel;
+
+const closeSuggest = () => { el("sgmodal").hidden = true; };
+el("sgopen").addEventListener("click", () => {
+  el("sg-error").style.display = "none";
+  el("sgmodal").hidden = false;
+  el("sg-url").focus();
+});
+el("sgclose").addEventListener("click", closeSuggest);
+el("sgmodal").addEventListener("click", (e) => { if (e.target.id === "sgmodal") closeSuggest(); });
+
+// The address field only exists once they have asked to be alerted, and
+// clearing it on uncheck means an unticked box never sends an address.
+el("sg-alert").addEventListener("change", (e) => {
+  const field = el("sg-emailfield");
+  field.style.display = e.target.checked ? "grid" : "none";
+  if (e.target.checked) el("sg-email").focus();
+  else el("sg-email").value = "";
+});
+
+sgform.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const url = el("sg-url").value.trim();
+  if (!url) return;
+
+  const btn = sgform.querySelector('button[type="submit"]');
+  const label = btn.textContent;
+  const err = el("sg-error");
+  err.style.display = "none";
+  btn.textContent = "Sending..."; btn.disabled = true;
+
+  try {
+    const res = await fetch(SUGGEST_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        url,
+        wheel: SUGGEST_WHEEL,
+        email: el("sg-alert").checked ? el("sg-email").value.trim() || null : null,
+      }),
+    });
+    // Read the body before throwing: the endpoint explains a rejected URL,
+    // and "Server returned 400" would hide the one thing worth saying.
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || !body.ok) throw new Error(body.error || "Server returned " + res.status);
+
+    sgform.reset();
+    el("sg-emailfield").style.display = "none";
+    closeSuggest();
+    const ok = el("sgconfirm");
+    ok.hidden = false;
+    setTimeout(() => { ok.hidden = true; }, 3000);
+  } catch (e2) {
+    // Never fail silently. A closed modal with no banner is indistinguishable
+    // from success, which is how the index form used to lose submissions.
+    err.textContent = e2.message || "Could not send that suggestion. Please try again.";
+    err.style.display = "block";
+  } finally {
+    btn.textContent = label; btn.disabled = false;
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  close();
+  closeSuggest();
+});
 
 async function copy(txt, btn, label) {
   try { await navigator.clipboard.writeText(txt); btn.textContent = "Copied"; }

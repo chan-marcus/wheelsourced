@@ -60,44 +60,49 @@ from_listing:
   units_sold: null
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: null
+  price_per_wheel_1set: 462
   price_per_wheel_4set: 1848
+  forging_process: separate forged blanks made from T6061 aerospace-grade aluminum,
+    machined from a forged blank
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: provided
+  freight_cif_usd: 290
+  hs_code: null
+  is_manufacturer: true
+  cnc_inhouse: true
+  heat_treat: completed at upstream blank manufacturing plant; procured forged wheel
+    blanks that meet required standards
+  payment_terms: 50% down payment, 50% balance payable before shipment
+  defect_policy: full refund if quality issues arise upon receipt
   weight_kg: 11.5
   load_rating_kg: null
-  forging_process: machined from forged blank, T6061 aerospace-grade aluminum
-  cert_document: claimed without document
-  size_chart: 15-26 inches
-  freight_cif_usd: null
-  is_manufacturer: true
   forged_confirmed: true
-  piece_count:
-  - 2-piece
-  cnc_inhouse: null
-  heat_treat: null
-  payment_terms: null
-  defect_policy: null
-  hs_code: null
+  size_chart: 15-26 inches for passenger cars
   quote_construction: 2-piece
-  certs_claimed: null
+  certs_claimed:
+  - DOT
+  - JWL
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
-  first_reply: '2026-08-06'
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
-  reply_received: '2026-08-06'
+  parsed_replies: {}
+  first_reply: '2026-08-07'
+  reply_received: '2026-08-07'
   reply_count: 1
-  questions_answered: 7/14
+  questions_answered: 11/12
   reply_notes:
-  - '2026-08-06: Price $462/pc for 18-inch size stated as $1848 per set (4 wheels).
-    Weight given as 11-12kg range per wheel. JWL and DOT certifications claimed but
-    no PDF provided. Load rating stated as vehicle-model-dependent, not provided.
-    Postcode requested for shipping quote.'
+  - '2026-08-07: JWI certificate mentioned and image referenced but not attached or
+    promised. Monoblock price $296/pc, 2-piece $462/pc, 3-piece $565/pc all quoted
+    for same 18x9.5J ET+22 5x114.3 size. Weight stated as 11-12kg range; midpoint
+    11.5kg used. Load rating deferred to vehicle-specific matching. Heat treat detail
+    sparse.'
   factory_address: Tianjin
-  parsed_replies:
-    ruitou-power-chengdu-auto-parts-co-ltd__2026-08-06.txt: 31bca46b95d29a4e
 flags:
-- cert claimed, no document
 - no load rating given
 - under 3 years listed

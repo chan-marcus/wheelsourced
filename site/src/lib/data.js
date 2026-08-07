@@ -156,8 +156,15 @@ function normalize(r) {
     // One question, two answers, kept apart: which certifications they name,
     // and whether the certificate ever arrived. Merging them let a supplier
     // bank the harder one by answering the easier one.
+    //
+    // Quoted only, with no fallback to L.certs_claimed. The listing side is
+    // marketing boilerplate and it sprays: one listing claims eight
+    // certifications where the supplier, asked directly, named two. Printing
+    // the long unvetted list next to the short honest one rewards the vendor
+    // whose listing overclaims, and the product here is the vetting. A
+    // supplier who has not answered gets "not disclosed", same as any other
+    // field.
     certs: Q.certs_claimed?.length ? Q.certs_claimed : null,
-    listing_certs: L.certs_claimed?.length ? L.certs_claimed : null,
     cert: Q.cert_document || null,
     size_chart: Q.size_chart || null,
     is_manufacturer: Q.is_manufacturer ?? null,

@@ -15,7 +15,15 @@ const { wheel } = Astro.props;
 const refSpec = wheel.suppliers.find((s) => s.ref_spec)?.ref_spec ?? "18x9.5J ET+22 5x114.3";
 const refSize = refSpec.split(" ")[0] ?? "18x9.5J";
 const quoted = wheel.suppliers.filter((s) => s.replies).length;
-const payload = JSON.stringify({ suppliers: wheel.suppliers });
+// Flags never reach the browser. They are internal sourcing judgements, and
+// several read as accusations against a named real company ("cert claimed, no
+// document"). Removing them from the rendered tags left them sitting in this
+// payload in plain sight of View Source, which is not hidden at all on a
+// public domain. Ship only what the page needs: whether the vendor is clean,
+// for the "top" badge.
+const payload = JSON.stringify({
+  suppliers: wheel.suppliers.map(({ flags, ...s }) => ({ ...s, clean: !flags.length })),
+});
 ---
 
 <html lang="en">
@@ -157,7 +165,7 @@ function render() {
   el("count").textContent = `${hit.length} suppliers`;
 
   el("rows").innerHTML = hit.map((s, i) => `
-    <article class="v ${sortMode === "vetting" && i === 0 && !s.flags.length ? "top" : ""}">
+    <article class="v ${sortMode === "vetting" && i === 0 && s.clean ? "top" : ""}">
       <div class="vh">
         <div class="vinfo">
           <div class="vn">${s.name}</div>

@@ -239,13 +239,26 @@ async def do_reply(req: Request):
         if v in (None, ""):
             continue
         prev = rec["from_quote"].get(k)
+
+        # piece_count is a capability set, so it accumulates and is never a
+        # revision: learning a supplier also does 3-piece is new information,
+        # not a contradiction. Recording it as one put "changed answer between
+        # rounds" on Hantuo for answering the question we asked them.
+        if k == "piece_count":
+            merged = P.merge_constructions(prev, v)
+            if prev in (None, "") and k in P.ALL_FIELDS:
+                new_this_round += 1
+            rec["from_quote"][k] = merged
+            continue
+
         if prev in (None, ""):
             if k in P.ALL_FIELDS:
                 new_this_round += 1
-        elif str(prev) != str(v):
+        elif str(prev) != str(v) and k in P.REVISION_FIELDS:
             # They said something different the second time. Keep the newer
             # value but record the change: a price that moves between rounds
-            # is worth knowing about.
+            # is worth knowing about. Restricted to numbers and booleans,
+            # because a reworded prose summary is not a changed answer.
             changed.append(f"{k}: {prev} -> {v}")
         rec["from_quote"][k] = v
 

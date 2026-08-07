@@ -34,6 +34,23 @@ non-disclosure. It usually does.
 are separate questions. A cast 3-piece is a real, honest product. Never let
 one field fall back to the other.
 
+**4b. Capability and quote are different questions.**
+`piece_count` is the SET of constructions a supplier can build, rendered as
+tags. It accumulates through `merge_constructions()` and is never overwritten
+by whichever one they last quoted. Every price, meanwhile, is for
+`QUOTE_CONSTRUCTION` (3-piece) so the figures compare, and
+`quote_construction` records what a stored price is actually for.
+
+Conflating the two cost a supplier their ranking. Hantuo quoted 2-piece, was
+asked for 3-piece, and the second quote overwrote the first: their
+`piece_count` collapsed from a capability to a single value, the price rise
+logged as a revision, they were flagged "changed answer between rounds", and
+they fell from first to second. They had done nothing but answer the
+question. A vendor must never be penalised for disclosing more, which is
+principle 3 read in the mirror.
+
+Construction is NOT a scoring input and must not become one.
+
 **5. Flow forming is not forging.**
 "Rotary forged" and "flow formed" mean a CAST centre with a spun barrel.
 The reply parser is explicitly told not to normalise those to "forged".
@@ -164,6 +181,14 @@ supplier who is already talking to you.
 rounds"` used to be tacked on by app.py after `_flags()` returned, so every
 `recompute.py` run wiped it. It now derives from `meta.revisions`. Any new
 flag must be computable from the record alone or it will not survive.
+
+**Only numbers and booleans count as a changed answer.** `REVISION_FIELDS`
+gates what goes into `meta.revisions`. The prose fields are the model's
+summary of a reply, and re-reading the same text rewords it: Gushi's
+`defect_policy` shifted from "compensation provided if damage occurs" to
+"compensation provided for damage" and earned a "changed answer between
+rounds" flag for a sentence the supplier never revised. A reworded summary is
+not a contradiction.
 
 ---
 

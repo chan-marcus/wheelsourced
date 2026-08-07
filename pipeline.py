@@ -39,10 +39,18 @@ TODAY = date.today().isoformat()
 # ever stand in for the other. `forging_process` keeps their claim verbatim,
 # which is what lets the flag logic tell press forging from flow forming.
 QUOTE_ONLY = {
-    "price_per_wheel_1set":  "Price per single wheel and price for 1 set (4 pcs)",
+    # Every price on the site is a 3-piece price. Say so in the question, or
+    # you get one vendor's 2-piece quote sitting in the same column as another
+    # vendor's 3-piece and the table silently compares different products.
+    # Hantuo quoted 2-piece, then quoted 3-piece when asked, and the second
+    # answer overwrote the first: it read as a price rise and cost them their
+    # ranking for answering an extra question.
+    "price_per_wheel_1set":  "For the 3-PIECE construction: price per single wheel, and price for 1 set (4 pcs)",
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
     "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
-    "piece_count":           "Is it monoblock, 2-piece, or 3-piece? or all options available?",
+    # A capability question, not a description of one product. Suppliers
+    # routinely make all three, and the answer is a set.
+    "piece_count":           "Which constructions can you make: monoblock (single-piece), 2-piece, 3-piece? List every one you offer, not just this listing",
     "cert_document":         "Which certifications do you have? (DOT, JWL, VIA, TUV, etc.) Does it cover this width? Certificate PDF?",
     "freight_cif_usd":       "Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse",
     "hs_code":               "HS code / tariff classification for your wheels",
@@ -73,12 +81,75 @@ ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
 # Gushi replied "Weight is about 11 kg, load capacity is 850 kg" and both
 # fields stayed null. Older records still hold values only because these
 # fields were in the asked set before the question set was trimmed.
-EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart")
+EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart",
+                  # Which construction the stored price is actually for. Not a
+                  # question: it qualifies the price. Without it a 2-piece
+                  # quote and a 3-piece quote sit in the same column looking
+                  # comparable, and ask() treats the 2-piece one as answered
+                  # and never asks again.
+                  "quote_construction")
 
 # What gets persisted. ALL_FIELDS stays the *asked* set, so it remains the
 # denominator for questions_answered: a supplier has not failed to answer
 # something nobody put to them.
 STORED_FIELDS = tuple(ALL_FIELDS) + EXTRACTED_ONLY
+
+# Constructions, in the order they are displayed. Also the whitelist: a reply
+# saying "all options" or "any style" is not a capability, it is a sales line.
+CONSTRUCTIONS = ("monoblock", "2-piece", "3-piece")
+
+# Every price on the sheet is for this construction. Pricing is only
+# comparable if the thing being priced is the same, and construction drives
+# cost harder than anything else: a 3-piece has a barrel, a lip and about
+# thirty bolts that a monoblock does not. Which constructions a supplier can
+# build is a separate question, answered as a set of tags.
+QUOTE_CONSTRUCTION = "3-piece"
+
+_CONSTRUCTION_ALIASES = {
+    "single-piece": "monoblock", "single piece": "monoblock",
+    "1-piece": "monoblock", "one-piece": "monoblock", "1 piece": "monoblock",
+    "two-piece": "2-piece", "2 piece": "2-piece",
+    "three-piece": "3-piece", "3 piece": "3-piece",
+}
+
+
+# Fields where a changed answer is a real contradiction worth flagging.
+# Deliberately only numbers and booleans. The prose fields are the model's
+# summary of what a supplier wrote, and re-reading the same reply rewords it:
+# Gushi's defect_policy went from "compensation provided if damage occurs" to
+# "compensation provided for damage" and earned a "changed answer between
+# rounds" flag for a sentence the supplier never revised.
+REVISION_FIELDS = (
+    "price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd",
+    "weight_kg", "load_rating_kg", "forged_confirmed", "is_manufacturer",
+    "cnc_inhouse", "hs_code",
+)
+
+
+def merge_constructions(prev, new):
+    """Union of what a supplier says they can build.
+
+    piece_count is a capability set, not a description of whichever product
+    they last quoted, so it only ever grows. Overwriting it lost the earlier
+    answer and logged a revision, which put "changed answer between rounds" on
+    a supplier who had simply answered a second question: Hantuo said 2-piece
+    in round one, said 3-piece when asked for a 3-piece quote, and got flagged
+    for contradicting themselves.
+    """
+    def norm(v):
+        if v in (None, ""):
+            return []
+        out = []
+        for item in (v if isinstance(v, list) else [v]):
+            s = str(item).strip().lower()
+            s = _CONSTRUCTION_ALIASES.get(s, s)
+            if s in CONSTRUCTIONS:
+                out.append(s)
+        return out
+
+    seen = set(norm(prev)) | set(norm(new))
+    return [c for c in CONSTRUCTIONS if c in seen] or None
+
 
 # Round two unlocks once these are known. Not the whole of round one: a
 # supplier who answered everything except the size chart has clearly engaged,
@@ -278,6 +349,17 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
             rec["from_quote"].setdefault(k, None)
 
         def answered(k):
+            # A price quoted for the wrong construction is not an answer to
+            # the question we now ask. Every figure on the sheet is a
+            # QUOTE_CONSTRUCTION price, so a 2-piece quote left over from
+            # before that rule has to be asked again, or it sits in the table
+            # looking comparable to a 3-piece one forever. Unknown is left
+            # alone: re-asking everyone who never named a construction would
+            # spam suppliers who may well have quoted the right thing.
+            if k in ("price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd"):
+                qc = rec["from_quote"].get("quote_construction")
+                if qc and qc != QUOTE_CONSTRUCTION:
+                    return False
             return rec["from_quote"].get(k) not in (None, "")
 
         # Round two once the supplier has actually engaged. The gate exists to
@@ -308,7 +390,7 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  {size} \u00b7 {offset} \u00b7 {pcd} \u00b7 {finish}
+  {size} \u00b7 {offset} \u00b7 {pcd} \u00b7 {finish} \u00b7 {QUOTE_CONSTRUCTION}
 
 Could you confirm:
 
@@ -324,7 +406,7 @@ Thank you.""".strip() + "\n"
         rec["meta"].setdefault("rfq_first_sent", TODAY)
         rec["meta"]["rfq_sent"] = TODAY
         rec["meta"]["rfq_round"] = 2 if round2 else 1
-        rec["meta"]["ref_spec"] = f"{size} {offset} {pcd} {finish}"
+        rec["meta"]["ref_spec"] = f"{size} {offset} {pcd} {finish} {QUOTE_CONSTRUCTION}"
         f.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
         print(f"  {rec['id']}: round {2 if round2 else 1}, asking {len(missing)} questions")
 
@@ -338,8 +420,11 @@ REPLY_SCHEMA = """
 This is a supplier's reply to a sourcing enquiry, often in broken English.
 Return one JSON object. Extract ONLY what the supplier actually stated.
 
-  price_per_wheel_1set   number or null (USD)
-  price_per_wheel_4set   number or null
+  price_per_wheel_1set   number or null (USD). We always ask for the 3-piece
+                         price. If they quote several constructions, take the
+                         3-piece figure. If they quote only one construction
+                         and do not say which, take it.
+  price_per_wheel_4set   number or null. Same rule.
   weight_kg              number or null
   load_rating_kg         number or null
   forged_confirmed       true | false | null. TRUE only for genuine press
@@ -349,9 +434,15 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          forming, rotary forging or a spun barrel, which mean
                          a CAST centre. NULL if they never addressed it, or
                          said only "forged" with no process detail at all.
-  piece_count            "monoblock" | "2-piece" | "3-piece" |
-                         ["2-piece", "3-piece"] | null. Array if vendor offers
-                         multiple options (e.g. "available in 2-piece and 3-piece").
+  piece_count            ARRAY of every construction the supplier says they
+                         can make, from "monoblock", "2-piece", "3-piece".
+                         Null if they never addressed it. This is a
+                         CAPABILITY, not a description of one product: a
+                         supplier who says "we make all three" is
+                         ["monoblock", "2-piece", "3-piece"], and one who
+                         quotes a 3-piece but mentions offering 2-piece is
+                         ["2-piece", "3-piece"]. Do not narrow the list to
+                         whichever one they happened to quote.
                          INDEPENDENT of forging. A cast 3-piece is a real,
                          honest product and a forged monoblock is not
                          "more pieces". Never infer either field from the
@@ -364,6 +455,10 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          downgrade. "Flow formed" and "rotary forged" mean a
                          CAST centre with a spun barrel -- record those terms
                          exactly, do not translate them to "forged".
+  quote_construction     "monoblock" | "2-piece" | "3-piece" | null. Which
+                         construction the price above is for. If they name it
+                         ("the three-piece style is 550 USD"), use that. If
+                         they give one price and never say, null.
   cert_document          "provided" | "promised" | "claimed without document" | null
   size_chart             string or null. If they listed sizes or attached a
                          chart, summarise the range, e.g. "17-20in, 8-12J,
@@ -491,7 +586,11 @@ def ingest(wheel, force=False, workers=6):
         filled = 0
         for k in STORED_FIELDS:
             if got.get(k) not in (None, ""):
-                rec["from_quote"][k] = got[k]
+                if k == "piece_count":
+                    rec["from_quote"][k] = merge_constructions(
+                        rec["from_quote"].get(k), got[k])
+                else:
+                    rec["from_quote"][k] = got[k]
                 if k in ALL_FIELDS:
                     filled += 1
 
@@ -586,9 +685,11 @@ def _flags(rec):
         # Scale with the wheel. A flat ceiling accuses honest suppliers of
         # big sizes, and gives multi-piece no allowance for its hardware.
         dia, wid = _ref_size(rec)
-        pieces = str(Q.get("piece_count") or L.get("construction") or "").lower()
-        multi = any(k in pieces for k in ("2-piece", "3-piece", "two piece",
-                                          "three piece", "2 piece", "3 piece"))
+        # The quote, and therefore the weight quoted against it, is always for
+        # QUOTE_CONSTRUCTION. Do not read the allowance off piece_count: that
+        # is now the set of constructions a supplier *can* build, and someone
+        # who also offers monoblock is not quoting one.
+        multi = QUOTE_CONSTRUCTION in ("2-piece", "3-piece")
         ceiling = FORGED_K * dia * wid * (MULTIPIECE_TOLERANCE if multi else MONOBLOCK_TOLERANCE)
         if w > ceiling:
             fl.append(f"weight {w}kg high for forged ({src}) at {dia:g}x{wid:g} "
@@ -597,8 +698,10 @@ def _flags(rec):
         fl.append("claims factory, profile says trading")
     if Q.get("load_rating_kg") is None:
         fl.append("no load rating given")
-    if Q.get("piece_count") in (None, ""):
-        fl.append("piece count not confirmed")
+    # Falsy covers the empty list merge_constructions can no longer produce,
+    # but would otherwise slip past an `in (None, "")` test.
+    if not Q.get("piece_count"):
+        fl.append("constructions offered not confirmed")
     fp = str(Q.get("forging_process") or "").lower()
     # Every forged wheel is machined from a forged blank -- that IS the
     # process, so it is not a red flag. The actual fraud vector is a cast

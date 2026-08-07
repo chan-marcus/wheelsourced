@@ -150,7 +150,7 @@ could outrank one with five on a lucky average, which is the same failure
 mode as defaulting a missing freight cost to zero. The floor of 0.55 means a
 thin record is discounted, not erased.
 
-Weights: reorder 2.0, rating 1.5, store age 1.5, review count 1.2, landed
+Weights: reorder 2.0, rating 1.5, store age 1.5, review count 1.3, landed
 cost 1.0, response 0.3, transit 0.3. Adding a dimension changes every score,
 so check the whole table afterwards rather than the one vendor you had in
 mind: adding transit at 0.3 raised a thin vendor's score because it happened

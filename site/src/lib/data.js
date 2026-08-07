@@ -229,7 +229,7 @@ function scoreAll(list) {
     // Absolute. Alibaba ratings all sit between 4.4 and 5.0, so anchor at 4.
     { k: credibleRating,     w: 1.5, abs: (v) => clamp01(v - 4) },
     { k: (s) => s.years,     w: 1.5, abs: (v) => clamp01(v / TRUSTED_YEARS) },
-    { k: (s) => s.review_count, w: 1.2, abs: (v) => clamp01(v / TRUSTED_REVIEWS) },
+    { k: (s) => s.review_count, w: 1.3, abs: (v) => clamp01(v / TRUSTED_REVIEWS) },
   ];
 
   const ranges = dims.map((d) => {

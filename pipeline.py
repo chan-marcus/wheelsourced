@@ -623,7 +623,10 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          much for two piece" is a 2-piece price even if the
                          reply itself does not repeat the word. If they give
                          one price and never say, null.
-  cert_document          "provided" | "promised" | "claimed without document" | null
+  cert_document          "provided" | "promised" | "claimed without document"
+                         | "not available" | null. Use "not available" when
+                         they say they cannot or do not supply one. That is a
+                         disclosure, not a claim.
   certs_claimed          ARRAY of certification names the SUPPLIER says they
                          hold, e.g. ["DOT","VIA"] for "our products are DOT &
                          VIA certified". [] if they name none. Separate from
@@ -648,6 +651,9 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
 Critical rules:
 - If they claim a certification but do not attach or offer the document, that
   is "claimed without document", NOT "provided".
+- "Claimed without document" requires a claim. A supplier saying they cannot
+  provide a certificate, or that one would need a test run first, has told us
+  something useful and claimed nothing: that is "not available".
 - certs_claimed is only what the SUPPLIER claims. The pasted thread contains
   our side of the conversation too, and our question lists DOT, JWL, VIA and
   TUV as examples. Those are our words. Never return a certification that
@@ -959,7 +965,15 @@ def _flags(rec):
 
     if forged and p and p < 150:
         fl.append("price implausible for forged")
-    if Q.get("cert_document") == "claimed without document":
+    # A claim is only unbacked if something was claimed. certs_claimed is the
+    # discriminator the enum alone could not give: Ningbo answered "we
+    # currently cannot provide certificates, you would need 20 samples first",
+    # which is a straight and useful disclosure, and the sheet accused them of
+    # claiming a certification they could not evidence. That is principle 5's
+    # false accusation in a different column. The prompt now has "not
+    # available" for exactly this, and the guard stays anyway, because a
+    # mis-bucketed enum value should not be able to produce the accusation.
+    if Q.get("cert_document") == "claimed without document" and Q.get("certs_claimed"):
         fl.append("cert claimed, no document")
     # The listing sells it as forged and the supplier will not say so.
     if listing_forged and quoted_forged is False:

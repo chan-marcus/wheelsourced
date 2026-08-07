@@ -176,9 +176,18 @@ const CERT_DOC = {
   "provided": "on file",
   "promised": "promised",
   "claimed without document": "no document",
+  "not available": "none available",
 };
 const certDoc = (v) =>
   v ? ` <span class="grey">${CERT_DOC[v] || v}</span>` : "";
+
+// Standing alone the stored phrase is usually self-describing, so it is used
+// as it is. "not available" is the exception: printed raw it sits one word
+// away from the "not disclosed" that means the supplier never answered, and a
+// supplier who told us they have no certificate must not read like one who
+// ignored the question.
+const CERT_DOC_ALONE = { "not available": "none available" };
+const certAlone = (v) => (v ? CERT_DOC_ALONE[v] || v : null);
 const or = (v, unit = "") =>
   v === null || v === undefined || v === ""
     ? `<span class="none">not disclosed</span>` : `${v}${unit}`;
@@ -291,7 +300,7 @@ function render() {
           <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
           <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
           <div><dt>Certification</dt><dd>${
-            s.certs ? s.certs.join(", ") + certDoc(s.cert) : or(s.cert)}</dd></div>
+            s.certs ? s.certs.join(", ") + certDoc(s.cert) : or(certAlone(s.cert))}</dd></div>
           <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
           <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
             : s.cnc === false ? "outsourced" : or(null)}</dd></div>

@@ -239,6 +239,23 @@ were read and that stays true. It does redo `questions_answered` when the field
 is in `ALL_FIELDS`, since that fraction counts populated fields and would
 otherwise be stale. It does NOT recompute flags: run `recompute.py` after.
 
+**"Claimed without document" requires a claim.** The enum had no way to say a
+supplier had told us they have no certificate, so the model put that in the
+same bucket as an unbacked boast. Ningbo answered "we currently cannot provide
+certificates, you would need 20 samples first", which is straight and useful,
+and both the flag and the public Certification cell accused them of claiming
+something. Principle 5's false accusation, one column over.
+
+`cert_document` now has `"not available"` for a decline, and the flag
+additionally requires `certs_claimed` to be non-empty. Both, deliberately: the
+enum value is the honest record, and the `certs_claimed` gate means a
+mis-bucketed value cannot produce the accusation on its own. Weiluo still
+trips it, because they did claim DOT and VIA and did not send anything.
+
+On the sheet a decline reads "none available", not the raw stored phrase,
+which would otherwise sit one word from the "not disclosed" that means the
+supplier never answered.
+
 **The Certification column is quoted-only, with no listing fallback.** The
 listing side sprays: one listing claims eight certifications where the
 supplier, asked directly, named two. Rendering the long unvetted list beside

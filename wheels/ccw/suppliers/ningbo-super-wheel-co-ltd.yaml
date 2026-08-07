@@ -94,7 +94,7 @@ from_quote:
   weight_kg: 13.5
   load_rating_kg: 825
   forging_process: forged blanks, 6061-T6 aviation grade aluminium
-  cert_document: claimed without document
+  cert_document: not available
   size_chart: monoblock 15-26in; 2-piece and 3-piece 17-30in; fully customizable,
     no fixed chart
   freight_cif_usd: null
@@ -143,5 +143,4 @@ meta:
     only for orders of 20+ samples; 3-year structural warranty offered; freight quote
     320 USD for one set of 18-inch wheels
 flags:
-- cert claimed, no document
 - quoted 3-piece, no 2-piece price

@@ -123,7 +123,11 @@ footer p{font-family:'IBM Plex Mono';font-size:11px;line-height:1.7;color:var(--
 .band b{font-weight:400;color:var(--soft)}
 
 .preamble{border-left:3px solid var(--ink);padding:2px 0 2px 16px;margin:26px 0 6px}
-.preamble p{margin:0 0 9px;font-size:14.5px;max-width:66ch}
+/* One measure in absolute units, not 66ch. ch is the width of the font's
+   "0", so the mono paragraph wrapped 79px narrower than the sans one and
+   the two right edges never lined up. text-wrap:pretty keeps the last line
+   off a single orphaned word ("to." was sitting alone). */
+.preamble p{margin:0 0 9px;font-size:14.5px;max-width:36rem;text-wrap:pretty}
 .preamble p.est{font-family:'IBM Plex Mono';font-size:12.5px;line-height:1.7;color:var(--soft)}
 .preamble p.est b{color:var(--ink)}
 

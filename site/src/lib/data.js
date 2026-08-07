@@ -176,23 +176,64 @@ export function loadVehicles() {
 }
 
 
-// Composite "best vetted": cheap, well rated, long established, fast to reply,
-// high reorder. Each dimension is min-max normalised across the set so no
-// single unit dominates, then averaged over whatever data actually exists.
-// A vendor missing a dimension is scored on the rest rather than penalised
-// into last place, but flags subtract directly.
+// How many reviews a rating needs before it mostly speaks for itself.
+const RATING_PRIOR_WEIGHT = 25;
+// Where longevity and sample size stop earning further credit.
+const TRUSTED_YEARS = 6;
+const TRUSTED_REVIEWS = 150;
+
+const clamp01 = (n) => Math.max(0, Math.min(1, n));
+
+// Composite "best vetted". Dimensions come in two kinds, deliberately:
+//
+//   relative  landed cost, response, reorder, transit. These only mean
+//             anything against the rest of the set, so they are min-max
+//             normalised.
+//   absolute  rating, store age, review count. These mean something on their
+//             own. Min-max hid that: it scores the worst vendor in the set at
+//             zero and everyone else on a curve, so a one-year-old shop only
+//             looked bad because a peer happened to be five. Worse, when
+//             every vendor ties, min-max hands them all full marks, so a set
+//             where nobody has a track record would read as though everybody
+//             did.
+//
+// The rating is credibility-weighted before it is scored. 5.0 from two
+// reviews is not a better rating than 4.8 from eighty-seven, it is a less
+// certain one. Scoring rating and review count as independent dimensions let
+// a vendor bank full marks for a figure its own sample cannot support, which
+// is the "silence must not pay" rule in a different costume.
 function scoreAll(list) {
+  const rated = list.filter((s) => typeof s.store_rating === "number");
+  const prior = rated.length
+    ? rated.reduce((t, s) => t + s.store_rating, 0) / rated.length
+    : null;
+
+  // Shrink each rating toward the set mean in proportion to how few reviews
+  // stand behind it. Two reviews barely move off the prior, three hundred
+  // nearly replace it.
+  const credibleRating = (s) => {
+    if (prior === null || typeof s.store_rating !== "number") return null;
+    const n = s.review_count ?? 0;
+    return (n * s.store_rating + RATING_PRIOR_WEIGHT * prior) / (n + RATING_PRIOR_WEIGHT);
+  };
+
   const dims = [
-    { k: (s) => s.landed ?? s.setPrice, lowerBetter: true,  w: 1.0 },
-    { k: (s) => s.store_rating,         lowerBetter: false, w: 1.2 },
-    { k: (s) => s.review_count,         lowerBetter: false, w: 1.5 }, // Sample size: low review counts = uncertain rating
-    { k: (s) => s.years,                lowerBetter: false, w: 1.5 }, // Startup risk: young stores are red flags
+    // Landed only. `landed ?? setPrice` compared a vendor's pre-freight
+    // number against everyone else's post-freight one, so withholding freight
+    // made you look cheaper than the vendors who disclosed it. That is the
+    // same bug as defaulting a missing freight cost to zero, wearing a hat.
+    { k: (s) => s.landed,               lowerBetter: true,  w: 1.0 },
     { k: (s) => s.respHours,            lowerBetter: true,  w: 0.3 }, // Minor factor: many fast responders still disappoint
     { k: (s) => s.reorderPct,           lowerBetter: false, w: 2.0 }, // Most telling: share of buyers who came back
-    { k: (s) => transitDays(s.transit), lowerBetter: true,  w: 0.3 }, // How long wheels take to arrive: lower is better
+    { k: (s) => transitDays(s.transit), lowerBetter: true,  w: 0.3 },
+    // Absolute. Alibaba ratings all sit between 4.4 and 5.0, so anchor at 4.
+    { k: credibleRating,     w: 1.5, abs: (v) => clamp01(v - 4) },
+    { k: (s) => s.years,     w: 1.5, abs: (v) => clamp01(v / TRUSTED_YEARS) },
+    { k: (s) => s.review_count, w: 1.2, abs: (v) => clamp01(v / TRUSTED_REVIEWS) },
   ];
 
   const ranges = dims.map((d) => {
+    if (d.abs) return null;
     const vals = list.map(d.k).filter((v) => typeof v === "number");
     return vals.length ? [Math.min(...vals), Math.max(...vals)] : null;
   });
@@ -200,11 +241,21 @@ function scoreAll(list) {
   list.forEach((s) => {
     let sum = 0, wt = 0;
     dims.forEach((d, i) => {
-      const r = ranges[i], v = d.k(s);
-      if (!r || typeof v !== "number") return;
-      const [lo, hi] = r;
-      let n = hi === lo ? 1 : (v - lo) / (hi - lo);
-      if (d.lowerBetter) n = 1 - n;
+      const v = d.k(s);
+      if (typeof v !== "number") return;
+      let n;
+      if (d.abs) {
+        n = d.abs(v);
+      } else {
+        const r = ranges[i];
+        if (!r) return;
+        const [lo, hi] = r;
+        // No spread means the dimension separates nobody. Award the midpoint
+        // rather than full marks: an uninformative dimension should not read
+        // as everyone excelling at it.
+        n = hi === lo ? 0.5 : (v - lo) / (hi - lo);
+        if (d.lowerBetter) n = 1 - n;
+      }
       sum += n * d.w;
       wt += d.w;
     });

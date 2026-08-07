@@ -117,17 +117,44 @@ flag must be computable from the record alone or it will not survive.
 
 ## Scoring
 
-`scoreAll()` in `site/src/lib/data.js` computes the "best vetted" number:
-min-max normalises price, store rating, store age, response time and reorder
-rate across the set, then subtracts 6 per flag. A vendor missing a dimension
-is scored on the rest rather than pushed to last place.
+`scoreAll()` in `site/src/lib/data.js` computes the "best vetted" number over
+seven dimensions, then subtracts 6 per flag. A vendor missing a dimension is
+scored on the rest rather than pushed to last place.
+
+Dimensions come in two kinds and this distinction matters:
+
+- **Relative** (min-max across the set): landed cost, response time, reorder
+  rate, transit time. These only mean anything against the peers.
+- **Absolute** (fixed scale): store rating, store age, review count. Min-max
+  scored the worst vendor in the set at zero and everyone else on a curve, so
+  a one-year-old shop only looked bad because a peer happened to be five. When
+  every vendor ties on a dimension min-max gives them all full marks, which
+  reads as everyone excelling at something none of them has.
+
+**Ratings are credibility-weighted before scoring.** A rating is shrunk toward
+the set mean in proportion to how few reviews back it (`RATING_PRIOR_WEIGHT`,
+25). 5.0 from two buyers is not a better rating than 4.8 from eighty-seven, it
+is a less certain one. Scoring rating and review count as independent
+dimensions let a vendor bank full marks for a figure its own sample could not
+support: the "silence must not pay" rule in a different costume.
+
+**Only a fully quoted landed cost is scored.** The price dimension used
+`landed ?? setPrice`, which compared one vendor's pre-freight number against
+everyone else's post-freight one, so withholding freight made you look cheaper
+than the vendors who disclosed it. Same bug as defaulting freight to zero.
 
 Scaled by coverage: the weighted average is multiplied by
-`0.55 + 0.45 * coverage`, where coverage is the share of the five dimensions
+`0.55 + 0.45 * coverage`, where coverage is the share of the seven dimensions
 the vendor actually has. Before this, a vendor with two populated dimensions
 could outrank one with five on a lucky average, which is the same failure
 mode as defaulting a missing freight cost to zero. The floor of 0.55 means a
 thin record is discounted, not erased.
+
+Weights: reorder 2.0, rating 1.5, store age 1.5, review count 1.2, landed
+cost 1.0, response 0.3, transit 0.3. Adding a dimension changes every score,
+so check the whole table afterwards rather than the one vendor you had in
+mind: adding transit at 0.3 raised a thin vendor's score because it happened
+to be fastest, which is the opposite of what was intended.
 
 ---
 

@@ -115,6 +115,12 @@ let sortMode = "vetting";
 let current = null;
 
 const money = (n) => "$" + Math.round(n).toLocaleString();
+// "4 pieces" -> "4". The Min. order label already says what is being counted.
+// Only piece/pieces: a "2 sets" MOQ means something different from "2" and
+// keeps its unit. Display only, because s.moq is compared as a whole string
+// above to decide whether a per-wheel figure is meaningful.
+const moqCount = (v) =>
+  typeof v === "string" ? v.replace(/\s*pieces?\b\.?/i, "").trim() || v : v;
 const or = (v, unit = "") =>
   v === null || v === undefined || v === ""
     ? `<span class="none">not disclosed</span>` : `${v}${unit}`;
@@ -233,7 +239,7 @@ function render() {
           <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
           <div><dt>Damage policy</dt><dd>${or(s.defects)}</dd></div>
           <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
-          <div><dt>Min. order</dt><dd>${or(s.moq)}</dd></div>
+          <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
         </dl>
       </div>
 

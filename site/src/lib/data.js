@@ -268,7 +268,7 @@ function scoreAll(list) {
     const coverage = wt / dims.reduce((t, d) => t + d.w, 0);
     const base = wt ? (sum / wt) * (0.55 + 0.45 * coverage) : 0;
     s.coverage = Math.round(coverage * 100);
-    s.vetScore = Math.round(Math.max(0, base * 100 - s.flags.length * 6));
+    s.vetScore = Math.round(Math.max(0, base * 100));
   });
 
   return list.sort((a, b) => b.vetScore - a.vetScore);

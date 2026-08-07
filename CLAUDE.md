@@ -149,8 +149,9 @@ flag must be computable from the record alone or it will not survive.
 ## Scoring
 
 `scoreAll()` in `site/src/lib/data.js` computes the "best vetted" number over
-seven dimensions, then subtracts 6 per flag. A vendor missing a dimension is
-scored on the rest rather than pushed to last place.
+seven dimensions. A vendor missing a dimension is scored on the rest rather
+than pushed to last place. Flags are computed and stored but do not affect
+the vetting score.
 
 Dimensions come in two kinds and this distinction matters:
 

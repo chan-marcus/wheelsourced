@@ -118,10 +118,20 @@ matching is a human judgement; do not try to automate it.
 in pipeline.py, run `python recompute.py` or the old flags persist in the
 YAML and show on the site.
 
-**Astro reads ../wheels at build time.** `npm run dev` does not watch files
-outside its own directory, so after a pull you must restart the dev server.
-The GUI reads YAML live; the site does not. They will disagree until you
-restart Astro.
+**Astro reads ../wheels at build time.** The GUI reads YAML per request; the
+site reads it once and bakes it into `getStaticPaths`. Vite only watches its own
+root, so for a long time nothing written to `wheels/` reached a running dev
+server and the sheet quietly served whatever it had at startup. That does not
+present as a stale page, it presents as the write having failed: reset a
+supplier, watch the GUI clear, then see the old figures still on the sheet.
+
+The `watch-wheels` plugin in `astro.config.mjs` now watches `../wheels` and
+restarts the server on change, debounced so a pull does not restart a dozen
+times. It restarts rather than invalidating the module because `getStaticPaths`
+caches per route and has already handed the supplier data to the props, so
+dropping `data.js` out of the module graph would not reach it.
+
+Nothing watches during `astro build`, which is correct: a build reads once.
 
 **Changing the question set needs a migration.** `ask()` iterates the field
 definitions (not the record) and calls setdefault, so new keys backfill

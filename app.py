@@ -321,30 +321,57 @@ async def edit_field(req: Request):
     return {"ok": True, "record": rec}
 
 
+# Meta written by the listing pull and by ask(), not by reading a reply. A
+# reset throws away everything a supplier told us, so anything NOT in here goes.
+# Kept as a keep-list rather than a drop-list on purpose: parse-derived keys get
+# added over time and a drop-list silently misses the new ones, which is exactly
+# how reply_count and questions_answered survived the first version of this.
+RESET_KEEPS_META = ("listing_seen", "ref_spec", "rfq_sent", "rfq_round", "rfq_first_sent")
+
+
 @app.post("/api/reset-supplier/{supplier_id:path}")
-async def reset_supplier(supplier_id: str):
-    """Clear quoted data and parsing cache for a supplier so you can re-parse."""
-    # Infer the wheel from the first supplier directory we find. This is a
-    # little shaky but reset is dev-only and the tool pane only uses it per
-    # wheel anyway.
-    wheels_dir = Path("wheels")
-    for wheel_dir in wheels_dir.iterdir():
-        if not wheel_dir.is_dir():
-            continue
+async def reset_supplier(supplier_id: str, req: Request):
+    """Clear everything the replies told us, so the archive can be re-parsed.
+
+    The raw replies in replies/ are never touched. This only drops what the
+    model extracted from them, which is what makes a re-parse meaningful.
+    """
+    # The GUI knows which wheel it is looking at, so trust it. Scanning every
+    # wheel for a matching filename resets the wrong record when the same
+    # factory is tracked under two wheels, which is normal here.
+    try:
+        wheel = (await req.json()).get("wheel")
+    except Exception:
+        wheel = None
+
+    roots = [Path("wheels") / wheel] if wheel else \
+            [d for d in Path("wheels").iterdir() if d.is_dir()]
+
+    for wheel_dir in roots:
         sup_file = wheel_dir / "suppliers" / f"{supplier_id}.yaml"
         if not sup_file.exists():
             continue
         rec = yaml.safe_load(sup_file.read_text())
-        # Clear all from_quote fields so they start empty.
+
+        # Every quoted field back to null, including the extracted-only ones.
         rec["from_quote"] = {k: None for k in P.STORED_FIELDS}
-        # Clear the parsing cache so ingest will re-read everything.
-        rec.setdefault("meta", {})["parsed_replies"] = {}
-        # Clear off-basis quotes (prices for other constructions).
-        rec["meta"].pop("off_basis_quotes", None)
-        # Recompute flags on the clean slate.
+        # Drop the parse cache so ingest re-reads the archive instead of
+        # skipping it on an unchanged content hash.
+        meta = {k: v for k, v in (rec.get("meta") or {}).items() if k in RESET_KEEPS_META}
+        meta["parsed_replies"] = {}
+        rec["meta"] = meta
+        # Flags last, and only now: _flags() derives "changed answer between
+        # rounds" from meta.revisions, so clearing revisions above is what stops
+        # a blank record carrying an accusation about answers it no longer holds.
         rec["flags"] = P._flags(rec)
+
         sup_file.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
-        return {"ok": True}
+        log(f"{supplier_id}: reset, {len(list((wheel_dir / 'replies').glob(supplier_id + '__*.txt')))} replies kept")
+        # The GUI rebuilds the row from this, so returning it is not optional:
+        # without it the caller reads r.record.from_quote off undefined and
+        # reports a failure for a reset that actually succeeded.
+        return {"ok": True, "record": rec}
+
     return JSONResponse({"ok": False, "error": f"supplier not found: {supplier_id}"}, status_code=404)
 
 
@@ -397,6 +424,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .f input.empty{border-color:var(--chop);border-style:dashed}
 #log{font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);background:var(--stock2);border:1px solid var(--rule);padding:10px;height:120px;overflow:auto;white-space:pre-wrap;margin-top:10px}
 .hint{font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:8px}
+
+/* Native confirm() and alert() are OS chrome: wrong typeface, wrong palette,
+   and blocking. They are also suppressed outright in some embedded browsers,
+   where confirm() silently returns false and the button just does nothing. */
+.scrim{position:fixed;inset:0;background:rgba(27,33,28,.55);display:flex;
+  align-items:flex-start;justify-content:center;padding:14vh 18px;z-index:60}
+.scrim[hidden]{display:none}
+.dlg{background:var(--stock);border:2px solid var(--ink);max-width:460px;width:100%;padding:20px}
+.dlg h3{font-family:'Barlow Condensed';font-weight:600;font-size:23px;text-transform:uppercase;
+  margin:0 0 10px;letter-spacing:.01em}
+.dlg p{font-family:'IBM Plex Mono';font-size:12.5px;line-height:1.65;color:var(--soft);margin:0 0 6px}
+.dlg p b{color:var(--ink);font-weight:500}
+.dlg .acts{display:flex;gap:9px;margin-top:18px}
+
+#toasts{position:fixed;right:18px;bottom:18px;z-index:70;display:flex;
+  flex-direction:column;gap:8px;align-items:flex-end}
+.toast{font-family:'IBM Plex Mono';font-size:12px;line-height:1.5;max-width:380px;
+  background:var(--ink);color:var(--stock);border:1px solid var(--ink);padding:11px 14px;
+  animation:tin 180ms cubic-bezier(.4,0,.2,1)}
+.toast.bad{background:var(--chop);border-color:var(--chop)}
+.toast i{font-style:normal;display:block;font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;opacity:.72;margin-bottom:3px}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.toast{animation:none}}
 </style></head><body><div class="wrap">
 
 <header>
@@ -440,6 +491,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div id="sups"></div>
 
 </div>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgtitle">
+    <h3 id="dlgtitle"></h3>
+    <div id="dlgbody"></div>
+    <div class="acts">
+      <button id="dlgok"></button>
+      <button class="ghost" id="dlgno">Cancel</button>
+    </div>
+  </div>
+</div>
+<div id="toasts" aria-live="polite"></div>
+
 <script>
 let S={wheel:"",suppliers:[],fields:{},rfqs:{}}, OPEN=null;
 
@@ -463,6 +527,47 @@ async function newWheel(){
   await post("/api/wheel",{name:n}); boot(n.toLowerCase().replace(/[^a-z0-9-]+/g,"-"));
 }
 const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(r=>r.json());
+
+// Resolves true/false. Native confirm() blocks the event loop and is disabled
+// outright in some embedded browsers, where it returns false and the button
+// reads as broken.
+function ask({title,body,ok="Confirm"}){
+  const scrim=document.getElementById("scrim");
+  document.getElementById("dlgtitle").textContent=title;
+  document.getElementById("dlgbody").innerHTML=body;
+  const okb=document.getElementById("dlgok"), nob=document.getElementById("dlgno");
+  okb.textContent=ok;
+  scrim.hidden=false; okb.focus();
+  return new Promise(res=>{
+    const done=v=>{
+      scrim.hidden=true;
+      okb.onclick=nob.onclick=scrim.onclick=null;
+      document.removeEventListener("keydown",key);
+      res(v);
+    };
+    const key=e=>{ if(e.key==="Escape") done(false); };
+    okb.onclick=()=>done(true);
+    nob.onclick=()=>done(false);
+    scrim.onclick=e=>{ if(e.target===scrim) done(false); };
+    document.addEventListener("keydown",key);
+  });
+}
+
+// Which questions are still unanswered, recomputed from a record the server
+// just returned. Was written out three times with the same filter; a reset that
+// returns a record has to agree with a parse that returns one.
+const withGaps=rec=>({...rec,_gaps:Object.keys(S.fields).filter(k=>{
+  const v=rec.from_quote[k]; return !v && v!==false;})});
+
+function toast(msg,kind){
+  const t=document.createElement("div");
+  t.className="toast"+(kind==="bad"?" bad":"");
+  t.innerHTML=`<i>${kind==="bad"?"Failed":"Done"}</i>`;
+  t.appendChild(document.createTextNode(msg));
+  document.getElementById("toasts").appendChild(t);
+  // Errors stay put long enough to read and copy; confirmations do not.
+  setTimeout(()=>t.remove(),kind==="bad"?9000:4000);
+}
 
 async function savePicks(){
   const r=await post("/api/picks",{wheel:S.wheel,text:document.getElementById("picks").value});
@@ -594,38 +699,48 @@ async function sendReply(id, btn){
   if(btn){btn.textContent="Parsing...";btn.disabled=true;}
   try{
     const r=await post("/api/reply",{wheel:S.wheel,id,text,date:document.getElementById("dt-"+id).value});
-    if(r&&r.ok){
-      S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);
+    if(r&&r.ok&&r.record){
+      S.suppliers=S.suppliers.map(s=>s.id===id?withGaps(r.record):s);
       render();
     }else{
-      alert("Parse failed: "+((r&&r.error)||"the server did not return a record."));
+      toast("Parse failed: "+((r&&r.error)||"the server did not return a record."),"bad");
     }
   }catch(e){
     // Without this the rejected await skipped render(), the button stayed on
     // "Parsing..." forever, and a request that failed in 20ms read as a hang.
-    alert("Parse failed: "+e.message);
+    toast("Parse failed: "+e.message,"bad");
   }finally{
     if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
   }
 }
 async function setField(id,key,value){
   const r=await post("/api/field",{wheel:S.wheel,id,key,value});
-  if(r.ok){S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);render();}
+  if(r&&r.ok&&r.record){S.suppliers=S.suppliers.map(s=>s.id===id?withGaps(r.record):s);render();}
 }
 async function resetSupplier(id,btn){
-  if(!confirm("Clear all data for this supplier and re-parse from replies?"))return;
+  const ok=await ask({
+    title:"Reset "+id.replace(/-/g," "),
+    body:`<p>Clears every quoted field, the parse cache, and the reply history
+      on this record. The raw replies stay on disk, so you can parse them again.</p>
+      <p><b>Anything typed in by hand is lost too.</b></p>`,
+    ok:"Reset data"});
+  if(!ok) return;
   const label=btn.textContent;
   btn.textContent="Resetting...";btn.disabled=true;
   try{
     const r=await post("/api/reset-supplier/"+id,{wheel:S.wheel});
-    if(r&&r.ok){
-      S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);
+    // The record is what the row is rebuilt from. Guard it: an endpoint that
+    // returns {ok:true} and nothing else used to throw here and report a
+    // failure for a reset that had already written to disk.
+    if(r&&r.ok&&r.record){
+      S.suppliers=S.suppliers.map(s=>s.id===id?withGaps(r.record):s);
       render();
+      toast(id+" cleared. Paste a reply, or run ingest, to fill it again.");
     }else{
-      alert("Reset failed: "+(r&&r.error||"unknown error"));
+      toast("Reset failed: "+((r&&r.error)||"the server did not return a record."),"bad");
     }
   }catch(e){
-    alert("Reset failed: "+e.message);
+    toast("Reset failed: "+e.message,"bad");
   }finally{
     if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
   }

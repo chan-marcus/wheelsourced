@@ -84,18 +84,6 @@ const payload = JSON.stringify({
   </footer>
 </div>
 
-<div id="confirmModal" class="modal" hidden>
-  <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-    <div class="mhead"><span id="confirmTitle">Confirm reset</span>
-      <button class="x" id="confirmClose" aria-label="Close">×</button></div>
-    <p id="confirmMessage" style="margin: 16px 0; font-size: 14px;">Clear all data for this supplier and re-parse from replies?</p>
-    <div class="mfoot">
-      <button class="btn" id="confirmYes">Yes, reset data</button>
-      <button class="btn ghost" id="confirmNo">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <div id="modal" class="modal" hidden>
   <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="mtitle">
     <div class="mhead"><span id="mtitle">Your spec</span>
@@ -272,65 +260,6 @@ document.addEventListener("click", (e) => {
   el("modal").hidden = false;
   refresh();
   el("m-car").focus();
-});
-
-let resetId = null;
-let resetBtn = null;
-
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-reset]");
-  if (!btn) return;
-  resetId = btn.dataset.reset;
-  resetBtn = btn;
-  el("confirmModal").hidden = false;
-});
-
-el("confirmYes").addEventListener("click", async () => {
-  el("confirmModal").hidden = true;
-  if (!resetId || !resetBtn) return;
-
-  resetBtn.disabled = true;
-  resetBtn.textContent = "Resetting...";
-  try {
-    const r = await fetch(`/api/reset-supplier/${resetId}`, { method: "POST" });
-    if (!r.ok) throw new Error(await r.text());
-    alert("Data reset. Reload the page to see updated results.");
-    location.reload();
-  } catch (err) {
-    alert(`Reset failed: ${err.message}`);
-    resetBtn.disabled = false;
-    resetBtn.textContent = "Reset data";
-  }
-  resetId = null;
-  resetBtn = null;
-});
-
-el("confirmNo").addEventListener("click", () => {
-  el("confirmModal").hidden = true;
-  resetId = null;
-  resetBtn = null;
-});
-
-el("confirmClose").addEventListener("click", () => {
-  el("confirmModal").hidden = true;
-  resetId = null;
-  resetBtn = null;
-});
-
-el("confirmModal").addEventListener("click", (e) => {
-  if (e.target.id === "confirmModal") {
-    el("confirmModal").hidden = true;
-    resetId = null;
-    resetBtn = null;
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !el("confirmModal").hidden) {
-    el("confirmModal").hidden = true;
-    resetId = null;
-    resetBtn = null;
-  }
 });
 
 function buildMsg(s, spec) {

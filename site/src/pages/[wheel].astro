@@ -78,7 +78,6 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
   </section>
 
   <footer>
-    <p>Landed = quoted price per wheel × 4 + sea freight at the reference spec. Duty and port fees excluded.</p>
     <p>Store rating, response time, store age and reorder rate are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
     <p>Best vetted combines price, store rating, store age, response time and reorder rate, then subtracts for each flag. It is scaled by how many of those five a vendor actually has, so a thin record cannot outrank a complete one on a lucky average.</p>
     <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
@@ -198,6 +197,8 @@ function render() {
           <dt>Response</dt><dd>${s.response_time ?? "—"}</dd></div>
         <div class="${sortMode === "reorder" ? "hl on" : "hl"}">
           <dt>Reorder rate</dt><dd>${s.reorder ?? "—"}</dd></div>
+        <div class="hl">
+          <dt>Est. transit</dt><dd>${s.transit ?? "—"}</dd></div>
         <div class="${sortMode === "vetting" ? "hl on" : "hl"}">
           <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}</dd></div>
       </div>

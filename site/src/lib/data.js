@@ -43,6 +43,7 @@ function publishImage(slug) {
 const num = (v) => (typeof v === "number" && !Number.isNaN(v) ? v : null);
 const hours = (v) => { const m = String(v ?? "").match(/(\d+(?:\.\d+)?)\s*h/i); return m ? +m[1] : null; };
 const pct = (v) => { const m = String(v ?? "").match(/(\d+(?:\.\d+)?)\s*%/); return m ? +m[1] : null; };
+const transitDays = (v) => { const m = String(v ?? "").match(/(\d+(?:\.\d+)?)\s*d/i); return m ? +m[1] : null; };
 
 export function loadWheels() {
   if (!fs.existsSync(WHEELS_DIR)) return [];
@@ -188,6 +189,7 @@ function scoreAll(list) {
     { k: (s) => s.years,                lowerBetter: false, w: 1.3 }, // Higher weight: longevity is trust; startup risk is real
     { k: (s) => s.respHours,            lowerBetter: true,  w: 0.3 }, // Minor factor: many fast responders still disappoint
     { k: (s) => s.reorderPct,           lowerBetter: false, w: 2.0 }, // Most telling: share of buyers who came back
+    { k: (s) => transitDays(s.transit), lowerBetter: true,  w: 0.3 }, // How long wheels take to arrive: lower is better
   ];
 
   const ranges = dims.map((d) => {

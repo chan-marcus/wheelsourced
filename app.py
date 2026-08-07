@@ -13,7 +13,7 @@ What it is actually for: pasting supplier replies and watching the record fill
 in. Everything else is convenience.
 """
 
-import re, threading
+import os, re, threading
 from pathlib import Path
 from datetime import date
 import base64
@@ -26,6 +26,19 @@ import uvicorn
 
 
 import pipeline as P     # reuse QUOTE_ONLY, _flags, _ask_model, REPLY_SCHEMA
+
+# Anthropic() constructs happily without a key and only raises when you
+# actually send something, so a keyless server starts, serves every page, and
+# then fails the moment you paste a reply. Check at startup instead: the
+# failure belongs where it can be read, not four hours later behind a button.
+# This bites when the GUI is launched from somewhere that strips the variable
+# out of the environment rather than from a normal shell.
+if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
+    raise SystemExit(
+        "ANTHROPIC_API_KEY is not set in this process.\n"
+        "Reply parsing would fail on every paste, so refusing to start.\n"
+        "Run app.py from a shell that has the key (it is exported in ~/.zshrc)."
+    )
 
 app = FastAPI()
 
@@ -209,7 +222,16 @@ async def do_reply(req: Request):
     rec = yaml.safe_load((P.sdir(wheel) / f"{sid}.yaml").read_text())
     for k in P.ALL_FIELDS:
         rec["from_quote"].setdefault(k, None)
-    got = P._ask_model(b["text"], P.REPLY_SCHEMA)
+    # The raw reply is already on disk above, so a failure here loses nothing
+    # and is safe to retry. Report it as JSON: an uncaught exception becomes a
+    # bare 500 that the browser cannot read, which is how a parse failure
+    # turned into a button stuck on "Parsing..." rather than an error message.
+    try:
+        got = P._ask_model(b["text"], P.REPLY_SCHEMA)
+    except Exception as e:
+        log(f"{sid}: parse FAILED, reply saved to {path.name} -- {type(e).__name__}: {e}")
+        return JSONResponse(
+            {"ok": False, "error": f"{type(e).__name__}: {e}"}, status_code=502)
 
     new_this_round, changed = 0, []
     for k in P.ALL_FIELDS:
@@ -502,7 +524,7 @@ function render(){
         <div class="row" style="margin:8px 0 18px">
           <div style="max-width:170px"><span class="lbl">Date received</span>
             <input id="dt-${s.id}" value="${new Date().toISOString().slice(0,10)}"></div>
-          <button onclick="sendReply('${s.id}')">Parse reply</button>
+          <button data-send="${s.id}" onclick="sendReply('${s.id}', this)">Parse reply</button>
         </div>
         <span class="lbl">Quoted data · dashed border means still unanswered</span>
         <div class="grid" style="margin-top:8px">${fields}</div>
@@ -513,12 +535,28 @@ function render(){
 function toggle(id){OPEN=OPEN===id?null:id;render();}
 function copyRfq(id){const t=document.getElementById("rfq-"+id);t.select();
   navigator.clipboard.writeText(t.value).catch(()=>document.execCommand("copy"));}
-async function sendReply(id){
+async function sendReply(id, btn){
   const text=document.getElementById("rep-"+id).value.trim(); if(!text) return;
-  const btn=event.target; btn.textContent="Parsing..."; btn.disabled=true;
-  const r=await post("/api/reply",{wheel:S.wheel,id,text,date:document.getElementById("dt-"+id).value});
-  if(r.ok){S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);}
-  render();
+  // btn is passed in rather than read off the implicit global `event`, which
+  // is undefined once this is called from anything but an inline handler.
+  btn=btn||document.querySelector('[data-send="'+id+'"]');
+  const label=btn?btn.textContent:"";
+  if(btn){btn.textContent="Parsing...";btn.disabled=true;}
+  try{
+    const r=await post("/api/reply",{wheel:S.wheel,id,text,date:document.getElementById("dt-"+id).value});
+    if(r&&r.ok){
+      S.suppliers=S.suppliers.map(s=>s.id===id?{...r.record,_gaps:Object.keys(S.fields).filter(k=>!r.record.from_quote[k]&&r.record.from_quote[k]!==false)}:s);
+      render();
+    }else{
+      alert("Parse failed: "+((r&&r.error)||"the server did not return a record."));
+    }
+  }catch(e){
+    // Without this the rejected await skipped render(), the button stayed on
+    // "Parsing..." forever, and a request that failed in 20ms read as a hang.
+    alert("Parse failed: "+e.message);
+  }finally{
+    if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
+  }
 }
 async function setField(id,key,value){
   const r=await post("/api/field",{wheel:S.wheel,id,key,value});

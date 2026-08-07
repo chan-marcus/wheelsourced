@@ -86,13 +86,13 @@ from_quote:
   cert_document: null
   size_chart: 15-30 inches possible
   freight_cif_usd: 280
-  is_manufacturer: null
+  is_manufacturer: true
   forged_confirmed: true
   piece_count: 2-piece
   cnc_inhouse: null
-  heat_treat: null
+  heat_treat: T6
   payment_terms: null
-  defect_policy: null
+  defect_policy: compensation provided for damage
   hs_code: null
 meta:
   listing_seen: '2026-08-05'
@@ -101,17 +101,21 @@ meta:
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
-  reply_received: '2026-08-06'
+  reply_received: 2026-08-07-3
   reply_count: 1
-  questions_answered: 6/14
+  questions_answered: 8/12
   reply_notes:
   - '2026-08-06: Price stated as $380 per wheel (1 set) and $1520 for 4 wheels; shipping
     $280 USD stated separately; size range 15-30 inches mentioned as capability.'
-  factory_address: 1424 34th Ave, San Francisco, CA 94121
+  factory_address: Taixing, Jiangsu
   parsed_replies:
     taizhou-gushi-technology-co-ltd__2026-08-06-2.txt: 347eaa896d532f0b
     taizhou-gushi-technology-co-ltd__2026-08-06.txt: e37808883ef73dec
     taizhou-gushi-technology-co-ltd__2026-08-07.txt: c36acf1367327e86
+    taizhou-gushi-technology-co-ltd__2026-08-07-2.txt: c36acf1367327e86
+    taizhou-gushi-technology-co-ltd__2026-08-07-3.txt: 5401a33bc61644b8
+  reply_note: Supplier states they are a factory; no pricing, forging process detail,
+    piece count, or certification documents provided.
 flags:
 - no load rating given
 - under 3 years listed

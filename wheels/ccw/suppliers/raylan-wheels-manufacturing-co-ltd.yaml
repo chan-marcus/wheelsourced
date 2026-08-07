@@ -50,13 +50,13 @@ from_listing:
   - Silver
   construction: 3-piece
   certs_claimed:
-  - CE
   - DOT
-  - ECE
-  - IATF
   - JWL
-  - TUV
   - VIA
+  - TUV
+  - ECE
+  - IATF 16949
+  - CE
   main_image_url: null
   store_rating: 4.6
   review_count: 381
@@ -84,6 +84,7 @@ from_quote:
   defect_policy: null
   hs_code: null
   quote_construction: 2-piece
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

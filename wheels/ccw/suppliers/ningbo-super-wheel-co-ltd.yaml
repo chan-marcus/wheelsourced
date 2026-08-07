@@ -74,13 +74,12 @@ from_listing:
   construction: forged
   certs_claimed:
   - DOT
-  - E-mark
-  - E/e-mark
-  - IATF 16949
   - JWL
-  - TS16949
-  - TUV
   - VIA
+  - TUV
+  - ECE
+  - IATF 16949
+  - TS 16949
   main_image_url: null
   store_rating: 4.8
   review_count: 107
@@ -112,6 +111,7 @@ from_quote:
     foam rings, shipping insurance
   hs_code: null
   quote_construction: null
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

@@ -45,13 +45,12 @@ from_listing:
   construction: 2-piece
   certs_claimed:
   - DOT
-  - ISO 9001
-  - Intertek
   - JWL
-  - SFI
-  - TS16949
-  - TUV
   - VIA
+  - TUV
+  - SFI
+  - TS 16949
+  - ISO 9001
   main_image_url: null
   store_rating: 5.0
   review_count: 2
@@ -79,6 +78,7 @@ from_quote:
   defect_policy: null
   hs_code: null
   quote_construction: 2-piece
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

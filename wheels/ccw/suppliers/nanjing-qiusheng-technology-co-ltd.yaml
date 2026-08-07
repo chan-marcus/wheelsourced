@@ -71,13 +71,11 @@ from_listing:
   - Powder Coating
   construction: forged
   certs_claimed:
-  - Approved for Automotive Exports
   - DOT
+  - TUV
   - ECE
   - IATF 16949
   - ISO 9001
-  - TÜV Rheinland
-  - TüVRheinland verified onsite
   main_image_url: null
   store_rating: 4.7
   review_count: 319
@@ -104,6 +102,7 @@ from_quote:
   defect_policy: null
   hs_code: null
   quote_construction: null
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

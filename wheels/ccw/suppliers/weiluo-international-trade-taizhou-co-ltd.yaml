@@ -79,9 +79,8 @@ from_listing:
   construction: 2-piece
   certs_claimed:
   - DOT
-  - ISO 9001
   - VIA
-  - VIA A-351
+  - ISO 9001
   main_image_url: null
   store_rating: 4.8
   review_count: 18
@@ -93,54 +92,42 @@ from_listing:
 from_quote:
   price_per_wheel_1set: 350
   price_per_wheel_4set: null
-  weight_kg: 11
-  load_rating_kg: 850
   forging_process: 12000t high-pressure forging, 6061-T6
-  cert_document: claimed without document
-  size_chart: null
-  freight_cif_usd: 340
-  is_manufacturer: true
-  forged_confirmed: true
   piece_count:
   - monoblock
   - 2-piece
+  cert_document: claimed without document
+  freight_cif_usd: 340
+  hs_code: null
+  is_manufacturer: true
   cnc_inhouse: null
-  heat_treat: 6061-T6
+  heat_treat: null
   payment_terms: null
   defect_policy: null
-  hs_code: null
+  weight_kg: 11
+  load_rating_kg: 850
+  forged_confirmed: true
+  size_chart: null
   quote_construction: null
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
-  first_reply: '2026-08-06'
-  factory_address: No. 99, Industrial Concentration Zone, Zhangdian Town, Taizhou,
-    China
   ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
+  parsed_replies: {}
+  first_reply: '2026-08-07'
   reply_received: '2026-08-07'
-  reply_count: 2
-  questions_answered: 7/12
+  reply_count: 1
+  questions_answered: 6/12
   reply_notes:
-  - '2026-08-06: Price stated as $350 each (per wheel, 1 set); polishing adds $30
-    each. DOT & VIA certified claimed without document provided. Shipping $340 door-to-door.
-    Weight and load rating given for unspecified size; exact specs for 18x9.5J still
-    pending confirmation. No digital catalog; size chart promised.'
-  - '2026-08-07: Price $350 is per single wheel (1.18 inch), polished adds $30 each.
-    Stated monoblock and 2-piece available; 3-piece explicitly denied. DOT & VIA certification
-    claimed without document provided. Door-to-door shipping $340 to Los Angeles.
-    Also stated as trading company in addition to manufacturer.'
-  parsed_replies:
-    weiluo-international-trade-taizhou-co-ltd__2026-08-06-2.txt: 9899d49d7a72f90a
-    weiluo-international-trade-taizhou-co-ltd__2026-08-06.txt: 2689ff961abafb30
-    weiluo-international-trade-taizhou-co-ltd__2026-08-07.txt: 30316331655dbdb5
-  reply_days: 1
-  reply_note: Price stated as $350 each (per wheel, 1 set); polished add $30. Supplier
-    also mentioned 1.18 inch but primary quote is for 18x9.5J. Confirmed monoblock
-    capability ('CCW style can be monoblock too'). Explicitly stated 'do not produce
-    3-piece'. Door-to-door shipping $340 to Los Angeles. DOT & VIA certified claimed.
-    Manager confirmation pending on final pricing for 1 and 4 sets.
+  - '2026-08-07: Price $350 stated as ''each'' for 1.18 inch wheel; polishing add
+    $30 each; DOT & VIA certified claimed but no document provided; shipping $340
+    is door-to-door; 4-set pricing awaited from manager; they make monoblock and 2-piece,
+    explicitly do not make 3-piece'
+  factory_address: No. 99, Industrial Concentration Zone, Zhangdian Town, Taizhou,
+    China; also stated as jiangsu province taizhou city
 flags:
 - cert claimed, no document
 - no size chart supplied

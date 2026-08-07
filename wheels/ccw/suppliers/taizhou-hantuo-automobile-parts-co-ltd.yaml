@@ -73,16 +73,14 @@ from_listing:
   - Polished Edge
   construction: 2-piece
   certs_claimed:
-  - CE
   - DOT
-  - IATF 16949
-  - IATF16949
-  - ISO 9001
-  - ISO9001
-  - SFI
-  - TUV
+  - JWL
   - VIA
-  - VIA/JWL
+  - TUV
+  - SFI
+  - IATF 16949
+  - ISO 9001
+  - CE
   main_image_url: null
   store_rating: 4.8
   review_count: 87
@@ -112,6 +110,7 @@ from_quote:
   defect_policy: null
   hs_code: null
   quote_construction: 2-piece
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

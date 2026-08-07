@@ -67,8 +67,8 @@ from_listing:
   construction: forged
   certs_claimed:
   - DOT
-  - FMVSS110/120
-  - TÜV Rheinland
+  - TUV
+  - FMVSS
   main_image_url: null
   store_rating: 4.4
   review_count: 14
@@ -96,6 +96,7 @@ from_quote:
   defect_policy: compensation provided for damage
   hs_code: null
   quote_construction: 2-piece
+  certs_claimed: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

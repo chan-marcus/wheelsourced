@@ -30,7 +30,7 @@ for d in dirs:
         continue
     for f in sorted(sup.glob("*.yaml")):
         rec = yaml.safe_load(f.read_text())
-        for k in P.ALL_FIELDS:
+        for k in P.STORED_FIELDS:
             rec.setdefault("from_quote", {}).setdefault(k, None)
 
         before = list(rec.get("flags") or [])

@@ -93,12 +93,33 @@ outside its own directory, so after a pull you must restart the dev server.
 The GUI reads YAML live; the site does not. They will disagree until you
 restart Astro.
 
-**Changing the question set needs a migration.** `ask()` iterates
-`ALL_FIELDS` (not the record) and calls setdefault, so new keys backfill
+**Changing the question set needs a migration.** `ask()` iterates the field
+definitions (not the record) and calls setdefault, so new keys backfill
 automatically and stale keys are ignored. But old keys linger in the YAML
 until cleaned, and backfilling *values* for a newly added field means
 `ingest --wheel <w> --force` over the stored replies in `replies/`. Plain
 `ingest` will not do it: it now skips replies it has already read.
+
+**Asked and stored are different sets, and the copy loops use the stored
+one.** `ALL_FIELDS` is what the RFQ asks and is the denominator for
+`questions_answered`. `STORED_FIELDS` adds `EXTRACTED_ONLY` (weight_kg,
+load_rating_kg, forged_confirmed, size_chart): things `REPLY_SCHEMA` pulls
+out but that were never numbered questions.
+
+Trimming the question set once removed those four from the asked set while
+leaving them in `ROUND1_CORE` and `_flags()`. The copy loops iterated
+`ALL_FIELDS`, so the model extracted the values and the code silently threw
+them away, while the flag logic marked suppliers down for not providing them.
+Gushi replied "Weight is about 11 kg, load capacity is 850 kg" and both
+fields stayed null with a "no load rating given" flag attached. Older records
+only held values because those fields were asked before the trim.
+
+If you add a field to `REPLY_SCHEMA`, add it to `QUOTE_ONLY`/`ROUND2` if it
+should be asked, or to `EXTRACTED_ONLY` if it should only be kept. A field in
+the schema and in neither is a field you parse and discard.
+
+**`PHOTO_ASK` is dead.** It is defined and never referenced, so nothing asks
+for the scale photo. Weight arrives only when a supplier volunteers it.
 
 **Ingest is incremental, and a re-parse is not free.** Each reply's content
 hash is stored in `meta.parsed_replies`; unchanged files are skipped and the

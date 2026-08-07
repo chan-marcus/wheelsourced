@@ -61,6 +61,25 @@ ROUND2 = {
 
 ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
 
+# Answers we keep but never ask as a numbered question. REPLY_SCHEMA already
+# extracts all four: weight and load rating because suppliers volunteer them
+# unprompted, forged_confirmed because it is derived from forging_process
+# rather than asked, size_chart because they either attach one or do not.
+#
+# They are not in ALL_FIELDS, and the copy loops used to iterate ALL_FIELDS,
+# so the model returned these values and the code dropped them on the floor.
+# Meanwhile ROUND1_CORE gated on them and _flags() penalised their absence:
+# suppliers were being marked down for answers we had thrown away. Taizhou
+# Gushi replied "Weight is about 11 kg, load capacity is 850 kg" and both
+# fields stayed null. Older records still hold values only because these
+# fields were in the asked set before the question set was trimmed.
+EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart")
+
+# What gets persisted. ALL_FIELDS stays the *asked* set, so it remains the
+# denominator for questions_answered: a supplier has not failed to answer
+# something nobody put to them.
+STORED_FIELDS = tuple(ALL_FIELDS) + EXTRACTED_ONLY
+
 # Round two unlocks once these are known. Not the whole of round one: a
 # supplier who answered everything except the size chart has clearly engaged,
 # and holding the detail questions back over one soft field wastes a round.
@@ -218,7 +237,7 @@ def pull(wheel):
                     elif isinstance(old, list) and isinstance(v, list):
                         rec["from_listing"][k] = sorted(set(old) | set(v))
                 # New questions added later should appear on old records too.
-                for k in ALL_FIELDS:
+                for k in STORED_FIELDS:
                     rec["from_quote"].setdefault(k, None)
                 rec["meta"]["listing_seen"] = TODAY
                 print(f"     merged into {sid} ({len(rec['listings'])} listings)")
@@ -229,7 +248,7 @@ def pull(wheel):
                     "listings": [url],
                     "supplier_url": data.get("supplier_url"),
                     "from_listing": {k: v for k, v in data.items() if k != "supplier_url"},
-                    "from_quote": {k: None for k in ALL_FIELDS},
+                    "from_quote": {k: None for k in STORED_FIELDS},
                     "meta": {"listing_seen": TODAY, "rfq_sent": None,
                              "reply_received": None, "questions_answered": None},
                     "flags": [],
@@ -255,7 +274,7 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
         # Iterate the field definitions, not the record: YAML round-trips
         # alphabetise keys, and this also ignores keys left over from an
         # older question set while backfilling any newly added ones.
-        for k in ALL_FIELDS:
+        for k in STORED_FIELDS:
             rec["from_quote"].setdefault(k, None)
 
         def answered(k):
@@ -420,6 +439,14 @@ def ingest(wheel, force=False, workers=6):
     todo, skipped = [], 0
     for f in sorted(rep.glob("*.txt")):
         sid, _, datestr = f.stem.partition("__")
+        # Several replies can land on the same day, so app.py writes the
+        # second as "__2026-08-07-2". Keep only the date: the suffix used to
+        # land in reply_received verbatim, giving "2026-08-07-3", which is not
+        # a date, and which then made reply_days throw and be silently
+        # skipped. It only looked fine because ".txt" sorts after "-2.txt", so
+        # the unsuffixed file was normally written last and overwrote it.
+        m = re.match(r"\d{4}-\d{2}-\d{2}", datestr)
+        datestr = m.group(0) if m else ""
         target = sdir(wheel) / f"{sid}.yaml"
         if not target.exists():
             print(f"  no record for '{sid}', skipping {f.name}")
@@ -456,15 +483,17 @@ def ingest(wheel, force=False, workers=6):
 
     for f, sid, datestr, target, text, digest in todo:
         rec = yaml.safe_load(target.read_text())
-        for k in ALL_FIELDS:
+        for k in STORED_FIELDS:
             rec["from_quote"].setdefault(k, None)
         got = parsed[f]
 
+        # Store everything the schema extracted, count only what was asked.
         filled = 0
-        for k in ALL_FIELDS:
+        for k in STORED_FIELDS:
             if got.get(k) not in (None, ""):
                 rec["from_quote"][k] = got[k]
-                filled += 1
+                if k in ALL_FIELDS:
+                    filled += 1
 
         # Auto-confirm forging if they described a forging process and didn't
         # explicitly say "not forged". "Made with forged blanks" = forged.

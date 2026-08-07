@@ -220,7 +220,7 @@ async def do_reply(req: Request):
     path.write_text(b["text"], encoding="utf-8")
 
     rec = yaml.safe_load((P.sdir(wheel) / f"{sid}.yaml").read_text())
-    for k in P.ALL_FIELDS:
+    for k in P.STORED_FIELDS:
         rec["from_quote"].setdefault(k, None)
     # The raw reply is already on disk above, so a failure here loses nothing
     # and is safe to retry. Report it as JSON: an uncaught exception becomes a
@@ -234,13 +234,14 @@ async def do_reply(req: Request):
             {"ok": False, "error": f"{type(e).__name__}: {e}"}, status_code=502)
 
     new_this_round, changed = 0, []
-    for k in P.ALL_FIELDS:
+    for k in P.STORED_FIELDS:
         v = got.get(k)
         if v in (None, ""):
             continue
         prev = rec["from_quote"].get(k)
         if prev in (None, ""):
-            new_this_round += 1
+            if k in P.ALL_FIELDS:
+                new_this_round += 1
         elif str(prev) != str(v):
             # They said something different the second time. Keep the newer
             # value but record the change: a price that moves between rounds

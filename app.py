@@ -233,6 +233,13 @@ async def do_reply(req: Request):
         return JSONResponse(
             {"ok": False, "error": f"{type(e).__name__}: {e}"}, status_code=502)
 
+    # A price for the wrong construction never enters the record. Same guard
+    # ingest uses, called from the shared helper so the GUI and the CLI cannot
+    # drift apart on which quotes count.
+    rejected = P.take_quote(got, rec)
+    if rejected:
+        log(f"{sid}: {rejected} quote set aside, not a {P.QUOTE_CONSTRUCTION} price")
+
     new_this_round, changed = 0, []
     for k in P.STORED_FIELDS:
         v = got.get(k)

@@ -38,14 +38,23 @@ TODAY = date.today().isoformat()
 # questions: a cast 3-piece is a real, honest product, so neither field may
 # ever stand in for the other. `forging_process` keeps their claim verbatim,
 # which is what lets the flag logic tell press forging from flow forming.
+# Every price on the sheet is for this construction, and a quote for anything
+# else is discarded rather than stored. Pricing only compares if the thing
+# being priced is the same, and construction drives cost harder than anything
+# else: a 3-piece has a barrel, a lip and about thirty bolts a monoblock does
+# not. Which constructions a supplier can build is a separate question,
+# answered as a set of tags.
+#
+# Defined here, above the question set, because the question text is built
+# from it. They were once written out separately and drifted: the constant
+# said 2-piece while the RFQ still asked for a 3-PIECE price, so every reply
+# was answering a question whose answer the ingest guard then threw away, and
+# ask() re-sent it forever.
+QUOTE_CONSTRUCTION = "2-piece"
+
 QUOTE_ONLY = {
-    # Every price on the site is a 3-piece price. Say so in the question, or
-    # you get one vendor's 2-piece quote sitting in the same column as another
-    # vendor's 3-piece and the table silently compares different products.
-    # Hantuo quoted 2-piece, then quoted 3-piece when asked, and the second
-    # answer overwrote the first: it read as a price rise and cost them their
-    # ranking for answering an extra question.
-    "price_per_wheel_1set":  "For the 3-PIECE construction: price per single wheel, and price for 1 set (4 pcs)",
+    "price_per_wheel_1set":  (f"For the {QUOTE_CONSTRUCTION.upper()} construction: "
+                              f"price per single wheel, and price for 1 set (4 pcs)"),
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
     "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
     # A capability question, not a description of one product. Suppliers
@@ -98,19 +107,51 @@ STORED_FIELDS = tuple(ALL_FIELDS) + EXTRACTED_ONLY
 # saying "all options" or "any style" is not a capability, it is a sales line.
 CONSTRUCTIONS = ("monoblock", "2-piece", "3-piece")
 
-# Every price on the sheet is for this construction. Pricing is only
-# comparable if the thing being priced is the same, and construction drives
-# cost harder than anything else: a 3-piece has a barrel, a lip and about
-# thirty bolts that a monoblock does not. Which constructions a supplier can
-# build is a separate question, answered as a set of tags.
-QUOTE_CONSTRUCTION = "3-piece"
-
 _CONSTRUCTION_ALIASES = {
     "single-piece": "monoblock", "single piece": "monoblock",
     "1-piece": "monoblock", "one-piece": "monoblock", "1 piece": "monoblock",
     "two-piece": "2-piece", "2 piece": "2-piece",
     "three-piece": "3-piece", "3 piece": "3-piece",
 }
+
+
+# The price fields, which are only meaningful for QUOTE_CONSTRUCTION.
+PRICE_FIELDS = ("price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd")
+
+
+def take_quote(got, rec):
+    """Drop a price quoted for the wrong construction, keeping a record of it.
+
+    Enforced here rather than in the prompt. Asking the model to withhold a
+    number it can plainly see is the least reliable instruction you can give
+    it, and a 3-piece price silently landing in the 2-piece column is exactly
+    the failure this whole split exists to prevent. The model's job is to say
+    what the price is and which construction it is for; deciding whether to
+    keep it is the code's.
+
+    Mutates `got` in place and returns the construction that was rejected, or
+    None. The rejected figures go to meta.off_basis_quotes: a 3-piece quote is
+    a real answer from the supplier and publishing the nulls does not mean
+    destroying it, it just cannot sit in a column that compares 2-piece.
+    """
+    qc = got.get("quote_construction")
+    if not qc or qc == QUOTE_CONSTRUCTION:
+        return None
+    if not any(got.get(k) not in (None, "") for k in PRICE_FIELDS):
+        return None
+
+    stash = {"construction": qc, "seen": TODAY}
+    for k in PRICE_FIELDS:
+        if got.get(k) not in (None, ""):
+            stash[k] = got.pop(k)
+    got["quote_construction"] = None
+
+    off = rec.setdefault("meta", {}).setdefault("off_basis_quotes", [])
+    if not any(o.get("construction") == qc and
+               o.get("price_per_wheel_1set") == stash.get("price_per_wheel_1set")
+               for o in off):
+        off.append(stash)
+    return qc
 
 
 # Fields where a changed answer is a real contradiction worth flagging.
@@ -420,10 +461,11 @@ REPLY_SCHEMA = """
 This is a supplier's reply to a sourcing enquiry, often in broken English.
 Return one JSON object. Extract ONLY what the supplier actually stated.
 
-  price_per_wheel_1set   number or null (USD). We always ask for the 3-piece
-                         price. If they quote several constructions, take the
-                         3-piece figure. If they quote only one construction
-                         and do not say which, take it.
+  price_per_wheel_1set   number or null (USD). If they quote more than one
+                         construction, take the 2-PIECE figure. Report the
+                         price they actually gave and say which construction
+                         it is for in quote_construction; do not convert or
+                         adjust between constructions.
   price_per_wheel_4set   number or null. Same rule.
   weight_kg              number or null
   load_rating_kg         number or null
@@ -457,8 +499,11 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          exactly, do not translate them to "forged".
   quote_construction     "monoblock" | "2-piece" | "3-piece" | null. Which
                          construction the price above is for. If they name it
-                         ("the three-piece style is 550 USD"), use that. If
-                         they give one price and never say, null.
+                         ("the three-piece style is 550 USD"), use that. Watch
+                         for the question it answers: a price following "how
+                         much for two piece" is a 2-piece price even if the
+                         reply itself does not repeat the word. If they give
+                         one price and never say, null.
   cert_document          "provided" | "promised" | "claimed without document" | null
   size_chart             string or null. If they listed sizes or attached a
                          chart, summarise the range, e.g. "17-20in, 8-12J,
@@ -581,6 +626,9 @@ def ingest(wheel, force=False, workers=6):
         for k in STORED_FIELDS:
             rec["from_quote"].setdefault(k, None)
         got = parsed[f]
+        rejected = take_quote(got, rec)
+        if rejected:
+            print(f"  {sid}: {rejected} quote set aside, not a {QUOTE_CONSTRUCTION} price")
 
         # Store everything the schema extracted, count only what was asked.
         filled = 0
@@ -702,6 +750,14 @@ def _flags(rec):
     # but would otherwise slip past an `in (None, "")` test.
     if not Q.get("piece_count"):
         fl.append("constructions offered not confirmed")
+
+    # They answered with a price, just not for the construction the sheet
+    # compares. Worth surfacing: it is not a silence, it is an outstanding
+    # question, and without this the record looks like they never quoted.
+    off = {o.get("construction") for o in (meta.get("off_basis_quotes") or [])}
+    if off and not p:
+        fl.append(f"quoted {', '.join(sorted(x for x in off if x))}, "
+                  f"no {QUOTE_CONSTRUCTION} price")
     fp = str(Q.get("forging_process") or "").lower()
     # Every forged wheel is machined from a forged blank -- that IS the
     # process, so it is not a red flag. The actual fraud vector is a cast

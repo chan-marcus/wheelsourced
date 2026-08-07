@@ -90,37 +90,39 @@ from_listing:
   units_sold: null
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: 480
-  price_per_wheel_4set: 1920
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
   weight_kg: 13.5
   load_rating_kg: 825
-  forging_process: machined from a forged blank, 6061-T6 aviation grade aluminium
+  forging_process: forged blanks, 6061-T6 aviation grade aluminium
   cert_document: claimed without document
-  size_chart: null
-  freight_cif_usd: 320
+  size_chart: monoblock 15-26in; 2-piece and 3-piece 17-30in; fully customizable,
+    no fixed chart
+  freight_cif_usd: null
   is_manufacturer: true
   forged_confirmed: true
   piece_count:
+  - monoblock
+  - 2-piece
   - 3-piece
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
-  defect_policy: 3-year structural warranty for custom products; strict packaging
-    with double-layered cartons and foam rings; insurance purchased for goods during
-    shipping
+  defect_policy: 3-year structural warranty for custom products; double-layered cartons,
+    foam rings, shipping insurance
   hs_code: null
-  quote_construction: 3-piece
+  quote_construction: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-06'
+  rfq_sent: '2026-08-07'
   first_reply: '2026-08-06'
   factory_address: Zhejiang
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
-  ref_spec: 18x9.5J ET+22 5x114.3 Bronze 3-piece
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
   reply_received: '2026-08-06'
   reply_count: 1
-  questions_answered: 10/14
+  questions_answered: 5/12
   reply_notes:
   - '2026-08-06: Price 480 USD per wheel, 1920 USD per set (4 wheels); weight 13-14kg;
     load capacity 750-900kg per wheel; fully customizable, no fixed size chart; certification
@@ -128,6 +130,18 @@ meta:
   parsed_replies:
     ningbo-super-wheel-co-ltd__2026-08-06-2.txt: 7163f8c07a9c0975
     ningbo-super-wheel-co-ltd__2026-08-06.txt: 8b950f809aee2b73
+  off_basis_quotes:
+  - construction: 3-piece
+    seen: '2026-08-07'
+    price_per_wheel_1set: 480
+    price_per_wheel_4set: 1920
+    freight_cif_usd: 320
+  reply_days: 0
+  reply_note: Price given is for 1 wheel in silver with polish lip; 4-set price is
+    1920 USD total (1920/4=480 per wheel); weight 13-14kg stated, midpoint used; load
+    capacity 750-900kg per piece, midpoint used; custom products, certification available
+    only for orders of 20+ samples; 3-year structural warranty offered; freight quote
+    320 USD for one set of 18-inch wheels
 flags:
 - cert claimed, no document
-- no size chart supplied
+- quoted 3-piece, no 2-piece price

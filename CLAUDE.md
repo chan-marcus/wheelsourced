@@ -38,8 +38,21 @@ one field fall back to the other.
 `piece_count` is the SET of constructions a supplier can build, rendered as
 tags. It accumulates through `merge_constructions()` and is never overwritten
 by whichever one they last quoted. Every price, meanwhile, is for
-`QUOTE_CONSTRUCTION` (3-piece) so the figures compare, and
+`QUOTE_CONSTRUCTION` (2-piece) so the figures compare, and
 `quote_construction` records what a stored price is actually for.
+
+A price for any other construction is DISCARDED by `take_quote()`, never
+converted and never stored. It goes to `meta.off_basis_quotes` so the answer
+survives, and the supplier is flagged as still owing a comparable price.
+Enforced in code, not in the prompt: telling the model to withhold a number
+it can plainly see is the least reliable instruction available, and one
+3-piece figure landing in the 2-piece column defeats the entire split.
+
+`QUOTE_CONSTRUCTION` is defined above `QUOTE_ONLY` because the question text
+is built from it with an f-string. Written out separately they drifted, and
+the failure is silent and total: the constant said 2-piece while the RFQ
+asked for a 3-PIECE price, so every reply answered a question whose answer
+the guard then discarded, and `ask()` re-sent it forever.
 
 Conflating the two cost a supplier their ranking. Hantuo quoted 2-piece, was
 asked for 3-piece, and the second quote overwrote the first: their

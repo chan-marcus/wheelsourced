@@ -97,6 +97,10 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
   text-transform:uppercase;padding:9px 13px;border:1px solid var(--ink);background:var(--ink);
   color:var(--stock);cursor:pointer;text-decoration:none;display:inline-block}
 .btn.ghost{background:transparent;color:var(--ink)}
+/* The details toggle is a secondary control sitting above the primary
+   actions, so it reads smaller than Write quote request. Scoped to the
+   toggle rather than .ghost, which Open listing and the modal also use. */
+.btn[data-toggle-btn]{font-size:9.5px;padding:5px 9px;letter-spacing:.09em}
 .seen{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--soft);margin-left:auto}
 
 .empty{border:1px dashed var(--chop);padding:18px;font-family:'IBM Plex Mono';font-size:13px;line-height:1.8}

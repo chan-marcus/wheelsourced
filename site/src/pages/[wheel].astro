@@ -122,15 +122,23 @@ const or = (v, unit = "") =>
 
 el("sort").addEventListener("change", (e) => { sortMode = e.target.value; render(); });
 
-function toggleSpecs(id) {
+// Which spec panels are expanded. Held outside render() because changing the
+// sort rebuilds every row, and silently closing the panel you were reading is
+// the kind of thing that makes a sheet feel unreliable.
+const open = new Set();
+
+function setOpen(article, id, want) {
   const specs = el(`specs-${id}`);
-  const btn = event.target;
-  if (specs.style.display === "none") {
-    specs.style.display = "grid";
-    btn.textContent = "Hide details";
-  } else {
-    specs.style.display = "none";
-    btn.textContent = "Show details";
+  if (!specs) return;
+  want ? open.add(id) : open.delete(id);
+  specs.style.display = want ? "" : "none";
+  // Write the label into the toggle button, found from the row. The old code
+  // used event.target, so clicking the headline replaced whichever stat cell
+  // you happened to hit with the words "Hide details" and lost the figure.
+  const btn = article.querySelector("[data-toggle-btn]");
+  if (btn) {
+    btn.textContent = want ? "Hide details" : "Show details";
+    btn.setAttribute("aria-expanded", want);
   }
 }
 
@@ -180,7 +188,7 @@ function render() {
         </div>
       </div>
 
-      <div class="headline" onclick="toggleSpecs('${s.id}')" style="cursor: pointer;">
+      <div class="headline" data-toggle="${s.id}" style="cursor: pointer;">
         <div class="${sortMode === "rating" ? "hl on" : "hl"}">
           <dt>Store rating</dt><dd>${s.store_rating ? s.store_rating + "/5" : "—"}
           ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>
@@ -195,8 +203,11 @@ function render() {
       </div>
 
       <div style="margin-top: 12px;">
-        <button class="btn ghost" onclick="toggleSpecs('${s.id}')">Show details</button>
-        <dl class="specs" id="specs-${s.id}" style="display:none;margin-top:12px;">
+        <button class="btn ghost" data-toggle="${s.id}" data-toggle-btn
+          aria-controls="specs-${s.id}" aria-expanded="${open.has(s.id)}"
+          >${open.has(s.id) ? "Hide details" : "Show details"}</button>
+        <dl class="specs" id="specs-${s.id}"
+          style="${open.has(s.id) ? "" : "display:none;"}margin-top:12px;">
           <div><dt>Per wheel</dt><dd>${
             s.moq === "1 piece" && s.setPrice ? money(s.setPrice / 4)
             : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
@@ -223,6 +234,13 @@ function render() {
       </div>
     </article>`).join("");
 }
+
+el("rows").addEventListener("click", (e) => {
+  const t = e.target.closest("[data-toggle]");
+  if (!t) return;
+  const id = t.dataset.toggle;
+  setOpen(t.closest(".v"), id, !open.has(id));
+});
 
 document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-rfq]");

@@ -130,7 +130,16 @@ function setOpen(article, id, want) {
   const specs = el(`specs-${id}`);
   if (!specs) return;
   want ? open.add(id) : open.delete(id);
-  specs.style.display = want ? "" : "none";
+  // Smooth collapse/expand with CSS transitions. max-height + opacity for
+  // smooth reveal without display:none which kills animations.
+  // requestAnimationFrame ensures the browser calculates the scrollHeight
+  // before the transition starts, so the animation runs smoothly.
+  requestAnimationFrame(() => {
+    specs.style.maxHeight = want ? (specs.scrollHeight + 8) + "px" : "0";
+    specs.style.opacity = want ? "1" : "0";
+  });
+  specs.style.overflow = "hidden";
+  specs.style.transition = `max-height 250ms cubic-bezier(0.4,0,0.2,1), opacity 250ms cubic-bezier(0.4,0,0.2,1)`;
   // Write the label into the toggle button, found from the row. The old code
   // used event.target, so clicking the headline replaced whichever stat cell
   // you happened to hit with the words "Hide details" and lost the figure.
@@ -174,6 +183,7 @@ function render() {
             ${s.business_type ? `<span class="tag">${s.business_type}</span>` : ""}
             <span class="tag">${s.forged === true ? "forged" : s.forged === false ? "not forged" : "forging unconfirmed"}</span>
             ${Array.isArray(s.pieces) ? s.pieces.map(p => `<span class="tag">${p}</span>`).join("") : `<span class="tag">${s.pieces || "piece count unknown"}</span>`}
+            ${s.cert ? `<span class="tag good">${s.cert}</span>` : ""}
           </div>
         </div>
         <div class="vp">
@@ -208,7 +218,7 @@ function render() {
           aria-controls="specs-${s.id}" aria-expanded="${open.has(s.id)}"
           >${open.has(s.id) ? "Hide details" : "Show details"}</button>
         <dl class="specs" id="specs-${s.id}"
-          style="${open.has(s.id) ? "" : "display:none;"}margin-top:12px;">
+          style="margin-top:12px;max-height:${open.has(s.id) ? "999px" : "0"};opacity:${open.has(s.id) ? "1" : "0"};overflow:hidden;transition:max-height 250ms cubic-bezier(0.4,0,0.2,1), opacity 250ms cubic-bezier(0.4,0,0.2,1);">
           <div><dt>Per wheel</dt><dd>${
             s.moq === "1 piece" && s.setPrice ? money(s.setPrice / 4)
             : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`

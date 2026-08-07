@@ -192,9 +192,22 @@ h1{display:none}
   color:var(--ink);resize:vertical}
 
 /* Animations */
-.modal{animation:fadeIn var(--trans-smooth)}
-.modal[hidden]{animation:none}
+.modal{animation:fadeIn var(--trans-smooth);will-change:opacity,transform}
+.modal[hidden]{animation:none;display:none !important}
 @keyframes fadeIn{
   from{opacity:0;transform:translateY(-4px)}
   to{opacity:1;transform:translateY(0)}
 }
+
+/* Smooth reveal for supplier cards and details */
+.v{animation:slideUp var(--trans-smooth);will-change:auto}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Details panel animation on open */
+.specs{will-change:opacity}
+
+/* Button press feedback without lag */
+.btn{will-change:transform,box-shadow}

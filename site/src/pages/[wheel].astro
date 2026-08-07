@@ -183,7 +183,6 @@ function render() {
             ${s.business_type ? `<span class="tag">${s.business_type}</span>` : ""}
             <span class="tag">${s.forged === true ? "forged" : s.forged === false ? "not forged" : "forging unconfirmed"}</span>
             ${Array.isArray(s.pieces) ? s.pieces.map(p => `<span class="tag">${p}</span>`).join("") : `<span class="tag">${s.pieces || "piece count unknown"}</span>`}
-            ${s.cert ? `<span class="tag good">${s.cert}</span>` : ""}
           </div>
         </div>
         <div class="vp">

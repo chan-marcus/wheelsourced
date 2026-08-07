@@ -78,6 +78,47 @@ ruled out. Match through `_asserted()`, which ignores a keyword preceded by a
 negation. Any new claim-detection flag must go through it too: suppliers
 answer this question in the negative constantly, because we ask them to.
 
+**5b. Which certifications, and whether the certificate arrived, are two
+answers.**
+
+`certs_claimed` is the SET of certifications a supplier names, a whitelisted
+tag list that accumulates through `merge_certs()`. `cert_document` is whether
+a certificate was actually sent. Same split as forged vs piece_count, for the
+same reason: naming DOT and having emailed the PDF are different facts, and
+merging them let a vendor bank the hard one by answering the easy one. Weiluo
+wrote "our products are DOT & VIA certified" and the sheet printed only
+"claimed without document", throwing away the half of the answer the question
+asked for.
+
+`cert_document` stays the numbered question, so it stays the denominator.
+`certs_claimed` is `EXTRACTED_ONLY`: the RFQ already asks for both.
+
+The whitelist is there for the CONSTRUCTIONS reason. "Fully certified" and
+"export quality" are sales lines, not certifications. It also canonicalises,
+which is what collapses the listing side's "VIA" beside "VIA A-351" and its
+three spellings of IATF 16949. TS 16949 keeps its own tag rather than being
+upgraded to IATF: a supplier naming the withdrawn standard has not told us
+they hold the current one.
+
+**A cert only counts if the supplier's own text asserts it.** Enforced in
+`merge_certs()`, not asked for in the prompt, because our own RFQ question
+lists DOT, JWL, VIA and TUV as examples and the pasted thread contains our
+side of the conversation. A model reading the whole thread will hand those
+four straight back as the supplier's answer, which is principle 3 inverted:
+four free certifications for saying nothing. Verified: fed the real Weiluo
+thread and a model output of all four, the gate keeps DOT and VIA and drops
+JWL and TUV.
+
+**There are two negators now, and the narrow one is load-bearing.** `_NEGATOR`
+requires the negator flush against the keyword ("not flow-formed"). Do not
+widen it: in "not forged, this is flow formed" a longer reach finds "not"
+before "flow formed" and swallows the one flag principle 5 exists to raise.
+Certifications get denied in a verb phrase instead ("we do not have TUV", "no
+JWL yet"), so `_CERT_NEGATOR` allows a gap, bounded to one clause. It stops at
+a sentence end and at a contrastive conjunction, or "we don't have TUV but we
+do have JWL" denies the JWL too. `_asserted()` takes the negator as an
+argument; both paths share the scanning loop and neither can drift.
+
 **6. Name wheels by geometry, never by another maker's product.**
 "Mesh 5-spoke, 3-piece" not "OZ Futura replica". This keeps the site out of
 the takedown pipeline and is more accurate anyway.
@@ -157,6 +198,13 @@ only held values because those fields were asked before the trim.
 If you add a field to `REPLY_SCHEMA`, add it to `QUOTE_ONLY`/`ROUND2` if it
 should be asked, or to `EXTRACTED_ONLY` if it should only be kept. A field in
 the schema and in neither is a field you parse and discard.
+
+**Stored records show listing certifications until their replies are
+re-read.** `certs_claimed` was added after the archive existed, so every
+record except Weiluo has it null on the quote side and the sheet falls back to
+the grey listing claim. Backfilling means `ingest --wheel ccw --force` over
+the stored replies, with all the churn that carries. `recompute.py` does
+canonicalise the tags both sides, since that needs no model call.
 
 **`PHOTO_ASK` is dead.** It is defined and never referenced, so nothing asks
 for the scale photo. Weight arrives only when a supplier volunteers it.

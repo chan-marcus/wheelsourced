@@ -121,6 +121,16 @@ const money = (n) => "$" + Math.round(n).toLocaleString();
 // above to decide whether a per-wheel figure is meaningful.
 const moqCount = (v) =>
   typeof v === "string" ? v.replace(/\s*pieces?\b\.?/i, "").trim() || v : v;
+// Whether the certificate itself ever arrived, shown grey beside the names
+// because it qualifies them rather than answering for them. "DOT, VIA" with
+// nothing attached is a claim, and the sheet has to keep saying so.
+const CERT_DOC = {
+  "provided": "on file",
+  "promised": "promised",
+  "claimed without document": "no document",
+};
+const certDoc = (v) =>
+  v ? ` <span class="grey">${CERT_DOC[v] || v}</span>` : "";
 const or = (v, unit = "") =>
   v === null || v === undefined || v === ""
     ? `<span class="none">not disclosed</span>` : `${v}${unit}`;
@@ -232,7 +242,10 @@ function render() {
             : s.forged === false ? "no" : or(null)}</dd></div>
           <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
           <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
-          <div><dt>Certification</dt><dd>${or(s.cert)}</dd></div>
+          <div><dt>Certification</dt><dd>${
+            s.certs ? s.certs.join(", ") + certDoc(s.cert)
+            : s.listing_certs ? `<span class="grey">${s.listing_certs.join(", ")} listed</span>`
+            : or(s.cert)}</dd></div>
           <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
           <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
             : s.cnc === false ? "outsourced" : or(null)}</dd></div>

@@ -258,6 +258,16 @@ async def do_reply(req: Request):
             rec["from_quote"][k] = merged
             continue
 
+        # Same shape: a set of tags that only grows, gated on the supplier's
+        # own words actually asserting the name. Both halves matter here, see
+        # merge_certs. Not a revision either, for the piece_count reason.
+        if k == "certs_claimed":
+            dropped = P.unasserted_certs(v, b["text"])
+            if dropped:
+                log(f"{sid}: reply does not assert {', '.join(dropped)}, not stored")
+            rec["from_quote"][k] = P.merge_certs(prev, v, b["text"])
+            continue
+
         if prev in (None, ""):
             if k in P.ALL_FIELDS:
                 new_this_round += 1

@@ -33,6 +33,22 @@ for d in dirs:
         for k in P.STORED_FIELDS:
             rec.setdefault("from_quote", {}).setdefault(k, None)
 
+        # Collapse certification spellings to the canonical tags. Records
+        # pulled before the whitelist existed hold "VIA" beside "VIA A-351"
+        # and "IATF 16949" beside "IATF16949", and the sheet prints both.
+        # No model call and nothing invented: this only ever renames or drops
+        # what a record already claims, so it is safe to re-run.
+        for side in ("from_listing", "from_quote"):
+            block = rec.get(side) or {}
+            if "certs_claimed" not in block:
+                continue
+            was = block["certs_claimed"] or []
+            now = P.cert_names(was)
+            if now != list(was):
+                print(f"{f.stem}\n   certs    {side}: {was or '-'} -> {now or '-'}")
+                changed += 1
+            block["certs_claimed"] = now if side == "from_listing" else (now or None)
+
         before = list(rec.get("flags") or [])
         after = P._flags(rec)
         if before != after:

@@ -96,7 +96,17 @@ EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart
                   # quote and a 3-piece quote sit in the same column looking
                   # comparable, and ask() treats the 2-piece one as answered
                   # and never asks again.
-                  "quote_construction")
+                  "quote_construction",
+                  # WHICH certifications they name, as a set of tags.
+                  # cert_document is the numbered question and stays the
+                  # denominator; this is the other half of the same answer,
+                  # so it is kept rather than asked. Two axes, like forged
+                  # and piece_count: holding DOT and having sent the
+                  # certificate are different facts. Weiluo wrote "our
+                  # products are DOT & VIA certified" and the sheet showed
+                  # only "claimed without document", throwing away the part
+                  # of the answer the question actually asked for.
+                  "certs_claimed")
 
 # What gets persisted. ALL_FIELDS stays the *asked* set, so it remains the
 # denominator for questions_answered: a supplier has not failed to answer
@@ -190,6 +200,83 @@ def merge_constructions(prev, new):
 
     seen = set(norm(prev)) | set(norm(new))
     return [c for c in CONSTRUCTIONS if c in seen] or None
+
+
+# Certifications, in display order. A whitelist for the same reason
+# CONSTRUCTIONS is one: "fully certified", "meets international standards"
+# and "export quality" are sales lines, not certifications, and printing them
+# in the answer column pays a vendor for saying nothing.
+#
+# Each row is (canonical name, pattern matched against a claimed token,
+# spellings to look for in the raw reply). Patterns run against every token,
+# so one token can yield two answers ("JWL/VIA") or one ("VIA A-351" is a VIA
+# registration number, not a second certification). Normalising here is also
+# what collapses the listing side's "IATF 16949" and "IATF16949" into one tag.
+_CERT_TABLE = (
+    ("DOT",        r"\bdot\b",                    ("dot",)),
+    ("JWL",        r"\bjwl\b",                    ("jwl",)),
+    ("VIA",        r"\bvia\b",                    ("via",)),
+    ("TUV",        r"\bt[uü]v\b",                 ("tuv", "tüv")),
+    ("ECE",        r"\bece\b|\be/?e?[\s-]?mark\b", ("ece", "e-mark", "emark", "e/e-mark")),
+    ("SFI",        r"\bsfi\b",                    ("sfi",)),
+    ("SAE",        r"\bsae\b",                    ("sae",)),
+    ("FMVSS",      r"\bfmvss",                    ("fmvss",)),
+    ("CCC",        r"\bccc\b",                    ("ccc",)),
+    ("IATF 16949", r"\biatf\b",                   ("iatf",)),
+    # TS 16949 was renamed IATF 16949 in 2016, but it keeps its own tag. A
+    # supplier still naming the withdrawn standard has not told us they hold
+    # the current one, and quietly upgrading the answer would be inventing a
+    # certification on their behalf.
+    ("TS 16949",   r"\bts\s*16949\b",             ("ts 16949", "ts16949")),
+    ("ISO 9001",   r"\biso\s*9001\b",             ("iso 9001", "iso9001")),
+    ("CE",         r"\bce\b",                     ("ce",)),
+)
+CERTS = tuple(c for c, _, _ in _CERT_TABLE)
+_CERT_TERMS = {c: t for c, _, t in _CERT_TABLE}
+
+
+def cert_names(v):
+    """Canonical certification names found in one claimed value or list."""
+    got = []
+    for item in ([] if v in (None, "") else (v if isinstance(v, list) else [v])):
+        s = str(item).lower()
+        got += [name for name, pat, _ in _CERT_TABLE if re.search(pat, s)]
+    return [c for c in CERTS if c in set(got)]
+
+
+def unasserted_certs(new, text):
+    """Names the model returned that the reply does not actually assert."""
+    low = (text or "").lower()
+    return [n for n in cert_names(new) if not _cert_asserted(low, _CERT_TERMS[n])]
+
+
+def merge_certs(prev, new, text=None):
+    """Union of the certifications a supplier claims.
+
+    Accumulates like piece_count and for the same reason: naming DOT in round
+    one and VIA in round two means they hold both, so the second answer must
+    not erase the first. Never a revision either.
+
+    `text` is the raw reply, and a name only survives if it appears in it
+    un-negated. That gate is in code rather than in the prompt because both
+    ways it can fail have already cost this file real money.
+
+    The pasted thread contains OUR question, and our question lists DOT, JWL,
+    VIA and TUV as examples. A model reading the whole conversation will hand
+    those back as the supplier's answer, which credits a vendor with four
+    certifications it never claimed: silence paying, which is principle 3.
+    And because we name the four, suppliers answer in the negative constantly
+    ("DOT yes, no TUV"), which is the exact shape that once turned a bare
+    substring test into a false accusation against Taizhou Hantuo.
+
+    Both are caught by requiring the supplier's own text to assert the name.
+    """
+    keep = set(cert_names(prev))
+    low = (text or "").lower()
+    for name in cert_names(new):
+        if text is None or _cert_asserted(low, _CERT_TERMS[name]):
+            keep.add(name)
+    return [c for c in CERTS if c in keep] or None
 
 
 # Round two unlocks once these are known. Not the whole of round one: a
@@ -325,6 +412,14 @@ def pull(wheel):
                             data[k] = prof[k]
                 except Exception as e:
                     print(f"     profile hop failed: {e}")
+
+            # Canonicalise before the merge below unions the lists, or the
+            # same certification lands twice under two spellings: the stored
+            # records already hold "VIA" beside "VIA A-351" and "IATF 16949"
+            # beside "IATF16949". No assertion gate here, because a listing
+            # page has no supplier text to assert anything; it stays a
+            # listing claim and the sheet renders it as one.
+            data["certs_claimed"] = cert_names(data.get("certs_claimed"))
 
             sid = re.sub(r"[^a-z0-9]+", "-",
                          (data.get("supplier_name") or hashlib.md5(url.encode()).hexdigest()[:8]).lower()).strip("-")[:48]
@@ -505,6 +600,11 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          reply itself does not repeat the word. If they give
                          one price and never say, null.
   cert_document          "provided" | "promised" | "claimed without document" | null
+  certs_claimed          ARRAY of certification names the SUPPLIER says they
+                         hold, e.g. ["DOT","VIA"] for "our products are DOT &
+                         VIA certified". [] if they name none. Separate from
+                         cert_document: which certifications they claim, and
+                         whether they sent the certificate, are two answers.
   size_chart             string or null. If they listed sizes or attached a
                          chart, summarise the range, e.g. "17-20in, 8-12J,
                          ET-20 to +45, chart attached". Null if not addressed.
@@ -524,6 +624,10 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
 Critical rules:
 - If they claim a certification but do not attach or offer the document, that
   is "claimed without document", NOT "provided".
+- certs_claimed is only what the SUPPLIER claims. The pasted thread contains
+  our side of the conversation too, and our question lists DOT, JWL, VIA and
+  TUV as examples. Those are our words. Never return a certification that
+  only appears in a message we sent, and never one they denied ("no TUV").
 - If a price is given without stating quantity, put it in
   price_per_wheel_1set and say so in notes.
 - For forging_process, record their exact claim. "Forged" alone with no
@@ -637,6 +741,12 @@ def ingest(wheel, force=False, workers=6):
                 if k == "piece_count":
                     rec["from_quote"][k] = merge_constructions(
                         rec["from_quote"].get(k), got[k])
+                elif k == "certs_claimed":
+                    dropped = unasserted_certs(got[k], text)
+                    if dropped:
+                        print(f"  {sid}: reply does not assert {', '.join(dropped)}, not stored")
+                    rec["from_quote"][k] = merge_certs(
+                        rec["from_quote"].get(k), got[k], text)
                 else:
                     rec["from_quote"][k] = got[k]
                 if k in ALL_FIELDS:
@@ -697,13 +807,36 @@ _NEGATOR = re.compile(
 )
 
 
-def _asserted(text, keywords, window=30):
+# Certifications get denied in a verb phrase, not adjacent: "we do not have
+# TUV", "no JWL yet". _NEGATOR wants the negator flush against the keyword and
+# reads straight past all of those. It is deliberately not widened, because
+# the forging flag depends on its narrowness: in "not forged, this is flow
+# formed" a looser reach would find "not" before "flow formed" and swallow the
+# one flag principle 5 exists to raise.
+#
+# So the gap is allowed here only, and only as far as a clause runs. It stops
+# at a sentence end and at a contrastive conjunction, or "we don't have TUV
+# but we do have JWL" would deny the JWL as well.
+_CERT_NEGATOR = re.compile(
+    r"\b(?:not|no|never|non|isn'?t|aren'?t|doesn'?t|don'?t|cannot|can'?t|"
+    r"without|lack(?:s|ing)?|waiting for|applying for)\b"
+    r"(?:(?!\b(?:but|however|though|yet|although)\b)[^.;!?]){0,24}$"
+)
+
+
+def _asserted(text, keywords, window=30, negator=None):
     """True if a keyword appears in text without a negation just before it."""
+    neg = negator or _NEGATOR
     for k in keywords:
         for m in re.finditer(re.escape(k), text):
-            if not _NEGATOR.search(text[max(0, m.start() - window):m.start()]):
+            if not neg.search(text[max(0, m.start() - window):m.start()]):
                 return True
     return False
+
+
+def _cert_asserted(text, terms):
+    """_asserted with the wider reach certification denials need."""
+    return _asserted(text, terms, window=44, negator=_CERT_NEGATOR)
 
 
 def _flags(rec):

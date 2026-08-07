@@ -153,6 +153,11 @@ function normalize(r) {
     heat_treat: Q.heat_treat || null,
     payment: Q.payment_terms || null,
     defects: Q.defect_policy || null,
+    // One question, two answers, kept apart: which certifications they name,
+    // and whether the certificate ever arrived. Merging them let a supplier
+    // bank the harder one by answering the easier one.
+    certs: Q.certs_claimed?.length ? Q.certs_claimed : null,
+    listing_certs: L.certs_claimed?.length ? L.certs_claimed : null,
     cert: Q.cert_document || null,
     size_chart: Q.size_chart || null,
     is_manufacturer: Q.is_manufacturer ?? null,

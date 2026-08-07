@@ -6,6 +6,39 @@ import path from "node:path";
 import yaml from "js-yaml";
 
 const WHEELS_DIR = path.resolve("../wheels");
+const PUBLIC_DIR = path.resolve("public");
+
+const IMAGE_EXTS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"];
+
+// The uploaded image lives in wheels/<slug>/ next to the YAML, so it is one
+// more thing git versions alongside the record. Astro will not serve anything
+// outside site/public, though, so the <img> 404s unless we mirror it in.
+// Copy at load time rather than making the GUI write to two places: wheels/
+// stays the single source of truth and public/wheels is derived output.
+function publishImage(slug) {
+  const src = IMAGE_EXTS
+    .map((ext) => path.join(WHEELS_DIR, slug, `image${ext}`))
+    .find((p) => fs.existsSync(p));
+  if (!src) return { hasImage: false, imageExt: "" };
+
+  const ext = path.extname(src);
+  const destDir = path.join(PUBLIC_DIR, "wheels", slug);
+  const dest = path.join(destDir, `image${ext}`);
+
+  // A wheel has exactly one image. Clear stale copies first or an older
+  // upload in a different format keeps winning: the extension search is
+  // ordered, so a leftover image.png shadows a freshly uploaded image.jpg.
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const f of fs.readdirSync(destDir)) {
+    if (f.startsWith("image") && f !== `image${ext}`) fs.rmSync(path.join(destDir, f));
+  }
+
+  const from = fs.statSync(src);
+  const to = fs.existsSync(dest) ? fs.statSync(dest) : null;
+  if (!to || to.size !== from.size || to.mtimeMs < from.mtimeMs) fs.copyFileSync(src, dest);
+
+  return { hasImage: true, imageExt: ext };
+}
 
 const num = (v) => (typeof v === "number" && !Number.isNaN(v) ? v : null);
 const hours = (v) => { const m = String(v ?? "").match(/(\d+(?:\.\d+)?)\s*h/i); return m ? +m[1] : null; };
@@ -43,18 +76,11 @@ export function loadWheels() {
           return b.answered - a.answered;
         });
 
-      // Check if wheel has an image
-      const wheelDir = path.join(WHEELS_DIR, slug);
-      const imageExt = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"].find(ext =>
-        fs.existsSync(path.join(wheelDir, `image${ext}`))
-      );
-
       return {
         slug,
         title: titleize(slug),
         suppliers: scoreAll(suppliers),
-        hasImage: !!imageExt,
-        imageExt: imageExt || ""
+        ...publishImage(slug),
       };
     })
     .filter((w) => w && w.suppliers.length);

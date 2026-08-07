@@ -19,7 +19,7 @@ from datetime import date
 import base64
 
 import yaml
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -109,24 +109,36 @@ async def new_wheel(req: Request):
     return {"ok": True, "wheel": name}
 
 
-@app.post("/api/wheel-image")
-async def upload_wheel_image(req: Request):
-    data = await req.json()
-    wheel = data.get("wheel")
-    image_data = data.get("data")  # base64 encoded image
-    ext = data.get("ext", ".png")  # file extension
+IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg")
 
-    if not wheel or not image_data:
-        return JSONResponse({"ok": False, "error": "missing wheel or data"}, status_code=400)
+
+@app.post("/api/wheel-image")
+async def upload_wheel_image(wheel: str = Form(...), file: UploadFile = File(...)):
+    # Multipart, not base64 in JSON. Hand-rolling base64 in the browser meant a
+    # byte-at-a-time String.fromCharCode loop over the whole file, which is both
+    # slow and easy to get subtly wrong on binary data. The browser already
+    # knows how to send a file.
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in IMAGE_EXTS:
+        return JSONResponse(
+            {"ok": False, "error": f"unsupported file type {ext or '(none)'}"}, status_code=400)
+
+    contents = await file.read()
+    if not contents:
+        return JSONResponse({"ok": False, "error": "empty file"}, status_code=400)
 
     wheel_dir = Path("wheels") / wheel
     wheel_dir.mkdir(parents=True, exist_ok=True)
 
-    image_path = wheel_dir / f"image{ext}"
-    contents = base64.b64decode(image_data)
-    image_path.write_bytes(contents)
+    # One image per wheel. Without this an old image.png outlives a new
+    # image.jpg and the site keeps rendering the stale one, because the
+    # extension lookup is ordered rather than newest-wins.
+    for stale in wheel_dir.glob("image.*"):
+        if stale.suffix.lower() != ext:
+            stale.unlink()
 
-    return {"ok": True, "path": f"/wheels/{wheel}/image{ext}"}
+    (wheel_dir / f"image{ext}").write_bytes(contents)
+    return {"ok": True, "path": f"wheels/{wheel}/image{ext}", "bytes": len(contents)}
 
 
 @app.get("/api/picks")
@@ -397,62 +409,33 @@ async function pull(){
   },2000);
 }
 async function uploadImage(){
-  console.log("uploadImage called");
   const wheelInput = document.getElementById("wheelImage");
   const imagestatus = document.getElementById("imagestatus");
 
-  console.log("wheelInput:", wheelInput, "files:", wheelInput?.files?.length);
-
-  if(!S.wheel){
-    console.log("No wheel selected");
-    imagestatus.textContent = "Please select a wheel first";
-    return;
-  }
-
-  if(!wheelInput || !wheelInput.files || wheelInput.files.length === 0){
-    console.log("No file selected");
-    imagestatus.textContent = "Please select an image file";
-    return;
+  if(!S.wheel){ imagestatus.textContent = "Select a wheel first"; return; }
+  if(!wheelInput.files || !wheelInput.files.length){
+    imagestatus.textContent = "Choose an image file first"; return;
   }
 
   const file = wheelInput.files[0];
-  const fileName = file.name;
-  const ext = "." + fileName.split('.').pop().toLowerCase();
+  imagestatus.textContent = "Uploading " + file.name + "...";
 
-  console.log("File selected:", fileName, "size:", file.size, "bytes");
-  imagestatus.textContent = "Uploading...";
+  // Let the browser encode the file. FormData sends the bytes as-is.
+  const body = new FormData();
+  body.append("wheel", S.wheel);
+  body.append("file", file);
 
   try {
-    console.log("Reading file as arrayBuffer...");
-    const buffer = await file.arrayBuffer();
-    console.log("Buffer read, size:", buffer.byteLength);
-
-    const bytes = new Uint8Array(buffer);
-
-    // Convert to base64
-    let binary = '';
-    for(let i = 0; i < bytes.byteLength; i++){
-      binary += String.fromCharCode(bytes[i]);
-    }
-    const base64 = btoa(binary);
-
-    console.log("Base64 created, length:", base64.length);
-    console.log("Sending to API...");
-
-    const r = await post("/api/wheel-image", {wheel: S.wheel, data: base64, ext: ext});
-    console.log("API Response:", r);
-
+    const r = await fetch("/api/wheel-image", {method:"POST", body}).then(r=>r.json());
     if(r.ok){
-      console.log("Upload successful!");
-      imagestatus.textContent = "✓ Image uploaded successfully - refresh page to see it";
+      const kb = Math.round(r.bytes/1024);
+      imagestatus.textContent = "Saved " + r.path + " (" + kb + " kB). "
+        + "Restart the Astro dev server to see it on the site.";
       wheelInput.value = "";
-      setTimeout(() => { imagestatus.textContent = ""; }, 5000);
     } else {
-      console.log("API returned error:", r);
-      imagestatus.textContent = "Error: " + (r.error || "Upload failed");
+      imagestatus.textContent = "Error: " + (r.error || "upload failed");
     }
   } catch(err) {
-    console.error("Upload error:", err);
     imagestatus.textContent = "Error: " + err.message;
   }
 }

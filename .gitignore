@@ -17,3 +17,6 @@ site/.astro/
 
 # macOS
 .DS_Store
+
+# Wheel images mirrored out of wheels/ at build time by site/src/lib/data.js
+site/public/wheels/

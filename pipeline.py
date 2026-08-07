@@ -42,7 +42,7 @@ QUOTE_ONLY = {
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
     "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
     "piece_count":           "Is it monoblock, 2-piece, or 3-piece? or all options available?",
-    "cert_document":         "JWL / VIA / TUV certificate PDF, and does it cover this width?",
+    "cert_document":         "Which certifications do you have? (DOT, JWL, VIA, TUV, etc.) Does it cover this width? Certificate PDF?",
     "freight_cif_usd":       "Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse",
     "hs_code":               "HS code / tariff classification for your wheels",
     "is_manufacturer":       "Are you the manufacturer or a trading company? Factory address?",

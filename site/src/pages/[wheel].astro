@@ -97,6 +97,7 @@ const payload = JSON.stringify({ suppliers: wheel.suppliers });
       <div><label for="m-off">Offset</label><input id="m-off" placeholder="ET+22" /></div>
       <div><label for="m-pcd">Bolt pattern</label><input id="m-pcd" placeholder="5x120" /></div>
       <div><label for="m-pieces">Construction</label><select id="m-pieces" style="width: 100%; padding: 8px 10px; border: 1px solid #A9AFA5; font-family: 'IBM Plex Mono'; font-size: 13px; background: transparent; color: inherit; appearance: auto;"><option value="">Select</option><option value="single-piece">Single Piece</option><option value="2-piece">2-Piece</option><option value="3-piece">3-Piece</option></select></div>
+      <div><label for="m-finish">Finish / color</label><input id="m-finish" placeholder="Polished silver, bronze, etc." /></div>
       <div><label for="m-zip">Shipping zip code</label><input id="m-zip" placeholder="90210" /></div>
     </div>
     <div class="mfoot">
@@ -257,9 +258,9 @@ function buildMsg(s, spec) {
   const carline = spec?.car ? `My car: ${spec.car}\n\n` : "";
   const lines = spec
     ? [["Diameter", spec.dia], ["Width", spec.wid],
-       ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Construction", spec.pieces]]
+       ["Offset", spec.off], ["Bolt pattern", spec.pcd], ["Construction", spec.pieces], ["Finish", spec.finish]]
         .filter(([, v]) => v).map(([k, v]) => `  ${k.padEnd(13)}${v}`).join("\n")
-    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __\n  Construction  __";
+    : "  Diameter      __\n  Width         __\n  Offset        __\n  Bolt pattern  __\n  Construction  __\n  Finish        __";
 
   const zipline = spec?.zip ? `\n\nShipping zip code: ${spec.zip}` : "";
 
@@ -286,12 +287,13 @@ const readSpec = () => ({
   off: el("m-off").value.trim(),
   pcd: el("m-pcd").value.trim(),
   pieces: el("m-pieces").value.trim(),
+  finish: el("m-finish").value.trim(),
   zip: el("m-zip").value.trim(),
 });
 
 function refresh() { el("mpreview").value = buildMsg(current, readSpec()); }
 
-["m-car","m-dia","m-wid","m-off","m-pcd","m-pieces","m-zip"].forEach((id) =>
+["m-car","m-dia","m-wid","m-off","m-pcd","m-pieces","m-finish","m-zip"].forEach((id) =>
   el(id).addEventListener("input", refresh));
 
 const close = () => { el("modal").hidden = true; };

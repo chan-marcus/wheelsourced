@@ -1,0 +1,111 @@
+id: sichuan-maining-technology-co-ltd
+wheel: lmgt4
+listings:
+- https://www.alibaba.com/product-detail/Nismo-LMGT4-LM-GT4-17x9-18x9_1600579015054.html?chatToken=U1ZkdVJIVkhVRXB3VVd0MVF6QnFTSEJEV21jNEt6SmtiMnBMZWprNGIxVlNlRGRFYm05WmJXa3JlRzlZU2xoNFZVSjRSV0Y2V0dkTVMyWm1Mell4UTJJclNFeFVaRlkwUW5SelVITnZOWFJyU0hRMU1Ea3pURTlEUVVKMGVHdHFOSEJoV2tkc1pXdFBLMUk0Tm1adVVFeDVkRU5STTBWVk1XRlRhM3BRTDNJd2Rrc3dlWFJNV0haT1NEY3laRE5NTDNkSFVHa3piR2t3YjFwSWRuZFZURFZZVXpkSVFtMW1ORzlIU0VoUk0wWmhlbUpoZW5sMFdETmtOMVZtTVcxWCZ2ZXJzaW9uPTIuMC4w&encryptTargetLoginId=8pctgRBMALN2TU2bEzH7JkxOA22%2FKzOz6wdkfYSa%2Bs4%3D
+supplier_url: https://sichuanmaining.en.alibaba.com/
+from_listing:
+  supplier_name: Sichuan Maining Technology Co., Ltd.
+  business_type: manufacturer+trading
+  years_on_platform: 5
+  staff_count: null
+  factory_area_sqm: null
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 198
+  listed_price_high: 271
+  moq: 4 pieces
+  listed_lead_time: 40 days (1-4 pieces), to be negotiated for >4 pieces
+  sizes_offered:
+  - 17x9
+  - 18x9.5
+  - 18x10.5
+  - 19x10.5
+  bolt_patterns:
+  - 130mm
+  - 120mm
+  - 108mm
+  - 115mm
+  - 112mm
+  - 127mm
+  - 100mm
+  - 139.7mm
+  - 98mm
+  - 165.1mm
+  - 114.3mm
+  - 120.65mm
+  - 143.1mm
+  offsets_offered:
+  - 10mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 40mm
+  - 42mm
+  - 45mm
+  - 50mm
+  - 0mm
+  - 0-80mm
+  finishes:
+  - Black
+  - Gloss Black
+  construction: forged
+  certs_claimed: []
+  main_image_url: null
+  store_rating: 4.7
+  review_count: 134
+  response_time: ≤3h
+  on_time_dispatch: 96.7%
+  reorder_rate: 11%
+  units_sold: 18
+  transit_time: Est. 16-23 days
+from_quote:
+  price_per_wheel_1set: 289
+  price_per_wheel_4set: null
+  forging_process: 6061-T6
+  piece_count:
+  - monoblock
+  cert_document: claimed without document
+  freight_cif_usd: 300
+  is_manufacturer: true
+  cnc_inhouse: true
+  heat_treat: 6061-T6
+  payment_terms: 50% deposit to confirm order and begin design renderings and production,
+    remaining 50% balance prior to shipment once production is completed
+  defect_policy: Quality issues upon receipt (paint or performance) can be returned
+    for refund if not man-made damage; returns sent to US warehouse
+  size_chart: null
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: true
+  quote_construction: 2-piece
+  certs_claimed:
+  - DOT
+meta:
+  listing_seen: '2026-08-07'
+  rfq_sent: '2026-08-07'
+  reply_received: '2026-08-08'
+  questions_answered: 10/11
+  rfq_first_sent: '2026-08-07'
+  rfq_round: 2
+  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
+  first_reply: '2026-08-08'
+  reply_count: 4
+  reply_notes:
+  - '2026-08-08: Price stated as $289 per wheel; for one set of 4 totals $1456 including
+    $300 shipping. DOT certification claimed but no document provided. Manufacturing
+    lead time 30-40 days. Factory direct, MOQ 1 set, discounts available for 5+ sets.'
+  - '2026-08-08: Price stated per wheel; shipping quoted separately at 300 USD for
+    one set'
+  - '2026-08-08: Only heat treatment temper and payment terms stated. No defect policy
+    provided. Supplier name is Ethan Zhu.'
+  - '2026-08-08: Message addresses only defect policy and insurance; no product specifications
+    provided'
+  factory_address: Ningbo, Zhejiang
+flags:
+- cert claimed, no document
+- claims factory, profile says trading
+- forging process not actually described

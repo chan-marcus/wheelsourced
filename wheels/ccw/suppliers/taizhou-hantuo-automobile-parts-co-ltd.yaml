@@ -101,10 +101,11 @@ from_quote:
   freight_cif_usd: 250
   hs_code: null
   is_manufacturer: true
-  cnc_inhouse: null
+  cnc_inhouse: true
   heat_treat: T6 heat treatment, solution treatment and aging
   payment_terms: 50% deposit, balance on completion before shipment
-  defect_policy: null
+  defect_policy: If out of round or damaged, we will compensate repair costs. If cannot
+    be repaired, we will remake it.
   weight_kg: 9.5
   load_rating_kg: 745
   forged_confirmed: true
@@ -130,8 +131,8 @@ meta:
     freight_cif_usd: 288
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
-  reply_count: 3
-  questions_answered: 9/11
+  reply_count: 5
+  questions_answered: 11/11
   reply_notes:
   - '2026-08-08: 3-piece price 550 USD/wheel quoted; 2-piece price 430 USD/wheel also
     quoted. Offered monoblock, 2-piece, and 3-piece capabilities. Weight and load
@@ -142,6 +143,11 @@ meta:
     high-performance properties; no pricing, specifications, or certifications provided'
   - '2026-08-08: Only heat treatment process stated; no pricing, specifications, certifications,
     or construction details provided.'
+  - '2026-08-08: Only warranty information provided; no technical specifications or
+    pricing details supplied'
+  - '2026-08-08: Supplier confirms in-house CNC machining and factory testing capability
+    for roundness. Heat treatment process specified as T6 with solution and aging
+    steps.'
   factory_address: Taizhou, Jiangsu, China
   reply_days: 1
   reply_note: 3-piece price 550 USD/wheel quoted for 18x9.5J ET+22 5x114.3. Weight

@@ -190,6 +190,15 @@ dropping `data.js` out of the module graph would not reach it.
 
 Nothing watches during `astro build`, which is correct: a build reads once.
 
+**The restart is serialised, and the port is pinned.** A restart starting
+before the previous one finished raced it for the port: the new server found
+4321 held by the old, took 4322, and the old left a socket that listened and
+answered nothing. The result is a dead 4321, a live 4322 and no hint that the
+sheet moved. `restarting` guards against overlap, `strictPort` means a clash
+fails at startup instead of drifting somewhere else, and the server binds
+127.0.0.1 explicitly because Node resolves localhost to ::1 first on macOS, so
+the default bind served `localhost:4321` but not `127.0.0.1:4321`.
+
 **Changing the question set needs a migration.** `ask()` iterates the field
 definitions (not the record) and calls setdefault, so new keys backfill
 automatically and stale keys are ignored. But old keys linger in the YAML

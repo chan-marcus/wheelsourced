@@ -91,7 +91,7 @@ from_listing:
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
-  forging_process: machined from a forged blank, 6061-T6 aviation grade aluminium
+  forging_process: forged blanks, 6061-T6 aviation grade aluminium
   piece_count:
   - monoblock
   - 2-piece
@@ -128,7 +128,7 @@ meta:
     freight_cif_usd: 320
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
-  reply_count: 1
+  reply_count: 2
   questions_answered: 7/11
   reply_notes:
   - '2026-08-08: Price per wheel (480 USD) stated for 1 set of 4 wheels; weight given
@@ -136,6 +136,9 @@ meta:
     depending on dimensions; certification available only for minimum 20-sample orders;
     custom-bore available; mentions JWL/VIA standards in chat header but cannot provide
     certificates for customized products'
+  - '2026-08-08: 4-set price of 1920 USD is per set, not per wheel. Load rating stated
+    as range 750-900 kg; midpoint 825 kg reported. Certification requires minimum
+    20-sample batch. Freight quoted for one 18-inch set.'
   factory_address: Zhejiang
 flags:
 - quoted 3-piece, no 2-piece price

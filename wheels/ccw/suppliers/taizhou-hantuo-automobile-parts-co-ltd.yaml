@@ -92,7 +92,7 @@ from_listing:
 from_quote:
   price_per_wheel_1set: 430
   price_per_wheel_4set: 1720
-  forging_process: fully forged from 6061-T6 aluminum billets
+  forging_process: 6061-T6 forged aluminum alloy
   piece_count:
   - monoblock
   - 2-piece
@@ -102,7 +102,7 @@ from_quote:
   hs_code: null
   is_manufacturer: true
   cnc_inhouse: null
-  heat_treat: null
+  heat_treat: T6 heat treatment, solution treatment and aging
   payment_terms: 50% deposit, balance on completion before shipment
   defect_policy: null
   weight_kg: 9.5
@@ -130,14 +130,18 @@ meta:
     freight_cif_usd: 288
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
-  reply_count: 1
-  questions_answered: 8/11
+  reply_count: 3
+  questions_answered: 9/11
   reply_notes:
   - '2026-08-08: 3-piece price 550 USD/wheel quoted; 2-piece price 430 USD/wheel also
     quoted. Offered monoblock, 2-piece, and 3-piece capabilities. Weight and load
     rating given for 18x9.5J specification. Certificates promised via email but not
     yet provided as of message date. Production cycle for 3-piece stated as at least
     2 months.'
+  - '2026-08-08: Supplier claims forged 6061-T6 construction with lightweight, high-strength,
+    high-performance properties; no pricing, specifications, or certifications provided'
+  - '2026-08-08: Only heat treatment process stated; no pricing, specifications, certifications,
+    or construction details provided.'
   factory_address: Taizhou, Jiangsu, China
   reply_days: 1
   reply_note: 3-piece price 550 USD/wheel quoted for 18x9.5J ET+22 5x114.3. Weight

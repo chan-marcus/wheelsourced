@@ -87,9 +87,9 @@ from_quote:
   freight_cif_usd: 280
   hs_code: null
   is_manufacturer: true
-  cnc_inhouse: null
+  cnc_inhouse: true
   heat_treat: T6
-  payment_terms: null
+  payment_terms: 50% advance payment
   defect_policy: compensation provided if damaged
   weight_kg: 11
   load_rating_kg: 850
@@ -113,13 +113,14 @@ meta:
     taizhou-gushi-technology-co-ltd__2026-08-08.txt: 4a57faf2229c1c73
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
-  reply_count: 1
-  questions_answered: 9/11
+  reply_count: 2
+  questions_answered: 11/11
   reply_notes:
   - '2026-08-08: Supplier claims JWL/VIA/TUV certifications in product listing but
     did not provide documents or confirm coverage of specific width. CNC in-house
     status not explicitly stated. Payment terms not confirmed despite question asking
     about 50% deposit.'
+  - '2026-08-08: HS code / tariff classification not provided in response'
   factory_address: Taixing, Jiangsu
 flags:
 - under 3 years listed

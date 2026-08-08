@@ -304,6 +304,8 @@ function render() {
             : or(null)}</dd></div>
           <div><dt>Set of 4</dt><dd>${
             s.setPrice ? money(s.setPrice) : or(null)}</dd></div>
+          <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
+          <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
           <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
             : s.forged === false ? "no" : or(null)}</dd></div>
           <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
@@ -315,8 +317,6 @@ function render() {
             : s.cnc === false ? "outsourced" : or(null)}</dd></div>
           <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
           <div><dt>Damage/Defect policy</dt><dd>${or(s.defects)}</dd></div>
-          <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
-          <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
         </dl>
       </div>
 

@@ -78,6 +78,15 @@ QUOTE_ONLY = {
     # names, cert_document takes whether the certificate arrived. Drop the
     # second sentence and cert_document stops being asked at all.
     "cert_document":         "Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?",
+    # Both in one question, the way price 1set and 4set are. Suppliers answer
+    # them on one line anyway ("about 11kg, load 850kg"), and it keeps the
+    # cold list shorter. load_rating_kg carries no text of its own.
+    #
+    # These were flagged but never asked, which is the wrong way round: a
+    # supplier was marked "no load rating given" for withholding something
+    # nobody had requested, and the weight drives the forged-weight check too.
+    "weight_kg":             "What is the weight of one wheel in kg? What load can one wheel carry in kg?",
+    "load_rating_kg":        None,   # asked together with weight_kg, stored separately
     "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
     "hs_code":               "What is the HS code for your wheels?",
     "is_manufacturer":       "Are you the factory, or a trading company? What is the factory address?",
@@ -87,6 +96,10 @@ QUOTE_ONLY = {
 # contact. Sending all eleven questions cold tanks the response rate, so
 # they wait until the round-one basics are in.
 ROUND2 = {
+    # Also flagged before it was ever asked. Held to round two rather than
+    # round one only to keep first contact short: it unlocks the moment they
+    # reply, so anyone who can be flagged for it has been asked for it.
+    "size_chart":     "Which sizes do you make? Please send your size chart if you have one.",
     "cnc_inhouse":    "Do you do the CNC machining in your own factory, or outsource it?",
     "heat_treat":     "What is your heat treatment process? Which temper (for example T6)? How many hours?",
     "payment_terms":  "What are your payment terms? Is it 50% deposit?",
@@ -95,19 +108,34 @@ ROUND2 = {
 
 ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
 
-# Answers we keep but never ask as a numbered question. REPLY_SCHEMA already
-# extracts all four: weight and load rating because suppliers volunteer them
-# unprompted, forged_confirmed because it is derived from forging_process
-# rather than asked, size_chart because they either attach one or do not.
+# Fields answered inside somebody else's question, mapped to the question that
+# carries them. Written out rather than inferred from "the entry above with
+# text", because that is dict order doing load-bearing work, and because ask()
+# needs the mapping in reverse to re-send a question whose second half went
+# unanswered.
+PAIRED_WITH = {
+    "price_per_wheel_4set": "price_per_wheel_1set",
+    "load_rating_kg":       "weight_kg",
+}
+
+# Every text-less field must name its carrier, or it silently becomes a field
+# that is stored, counted in the denominator, and never actually asked.
+_orphans = [k for k, v in ALL_FIELDS.items() if not v and k not in PAIRED_WITH]
+if _orphans:
+    raise RuntimeError(f"asked fields with no question and no pairing: {_orphans}")
+
+# Answers we keep but never ask as a numbered question.
 #
-# They are not in ALL_FIELDS, and the copy loops used to iterate ALL_FIELDS,
-# so the model returned these values and the code dropped them on the floor.
-# Meanwhile ROUND1_CORE gated on them and _flags() penalised their absence:
-# suppliers were being marked down for answers we had thrown away. Taizhou
-# Gushi replied "Weight is about 11 kg, load capacity is 850 kg" and both
-# fields stayed null. Older records still hold values only because these
-# fields were in the asked set before the question set was trimmed.
-EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart",
+# Weight, load rating and size_chart used to live here, and that was the
+# wrong side of the line: all three are read by _flags(), so suppliers were
+# being marked "no load rating given" and "no size chart supplied" for
+# withholding things nobody had ever put to them. A flag has to be answerable.
+# They are questions now, and only genuinely underivable answers are left.
+EXTRACTED_ONLY = (# Derived from forging_process by the auto-confirm below, and
+                  # from their own words about flow forming. Asking "is it
+                  # really forged" invites a yes from someone who has already
+                  # described spinning a cast centre.
+                  "forged_confirmed",
                   # Which construction the stored price is actually for. Not a
                   # question: it qualifies the price. Without it a 2-piece
                   # quote and a 3-piece quote sit in the same column looking
@@ -167,10 +195,7 @@ FIELD_LABELS = {
 # GUI. That left certs_claimed invisible in the only tool for correcting it,
 # while it was being published on the sheet.
 EXTRACTED_DESC = {
-    "weight_kg":         "Weight per wheel in kg. Never asked, only recorded when volunteered.",
-    "load_rating_kg":    "Load rating per wheel in kg. Never asked, only recorded when volunteered.",
     "forged_confirmed":  "true or false. Drives the Forged column and the forging flags. Flow formed is not forged.",
-    "size_chart":        "The sizes or chart they offered, summarised.",
     "quote_construction": f"Which construction the stored price is for. Anything but {QUOTE_CONSTRUCTION} means the price was set aside.",
     "certs_claimed":     "Certifications they name, comma separated. DOT, JWL, VIA, TUV, ECE, SFI, ISO 9001, IATF 16949, CE.",
 }
@@ -618,7 +643,20 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3"):
 
         # Only ask what the listing could not answer. Shorter asks get
         # better response rates and signal you actually read their page.
-        numbered = [k for k in missing if k not in EXTRAS and pool.get(k)]
+        # A field with no question text of its own is asked inside another
+        # question, so a missing one has to pull in the question that carries
+        # it. Without this the secondary can never be asked again once the
+        # primary is answered: Ruitou gave a weight and no load rating, the
+        # weight question therefore stopped being sent, and they kept a "no
+        # load rating given" flag for something we had quietly stopped asking.
+        want = []
+        for k in missing:
+            if k in EXTRAS:
+                continue
+            k = PAIRED_WITH.get(k, k)
+            if pool.get(k) and k not in want:
+                want.append(k)
+        numbered = [k for k in pool if k in want]
         extras = [k for k in missing if k in EXTRAS and pool.get(k)]
 
         qs = "\n".join(f"  {i}. {pool[k]}" for i, k in enumerate(numbered, 1))

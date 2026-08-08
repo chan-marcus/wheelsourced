@@ -722,9 +722,7 @@ function render(){
           <button class="ghost" onclick="resetSupplier('${s.id}', this)">Reset data</button>
         </div>
         <span class="lbl">Quoted data · dashed border means still unanswered</span>
-        <div class="grid" style="margin-top:8px">${fields}</div>
-        <span class="lbl" style="margin-top:18px;display:block">Also extracted · kept but never asked, so never counted against them</span>
-        <div class="grid" style="margin-top:8px">${extracted}</div>
+        <div class="grid" style="margin-top:8px">${fields}${extracted}</div>
       </div></div>`;
   }).join("") || `<div class="hint">Nothing yet. Add listing URLs above and pull.</div>`;
 }

@@ -78,15 +78,6 @@ QUOTE_ONLY = {
     # names, cert_document takes whether the certificate arrived. Drop the
     # second sentence and cert_document stops being asked at all.
     "cert_document":         "Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?",
-    # Both in one question, the way price 1set and 4set are. Suppliers answer
-    # them on one line anyway ("about 11kg, load 850kg"), and it keeps the
-    # cold list shorter. load_rating_kg carries no text of its own.
-    #
-    # These were flagged but never asked, which is the wrong way round: a
-    # supplier was marked "no load rating given" for withholding something
-    # nobody had requested, and the weight drives the forged-weight check too.
-    "weight_kg":             "What is the weight of one wheel in kg? What load can one wheel carry in kg?",
-    "load_rating_kg":        None,   # asked together with weight_kg, stored separately
     "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
     # hs_code was asked here but never appeared in REPLY_SCHEMA below, so
     # nothing was ever extracted from an answer no matter how clearly a
@@ -115,7 +106,6 @@ ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
 # unanswered.
 PAIRED_WITH = {
     "price_per_wheel_4set": "price_per_wheel_1set",
-    "load_rating_kg":       "weight_kg",
 }
 
 # Every text-less field must name its carrier, or it silently becomes a field
@@ -126,17 +116,15 @@ if _orphans:
 
 # Answers we keep but never ask as a numbered question.
 #
-# Weight and load rating used to live here too, and that was the wrong side of
-# the line: both are read by _flags(), so suppliers were being marked "no load
-# rating given" for withholding something nobody had ever put to them. A flag
-# has to be answerable, so they became a question instead.
+# Weight and load rating were a question for exactly one commit. Not worth
+# the line in a cold message, so back here, and the "no load rating given"
+# flag goes with it: a flag has to be answerable, and this is no longer a
+# question anyone can fail to answer. Still recorded when a supplier
+# volunteers one, which is most of the time; only the asking stopped.
 #
-# size_chart is back on this side, deliberately, having been on the other one
-# for exactly one commit: not worth a question of its own, but "no size chart
-# supplied" is not a flag either while it stays here, for the reason above.
-# The line is kept, not removed, so a supplier who volunteers one still has it
-# recorded and shown; the question is what got cut.
-EXTRACTED_ONLY = ("size_chart",
+# size_chart is the same shape, having made the same round trip one commit
+# earlier for the same reason.
+EXTRACTED_ONLY = ("size_chart", "weight_kg", "load_rating_kg",
                   # Derived from forging_process by the auto-confirm below, and
                   # from their own words about flow forming. Asking "is it
                   # really forged" invites a yes from someone who has already
@@ -201,6 +189,8 @@ FIELD_LABELS = {
 # while it was being published on the sheet.
 EXTRACTED_DESC = {
     "size_chart":        "The sizes or chart they offered, summarised. Not a numbered question, so never flagged when blank.",
+    "weight_kg":         "Weight per wheel in kg. Not a numbered question, so never flagged when blank.",
+    "load_rating_kg":    "Load rating per wheel in kg. Not a numbered question, so never flagged when blank.",
     "forged_confirmed":  "true or false. Drives the Forged column and the forging flags. Flow formed is not forged.",
     "quote_construction": f"Which construction the stored price is for. Anything but {QUOTE_CONSTRUCTION} means the price was set aside.",
     "certs_claimed":     "Certifications they name, comma separated. DOT, JWL, VIA, TUV, ECE, SFI, ISO 9001, IATF 16949, CE.",
@@ -428,8 +418,8 @@ def merge_field(k, prev, value, text=None):
 # Round two unlocks once these are known. Not the whole of round one: a
 # supplier who answered everything except the size chart has clearly engaged,
 # and holding the detail questions back over one soft field wastes a round.
-ROUND1_CORE = ("price_per_wheel_1set", "weight_kg", "load_rating_kg",
-               "forged_confirmed", "piece_count", "freight_cif_usd")
+ROUND1_CORE = ("price_per_wheel_1set", "forged_confirmed", "piece_count",
+               "freight_cif_usd")
 
 # Rendered as bullets at the end rather than numbered questions. These are
 # nice-to-haves, and burying them keeps the numbered list short enough that
@@ -1146,8 +1136,8 @@ def _flags(rec):
                       f"(expected under {ceiling:.1f}kg)")
     if Q.get("is_manufacturer") is True and "trading" in str(L.get("business_type", "")).lower():
         fl.append("claims factory, profile says trading")
-    if Q.get("load_rating_kg") is None:
-        fl.append("no load rating given")
+    # No flag for a missing load_rating_kg: it went back to EXTRACTED_ONLY, so
+    # it is no longer a question anyone can fail to answer.
     # Falsy covers the empty list merge_constructions can no longer produce,
     # but would otherwise slip past an `in (None, "")` test.
     if not Q.get("piece_count"):

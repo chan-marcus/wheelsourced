@@ -7,8 +7,7 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. What is the weight of one wheel in kg? What load can one wheel carry in kg?
-  2. What is your heat treatment process? Which temper (for example T6)? How many hours?
-  3. If a wheel arrives out of round, or the finish is damaged, what do you do?
+  1. What is your heat treatment process? Which temper (for example T6)? How many hours?
+  2. If a wheel arrives out of round, or the finish is damaged, what do you do?
 
 Thank you.

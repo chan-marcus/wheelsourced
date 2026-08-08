@@ -173,7 +173,7 @@ footer p{font-family:'IBM Plex Mono';font-size:11px;line-height:1.7;color:var(--
 .masthead{display:flex;flex-direction:column;gap:14px}
 .logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
 .logo .word{font-family:var(--display);font-weight:700;font-size:31px;
-  letter-spacing:-.05em;line-height:1}
+  letter-spacing:-.11em;line-height:1}
 .logo .word em{font-style:normal;color:var(--bronze)}
 h1{display:none}
 

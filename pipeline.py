@@ -130,6 +130,37 @@ EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart
 # something nobody put to them.
 STORED_FIELDS = tuple(ALL_FIELDS) + EXTRACTED_ONLY
 
+# What each stored field is called in the interface. The sheet's spec grid
+# already had these names hand-written into the markup while the GUI derived
+# its own from the key, so the same value was "defect policy" in one place and
+# "Damage policy" in the other, and "freight cif usd" against "Est. shipping
+# cost". Named once here so the two cannot drift.
+#
+# Certification is two fields, kept apart for the reason on certs_claimed: the
+# names and whether a certificate exists are different answers. The sheet
+# prints them in one cell; the GUI has to edit them separately.
+FIELD_LABELS = {
+    "price_per_wheel_1set": "Per wheel",
+    "price_per_wheel_4set": "Set of 4",
+    "forging_process":      "Process stated",
+    "piece_count":          "Pieces",
+    "certs_claimed":        "Certification",
+    "cert_document":        "Certificate on file",
+    "freight_cif_usd":      "Est. shipping cost",
+    "hs_code":              "HS code",
+    "is_manufacturer":      "Manufacturer",
+    "cnc_inhouse":          "CNC",
+    "heat_treat":           "Heat treat",
+    "payment_terms":        "Payment terms",
+    "defect_policy":        "Damage/Defect policy",
+    "weight_kg":            "Weight (kg)",
+    "load_rating_kg":       "Load rating (kg)",
+    "forged_confirmed":     "Forged",
+    "size_chart":           "Size chart",
+    "quote_construction":   "Quoted construction",
+}
+
+
 # What the GUI puts under each of the kept-but-not-asked fields. ALL_FIELDS
 # carries the question text and doubles as the tooltip there; these have no
 # question to show, and without a line each they were simply absent from the

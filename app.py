@@ -115,6 +115,7 @@ def state(wheel: str = ""):
     # and corrected without being counted as a question nobody answered.
     return {"wheels": ws, "wheel": w, "suppliers": load(w) if w else [],
             "fields": P.ALL_FIELDS, "extracted": P.EXTRACTED_DESC,
+            "labels": P.FIELD_LABELS,
             "busy": BUSY["running"], "log": LOG[-40:]}
 
 
@@ -519,11 +520,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div id="toasts" aria-live="polite"></div>
 
 <script>
-let S={wheel:"",suppliers:[],fields:{},extracted:{},rfqs:{}}, OPEN=null;
+let S={wheel:"",suppliers:[],fields:{},extracted:{},labels:{},rfqs:{}}, OPEN=null;
 
 async function boot(w){
   const r = await (await fetch("/api/state?wheel="+encodeURIComponent(w||""))).json();
   S.wheel=r.wheel; S.suppliers=r.suppliers; S.fields=r.fields; S.extracted=r.extracted||{};
+  S.labels=r.labels||{};
   const sel=document.getElementById("wheel");
   sel.innerHTML=r.wheels.map(x=>`<option ${x===r.wheel?"selected":""}>${x}</option>`).join("");
   if(r.wheel){
@@ -671,7 +673,7 @@ function render(){
     // not a gap and must not be drawn like one.
     const cell=(k,desc,asked)=>{
       const v=Q[k]; const empty=(v===null||v===undefined||v==="");
-      return `<div class="f"><label title="${desc}">${k.replace(/_/g," ")}</label>
+      return `<div class="f"><label title="${desc}">${S.labels[k]||k.replace(/_/g," ")}</label>
         <input class="${empty&&asked?'empty':''}" value="${empty?'':show(v)}"
           onchange="setField('${s.id}','${k}',this.value)"></div>`;
     };

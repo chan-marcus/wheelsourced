@@ -110,7 +110,11 @@ function normalize(r) {
   return {
     id: r.id,
     name: titleize(r.id),
-    url: (r.listings && r.listings[0]) || r.listing_url || null,
+    // Outbound clicks go to our affiliate link where one is set, and fall
+    // back to the plain listing where it is not. Falling back rather than
+    // hiding the button: a supplier without an affiliate link is a supplier
+    // we earn nothing from, not one a reader should be unable to reach.
+    url: r.affiliate_url || (r.listings && r.listings[0]) || r.listing_url || null,
     bolt_patterns: (L.bolt_patterns || []).map(String),
     sizes: (L.sizes_offered || []).map(String),
     construction: L.construction || null,

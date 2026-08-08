@@ -569,6 +569,9 @@ def pull(wheel):
                 rec = yaml.safe_load(path.read_text())
                 rec.setdefault("listings",
                                [rec.pop("listing_url")] if "listing_url" in rec else [])
+                # setdefault, never assign: re-pulling a listing must not wipe
+                # an affiliate link already set for this supplier.
+                rec.setdefault("affiliate_url", None)
                 if url not in rec["listings"]:
                     rec["listings"].append(url)
                 for k, v in data.items():
@@ -590,6 +593,10 @@ def pull(wheel):
                     "wheel": wheel,
                     "listings": [url],
                     "supplier_url": data.get("supplier_url"),
+                    # Ours, not theirs, so it sits at the top level rather than
+                    # in from_quote and survives a reset. Null until set in the
+                    # GUI; the sheet falls back to listings[0] meanwhile.
+                    "affiliate_url": None,
                     "from_listing": {k: v for k, v in data.items() if k != "supplier_url"},
                     "from_quote": {k: None for k in STORED_FIELDS},
                     "meta": {"listing_seen": TODAY, "rfq_sent": None,

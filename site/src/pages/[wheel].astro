@@ -159,6 +159,12 @@ let sortMode = "vetting";
 let current = null;
 
 const money = (n) => "$" + Math.round(n).toLocaleString();
+// Escape before interpolating into an HTML attribute. The outbound link is now
+// an affiliate URL typed into a form rather than a scraped listing, and a
+// quote in it would close the href early and let the rest parse as markup.
+const attr = (v) => String(v ?? "")
+  .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+  .replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // "4 pieces" -> "4". The Min. order label already says what is being counted.
 // Only piece/pieces: a "2 sets" MOQ means something different from "2" and
 // keeps its unit. Display only, because s.moq is compared as a whole string
@@ -314,7 +320,7 @@ function render() {
 
       <div class="vf" style="margin-top:12px;">
         <button class="btn" data-rfq="${s.id}">Write quote request</button>
-        ${s.url ? `<a class="btn ghost" href="${s.url}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
+        ${s.url ? `<a class="btn ghost" href="${attr(s.url)}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
         <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>
       </div>
     </article>`).join("");

@@ -337,6 +337,52 @@ async def edit_field(req: Request):
     return {"ok": True, "record": rec}
 
 
+def _affiliate_url_ok(url):
+    """Scheme check only, deliberately not the listing allowlist.
+
+    Affiliate links go out through tracking hosts and redirectors, so
+    _listing_host_ok's alibaba/1688 rule would reject perfectly good ones.
+    What still has to be enforced is the scheme: this value is written
+    straight into an href on the public sheet, and "javascript:" there is an
+    XSS hole in our own page.
+    """
+    from urllib.parse import urlparse
+    try:
+        u = urlparse(url)
+    except ValueError:
+        return False
+    return u.scheme in ("http", "https") and bool(u.hostname)
+
+
+@app.post("/api/affiliate")
+async def set_affiliate(req: Request):
+    """Our affiliate link for a supplier, stored at the TOP level of the record.
+
+    Not from_quote: that is what a supplier told us, and this is something we
+    added. Keeping it out also keeps it out of the questions_answered
+    denominator. Not meta either, which is pipeline bookkeeping and gets
+    filtered through RESET_KEEPS_META. Top level means a reset, which throws
+    away every supplier answer so the archive can be re-parsed, leaves our own
+    link alone, which is the only sane behaviour for a field the supplier had
+    no part in.
+    """
+    b = await req.json()
+    path = P.sdir(b["wheel"]) / f"{b['id']}.yaml"
+    if not path.exists():
+        return JSONResponse({"ok": False, "error": f"no such supplier: {b['id']}"}, status_code=404)
+
+    raw = str(b.get("url") or "").strip()[:MAX_URL]
+    if raw and not _affiliate_url_ok(raw):
+        return JSONResponse(
+            {"ok": False, "error": "Affiliate link must be a http or https URL."}, status_code=400)
+
+    rec = yaml.safe_load(path.read_text())
+    rec["affiliate_url"] = raw or None
+    save(b["wheel"], rec)
+    log(f"{b['id']}: affiliate link {'set' if raw else 'cleared'}")
+    return {"ok": True, "affiliate_url": rec["affiliate_url"]}
+
+
 # Meta written by the listing pull and by ask(), not by reading a reply. A
 # reset throws away everything a supplier told us, so anything NOT in here goes.
 # Kept as a keep-list rather than a drop-list on purpose: parse-derived keys get
@@ -637,6 +683,21 @@ async function genRfq(){
   S.rfqs=r.rfqs; render();
 }
 
+// Escape before interpolating into an HTML attribute. A URL carrying a quote
+// would otherwise close the attribute early and the rest of it would be
+// parsed as markup.
+const attr=v=>String(v==null?"":v)
+  .replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+async function setAffiliate(id, url, el){
+  const r=await post("/api/affiliate",{wheel:S.wheel,id,url});
+  if(!r||!r.ok){ toast((r&&r.error)||"Could not save the affiliate link","bad"); return; }
+  const s=S.suppliers.find(x=>x.id===id);
+  if(s) s.affiliate_url=r.affiliate_url;
+  toast(r.affiliate_url?"Affiliate link saved":"Affiliate link cleared");
+  render();
+}
+
 function render(){
   document.getElementById("supcount").textContent=S.suppliers.length+" tracked";
   document.getElementById("sups").innerHTML=S.suppliers.map(s=>{
@@ -713,6 +774,14 @@ function render(){
           <textarea rows="10" id="rfq-${s.id}" readonly>${rfq}</textarea>
           <div class="row" style="margin:8px 0 18px"><button class="ghost" onclick="copyRfq('${s.id}')">Copy message</button>
           <a href="${(s.listings&&s.listings[0])}" target="_blank"><button class="ghost">Open listing</button></a></div>`:""}
+        <span class="lbl">Affiliate link · this is what "Open listing" points to on the public sheet</span>
+        <div class="row" style="margin:8px 0 18px">
+          <input id="aff-${s.id}" value="${attr(s.affiliate_url)}"
+            placeholder="https://s.click.alibaba.com/... — blank falls back to the plain listing"
+            onchange="setAffiliate('${s.id}', this.value, this)">
+          ${s.affiliate_url ? `<a href="${attr(s.affiliate_url)}" target="_blank" rel="noopener">
+            <button class="ghost">Test</button></a>` : ""}
+        </div>
         <span class="lbl">Paste their reply</span>
         <textarea rows="7" id="rep-${s.id}" placeholder="Paste the raw reply here, unedited. Broken English is fine."></textarea>
         <div class="row" style="margin:8px 0 18px">

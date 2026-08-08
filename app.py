@@ -945,4 +945,21 @@ def index():
 if __name__ == "__main__":
     Path("wheels").mkdir(exist_ok=True)
     print("\n  http://localhost:8420\n")
-    uvicorn.run(app, host="127.0.0.1", port=8420, log_level="warning")
+    # Reload on save. The page is one big string in this file, so before this
+    # a stale process served old HTML indefinitely and looked like a bug in
+    # the code you had just fixed: the Finish field stayed on the form for
+    # three hours after being deleted.
+    #
+    # "app:app" rather than the object, because reload re-imports the module
+    # in a child process and cannot do that from an instance. The __main__
+    # guard is what stops that child running this block again.
+    #
+    # Scoped to this directory and to the two files the GUI is actually built
+    # from. Watching everything would mean .venv, and writing YAML into
+    # wheels/ on every paste would restart the server mid-request. Excludes
+    # need watchfiles installed; uvicorn silently ignores them otherwise and
+    # warns, so if that warning ever appears, reinstall it.
+    uvicorn.run("app:app", host="127.0.0.1", port=8420, log_level="warning",
+                reload=True, reload_dirs=["."],
+                reload_includes=["app.py", "pipeline.py"],
+                reload_excludes=[".venv/*", "wheels/*", "site/*", ".git/*"])

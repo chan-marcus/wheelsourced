@@ -160,6 +160,21 @@ matching is a human judgement; do not try to automate it.
 in pipeline.py, run `python recompute.py` or the old flags persist in the
 YAML and show on the site.
 
+**The GUI reloads on save, but only for app.py and pipeline.py.** It serves
+its entire page from a string inside app.py, so a stale process serves old
+HTML forever and it reads as the edit not having worked: the Finish field sat
+on the form for three hours after being deleted from the source. `uvicorn.run`
+now takes `"app:app"` with `reload=True`.
+
+The watch is scoped on purpose. Unscoped it would take in `.venv`, and every
+paste writes YAML into `wheels/`, which would restart the server mid-request.
+Scoping needs `watchfiles` installed: without it uvicorn ignores the include
+and exclude lists and warns that it has, so treat that warning as "reinstall
+watchfiles", not as noise.
+
+Data still is not watched, and does not need to be. The GUI reads YAML per
+request.
+
 **Astro reads ../wheels at build time.** The GUI reads YAML per request; the
 site reads it once and bakes it into `getStaticPaths`. Vite only watches its own
 root, so for a long time nothing written to `wheels/` reached a running dev

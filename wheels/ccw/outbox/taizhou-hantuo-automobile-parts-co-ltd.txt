@@ -3,13 +3,17 @@ Hello,
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  18x9.5J · ET+22 · 5x114.3 · 2-piece
+  18x9.5J · ET+22 · 5x114.3 · Bronze · 2-piece
 
 Could you confirm:
 
-  1. What is the HS code for your wheels?
-  2. Do you do the CNC machining in your own factory, or outsource it?
-  3. What is your heat treatment process? Which temper (for example T6)? How many hours?
-  4. If a wheel arrives out of round, or the finish is damaged, what do you do?
+  1. For the 2-PIECE construction: price per single wheel, and price for 1 set (4 pcs)
+  2. Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse
+  3. HS code / tariff classification for your wheels
+  4. Do you do the CNC machining in house, or outsource it?
+  5. What is your heat treat process? Which temper, and how long?
+  6. What happens if a wheel arrives out of round or with finish damage?
+
+
 
 Thank you.

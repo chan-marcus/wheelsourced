@@ -85,35 +85,69 @@ from_listing:
   units_sold: 8
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  forging_process: null
-  piece_count: null
+  price_per_wheel_1set: 500
+  price_per_wheel_4set: 2000
+  forging_process: 6061-T6 aerospace-grade aluminum, machined from forged blank
+  piece_count:
+  - 3-piece
   cert_document: provided
-  freight_cif_usd: null
+  freight_cif_usd: 300
   hs_code: null
-  is_manufacturer: null
-  cnc_inhouse: null
+  is_manufacturer: true
+  cnc_inhouse: true
   heat_treat: null
-  payment_terms: null
+  payment_terms: 50% deposit, remaining balance after production confirmation before
+    shipping
   defect_policy: null
   weight_kg: null
-  load_rating_kg: null
-  forged_confirmed: null
-  size_chart: null
+  load_rating_kg: 850
+  forged_confirmed: true
+  size_chart: 15-28 inch diameter range mentioned; offset range to be confirmed per
+    vehicle model
   quote_construction: null
   certs_claimed:
+  - JWL
+  - VIA
   - TUV
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
-  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
   rfq_first_sent: '2026-08-06'
-  rfq_round: 1
-  parsed_replies: {}
-  questions_answered: 1/12
+  rfq_round: 2
+  parsed_replies:
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-10.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-11.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-12.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-2.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-3.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-4.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-5.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-6.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-7.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-8.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06-9.txt: b3e04687d6d85ecd
+    nanjing-qiusheng-technology-co-ltd__2026-08-06.txt: ba6ca586e24ed94d
+    nanjing-qiusheng-technology-co-ltd__2026-08-08-2.txt: 68b3f304f4386ef7
+    nanjing-qiusheng-technology-co-ltd__2026-08-08.txt: a283f5784b73e6c5
+  off_basis_quotes:
+  - construction: 3-piece
+    seen: '2026-08-07'
+    price_per_wheel_1set: 720
+    price_per_wheel_4set: 2880
+    freight_cif_usd: 300
+  first_reply: '2026-08-08'
+  reply_received: '2026-08-08'
+  reply_count: 2
+  questions_answered: 9/12
+  reply_notes:
+  - '2026-08-08: Price stated as $720 per wheel for 1-set (4 pcs) and $2880 for 4-set;
+    weight to be calculated upon rendering creation; TUV certificate PDF attachment
+    mentioned (德国TUV认证资料 南州秋声.pdf); all CNC and processes in-house; size chart promised
+    per vehicle model; US warehouses mentioned'
+  - '2026-08-08: Price given per individual wheel (1 set) and per 4-wheel set; construction
+    and forging process not specified.'
+  factory_address: 2nd Floor, Building 2, Haifeng Xiaoshi Technology Center, No. 586
+    Longmian Avenue, Jiangning District, Nanjing City, Jiangsu Province, China
 flags:
-- no load rating given
-- constructions offered not confirmed
-- no size chart supplied
 - under 3 years listed

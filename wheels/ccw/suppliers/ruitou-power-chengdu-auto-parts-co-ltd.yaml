@@ -62,8 +62,7 @@ from_listing:
 from_quote:
   price_per_wheel_1set: 462
   price_per_wheel_4set: 1848
-  forging_process: separate forged blanks made from T6061 aerospace-grade aluminum,
-    machined from a forged blank
+  forging_process: separate forged blanks, T6061 aerospace-grade aluminum
   piece_count:
   - monoblock
   - 2-piece
@@ -73,14 +72,13 @@ from_quote:
   hs_code: null
   is_manufacturer: true
   cnc_inhouse: true
-  heat_treat: completed at upstream blank manufacturing plant; procured forged wheel
-    blanks that meet required standards
-  payment_terms: 50% down payment, 50% balance payable before shipment
+  heat_treat: completed at upstream blank manufacturing plant
+  payment_terms: 50% deposit, 50% before shipment
   defect_policy: full refund if quality issues arise upon receipt
   weight_kg: 11.5
   load_rating_kg: null
   forged_confirmed: true
-  size_chart: 15-26 inches for passenger cars
+  size_chart: 15-26 inches available
   quote_construction: 2-piece
   certs_claimed:
   - DOT
@@ -88,20 +86,21 @@ from_quote:
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
-  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
-  parsed_replies: {}
-  first_reply: '2026-08-07'
-  reply_received: '2026-08-07'
+  parsed_replies:
+    ruitou-power-chengdu-auto-parts-co-ltd__2026-08-06.txt: 31bca46b95d29a4e
+    ruitou-power-chengdu-auto-parts-co-ltd__2026-08-07.txt: ffacd96f19f5050b
+    ruitou-power-chengdu-auto-parts-co-ltd__2026-08-08.txt: 5d068c205c2b6a8a
+  first_reply: '2026-08-08'
+  reply_received: '2026-08-08'
   reply_count: 1
   questions_answered: 11/12
   reply_notes:
-  - '2026-08-07: JWI certificate mentioned and image referenced but not attached or
-    promised. Monoblock price $296/pc, 2-piece $462/pc, 3-piece $565/pc all quoted
-    for same 18x9.5J ET+22 5x114.3 size. Weight stated as 11-12kg range; midpoint
-    11.5kg used. Load rating deferred to vehicle-specific matching. Heat treat detail
-    sparse.'
+  - '2026-08-08: 1-piece $296/pc $1184; 2-piece $462/pc $1848; 3-piece $565/pc $2260.
+    Weight stated as 11-12kg range. Supplier provided JWL certificate image. Specific
+    wheel: 18x9.5J ET+22 5x114.3 brushed center polished lip.'
   factory_address: Tianjin
 flags:
 - no load rating given

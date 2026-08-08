@@ -68,40 +68,51 @@ from_listing:
 from_quote:
   price_per_wheel_1set: 450
   price_per_wheel_4set: 1800
+  forging_process: machined from a forged blank, 6061-T6
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: claimed without document
+  freight_cif_usd: 290
+  hs_code: null
+  is_manufacturer: true
+  cnc_inhouse: true
+  heat_treat: T6, solution at 530°C for 4 hours with rapid water quenching, then artificial
+    aging at 160°C for 8 hours
+  payment_terms: 50% deposit upon order confirmation, 50% before shipment; flexible
+    terms negotiable for bulk orders
+  defect_policy: 'Within 3 working days of receipt: provide photos/videos. Supplier
+    offers either free replacement wheels with prepaid return freight, or partial
+    refund based on damage quantity'
   weight_kg: 9
   load_rating_kg: 850
-  forging_process: machined from a forged blank, 6061-T6 aluminum alloy
-  cert_document: null
-  size_chart: 18x9.5J; 19-inch diameter available in 7J to 14J width
-  freight_cif_usd: 290
-  is_manufacturer: true
   forged_confirmed: true
-  piece_count:
-  - 2-piece
-  cnc_inhouse: null
-  heat_treat: null
-  payment_terms: null
-  defect_policy: null
-  hs_code: null
+  size_chart: 18-19in diameter, 7-14J width, chart offered
   quote_construction: 2-piece
-  certs_claimed: null
+  certs_claimed:
+  - JWL
+  - VIA
+  - TUV
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
-  catalog_offered: true
-  first_reply: '2026-08-06'
-  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-  factory_address: Shandong Province, China
+  ref_spec: 18x9.5J ET+22 5x114.3 Bronze 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
-  reply_received: '2026-08-06'
-  reply_count: 1
-  questions_answered: 6/12
-  reply_notes:
-  - '2026-08-06: Price per single wheel stated as $450; 1 set (4 pcs) $1800; 4 sets
-    (16 pcs) $7100. Freight $290 to Los Angeles, CIF. Spec charts promised to email.
-    Production 30-40 days, transport 25-30 days. No certification document provided
-    or promised.'
   parsed_replies:
     raylan-wheels-manufacturing-co-ltd__2026-08-06.txt: b79f81d4129b0128
-flags: []
+    raylan-wheels-manufacturing-co-ltd__2026-08-08.txt: e6210f15c4e2f913
+  first_reply: '2026-08-08'
+  reply_received: '2026-08-08'
+  reply_count: 1
+  questions_answered: 11/12
+  reply_notes:
+  - '2026-08-08: Supplier confirms capability for single-piece, 2-piece, and 3-piece
+    constructions. Quoted price is for 18x9.5J 2-piece wheel. Load rating stated as
+    850 kg per wheel; earlier message claimed 750-950 kg range. Certifications claimed
+    but no documents provided.'
+  catalog_offered: true
+  factory_address: Shandong Province, China
+flags:
+- cert claimed, no document

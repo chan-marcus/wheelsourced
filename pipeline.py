@@ -88,18 +88,18 @@ QUOTE_ONLY = {
     "weight_kg":             "What is the weight of one wheel in kg? What load can one wheel carry in kg?",
     "load_rating_kg":        None,   # asked together with weight_kg, stored separately
     "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
-    "hs_code":               "What is the HS code for your wheels?",
+    # hs_code was asked here but never appeared in REPLY_SCHEMA below, so
+    # nothing was ever extracted from an answer no matter how clearly a
+    # supplier gave one: a dead question from the start, confirmed against
+    # every stored record before removal. Not something we need, dropped
+    # rather than kept.
     "is_manufacturer":       "Are you the factory, or a trading company? What is the factory address?",
 }
 
 # Round two. These matter when you are close to ordering, not at first
-# contact. Sending all eleven questions cold tanks the response rate, so
-# they wait until the round-one basics are in.
+# contact. Sending all ten questions cold tanks the response rate, so they
+# wait until the round-one basics are in.
 ROUND2 = {
-    # Also flagged before it was ever asked. Held to round two rather than
-    # round one only to keep first contact short: it unlocks the moment they
-    # reply, so anyone who can be flagged for it has been asked for it.
-    "size_chart":     "Which sizes do you make? Please send your size chart if you have one.",
     "cnc_inhouse":    "Do you do the CNC machining in your own factory, or outsource it?",
     "heat_treat":     "What is your heat treatment process? Which temper (for example T6)? How many hours?",
     "payment_terms":  "What are your payment terms? Is it 50% deposit?",
@@ -126,12 +126,18 @@ if _orphans:
 
 # Answers we keep but never ask as a numbered question.
 #
-# Weight, load rating and size_chart used to live here, and that was the
-# wrong side of the line: all three are read by _flags(), so suppliers were
-# being marked "no load rating given" and "no size chart supplied" for
-# withholding things nobody had ever put to them. A flag has to be answerable.
-# They are questions now, and only genuinely underivable answers are left.
-EXTRACTED_ONLY = (# Derived from forging_process by the auto-confirm below, and
+# Weight and load rating used to live here too, and that was the wrong side of
+# the line: both are read by _flags(), so suppliers were being marked "no load
+# rating given" for withholding something nobody had ever put to them. A flag
+# has to be answerable, so they became a question instead.
+#
+# size_chart is back on this side, deliberately, having been on the other one
+# for exactly one commit: not worth a question of its own, but "no size chart
+# supplied" is not a flag either while it stays here, for the reason above.
+# The line is kept, not removed, so a supplier who volunteers one still has it
+# recorded and shown; the question is what got cut.
+EXTRACTED_ONLY = ("size_chart",
+                  # Derived from forging_process by the auto-confirm below, and
                   # from their own words about flow forming. Asking "is it
                   # really forged" invites a yes from someone who has already
                   # described spinning a cast centre.
@@ -175,7 +181,6 @@ FIELD_LABELS = {
     "certs_claimed":        "Certification",
     "cert_document":        "Certificate on file",
     "freight_cif_usd":      "Est. shipping cost",
-    "hs_code":              "HS code",
     "is_manufacturer":      "Manufacturer",
     "cnc_inhouse":          "CNC",
     "heat_treat":           "Heat treat",
@@ -195,10 +200,21 @@ FIELD_LABELS = {
 # GUI. That left certs_claimed invisible in the only tool for correcting it,
 # while it was being published on the sheet.
 EXTRACTED_DESC = {
+    "size_chart":        "The sizes or chart they offered, summarised. Not a numbered question, so never flagged when blank.",
     "forged_confirmed":  "true or false. Drives the Forged column and the forging flags. Flow formed is not forged.",
     "quote_construction": f"Which construction the stored price is for. Anything but {QUOTE_CONSTRUCTION} means the price was set aside.",
     "certs_claimed":     "Certifications they name, comma separated. DOT, JWL, VIA, TUV, ECE, SFI, ISO 9001, IATF 16949, CE.",
 }
+
+# EXTRACTED_DESC is what makes an EXTRACTED_ONLY field visible in the GUI.
+# size_chart went back to EXTRACTED_ONLY without going back into this dict,
+# which stored it correctly and made it impossible to see or hand-correct:
+# the exact gap the extracted/asked split exists to close. Checked at import
+# so the two cannot drift apart silently again.
+if set(EXTRACTED_DESC) != set(EXTRACTED_ONLY):
+    raise RuntimeError(
+        f"EXTRACTED_DESC / EXTRACTED_ONLY mismatch: "
+        f"{set(EXTRACTED_ONLY) ^ set(EXTRACTED_DESC)}")
 
 
 def parse_set_field(k, raw):
@@ -276,7 +292,7 @@ def take_quote(got, rec):
 REVISION_FIELDS = (
     "price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd",
     "weight_kg", "load_rating_kg", "forged_confirmed", "is_manufacturer",
-    "cnc_inhouse", "hs_code",
+    "cnc_inhouse",
 )
 
 
@@ -1154,8 +1170,8 @@ def _flags(rec):
         fl.append("forging process not actually described")
     if Q.get("forging_process") and "not stated" in fp:
         fl.append("dodged the forging question")
-    if Q.get("size_chart") in (None, ""):
-        fl.append("no size chart supplied")
+    # No flag for a missing size_chart: it went back to EXTRACTED_ONLY, so it
+    # is no longer a question anyone can fail to answer.
     if (meta.get("reply_days") or 0) > 3:
         fl.append("slow to reply")
     if (L.get("years_on_platform") or 99) < 3:

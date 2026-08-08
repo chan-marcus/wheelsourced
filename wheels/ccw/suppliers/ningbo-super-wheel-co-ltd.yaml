@@ -91,25 +91,24 @@ from_listing:
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
-  forging_process: machined from forged blanks, 6061-T6 aviation grade aluminium
+  forging_process: machined from a forged blank, 6061-T6 aviation grade aluminium
   piece_count:
   - monoblock
   - 2-piece
   - 3-piece
-  cert_document: claimed without document
+  cert_document: not available
+  weight_kg: 13.5
+  load_rating_kg: 825
   freight_cif_usd: null
   hs_code: null
   is_manufacturer: true
+  size_chart: monoblock 15-26in; 2-piece and 3-piece 17-30in; fully customizable parameters
   cnc_inhouse: true
   heat_treat: null
-  payment_terms: full payment upfront or 50% deposit with balance after production
-  defect_policy: 3-year structural warranty on custom products; double-layered cartons,
-    foam rings, shipping insurance
-  weight_kg: 13.5
-  load_rating_kg: 825
+  payment_terms: full payment upfront, or 50% deposit with balance after production
+  defect_policy: 3-year structural warranty on custom products; strict packaging with
+    double-layered cartons and foam rings; shipping insurance purchased
   forged_confirmed: true
-  size_chart: monoblock 15-26 inch; 2-piece and 3-piece 17-30 inch; custom parameters
-    available
   quote_construction: null
   certs_claimed:
   - JWL
@@ -120,10 +119,7 @@ meta:
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-  parsed_replies:
-    ningbo-super-wheel-co-ltd__2026-08-06-2.txt: 7163f8c07a9c0975
-    ningbo-super-wheel-co-ltd__2026-08-06.txt: 8b950f809aee2b73
-    ningbo-super-wheel-co-ltd__2026-08-08.txt: 79f23bd1731cbe58
+  parsed_replies: {}
   off_basis_quotes:
   - construction: 3-piece
     seen: '2026-08-07'
@@ -133,13 +129,13 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
   reply_count: 1
-  questions_answered: 10/15
+  questions_answered: 9/13
   reply_notes:
-  - '2026-08-08: Supplier states forged wheels and mentions JWL/VIA standards in promotional
-    text but declined to provide certification documents without minimum 20-piece
-    order. Weight and load given as ranges (13-14kg, 750-900kg per wheel); midpoints
-    reported. Price quoted excludes center caps.'
+  - '2026-08-08: Price per wheel (480 USD) stated for 1 set of 4 wheels; weight given
+    as 13-14kg range for unspecified dimensions; load capacity 750-900kg per wheel
+    depending on dimensions; certification available only for minimum 20-sample orders;
+    custom-bore available; mentions JWL/VIA standards in chat header but cannot provide
+    certificates for customized products'
   factory_address: Zhejiang
 flags:
-- cert claimed, no document
 - quoted 3-piece, no 2-piece price

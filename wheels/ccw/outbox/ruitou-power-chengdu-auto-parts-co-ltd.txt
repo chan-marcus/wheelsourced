@@ -8,6 +8,5 @@ Reference spec for all pricing:
 Could you confirm:
 
   1. What is the weight of one wheel in kg? What load can one wheel carry in kg?
-  2. What is the HS code for your wheels?
 
 Thank you.

@@ -109,8 +109,13 @@ def save(wheel, rec):
 def state(wheel: str = ""):
     ws = wheels()
     w = wheel or (ws[0] if ws else "")
+    # `fields` stays the ASKED set and nothing else, because the GUI counts
+    # answered against it and that fraction is questions_answered. `extracted`
+    # is everything else that gets stored, sent separately so it can be shown
+    # and corrected without being counted as a question nobody answered.
     return {"wheels": ws, "wheel": w, "suppliers": load(w) if w else [],
-            "fields": P.ALL_FIELDS, "busy": BUSY["running"], "log": LOG[-40:]}
+            "fields": P.ALL_FIELDS, "extracted": P.EXTRACTED_DESC,
+            "busy": BUSY["running"], "log": LOG[-40:]}
 
 
 @app.post("/api/wheel")
@@ -315,6 +320,12 @@ async def edit_field(req: Request):
     v = b["value"]
     if v == "":
         v = None
+    # The set-valued fields are stored as lists, and every box in this GUI is
+    # a text box. Without this a corrected piece_count is saved as the string
+    # "monoblock, 2-piece" where the rest of the code expects a list, and a
+    # typed certification skips the whitelist that keeps sales lines out.
+    elif b["key"] in P.SET_FIELDS:
+        v = P.parse_set_field(b["key"], v)
     elif re.fullmatch(r"-?\d+(\.\d+)?", str(v)):
         v = float(v) if "." in str(v) else int(v)
     elif str(v).lower() in ("true", "false"):
@@ -508,11 +519,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <div id="toasts" aria-live="polite"></div>
 
 <script>
-let S={wheel:"",suppliers:[],fields:{},rfqs:{}}, OPEN=null;
+let S={wheel:"",suppliers:[],fields:{},extracted:{},rfqs:{}}, OPEN=null;
 
 async function boot(w){
   const r = await (await fetch("/api/state?wheel="+encodeURIComponent(w||""))).json();
-  S.wheel=r.wheel; S.suppliers=r.suppliers; S.fields=r.fields;
+  S.wheel=r.wheel; S.suppliers=r.suppliers; S.fields=r.fields; S.extracted=r.extracted||{};
   const sel=document.getElementById("wheel");
   sel.innerHTML=r.wheels.map(x=>`<option ${x===r.wheel?"selected":""}>${x}</option>`).join("");
   if(r.wheel){
@@ -652,12 +663,30 @@ function render(){
     const platRow = plat.length
       ? `<div class="plat">${plat.map(([k,v])=>
           `<span><i>${k}</i>${v}</span>`).join("")}</div>` : "";
-    const fields=Object.entries(S.fields).map(([k,desc])=>{
+    // A tag list has to come back as "DOT, VIA" rather than the "DOT,VIA" a
+    // bare array stringifies to, or every edit reformats what it read.
+    const show=v=>Array.isArray(v)?v.join(", "):v;
+    // `asked` fields dash when blank, because blank means a question went
+    // unanswered. The extracted ones were never asked, so a blank there is
+    // not a gap and must not be drawn like one.
+    const cell=(k,desc,asked)=>{
       const v=Q[k]; const empty=(v===null||v===undefined||v==="");
       return `<div class="f"><label title="${desc}">${k.replace(/_/g," ")}</label>
-        <input class="${empty?'empty':''}" value="${empty?'':v}"
+        <input class="${empty&&asked?'empty':''}" value="${empty?'':show(v)}"
           onchange="setField('${s.id}','${k}',this.value)"></div>`;
-    }).join("");
+    };
+    const fields=Object.entries(S.fields).map(([k,d])=>cell(k,d,true)).join("");
+    const extracted=Object.entries(S.extracted).map(([k,d])=>cell(k,d,false)).join("");
+
+    // The same landed cost the sheet headlines, computed the same way so the
+    // two never disagree: prefer their quoted set price over 4x the single,
+    // and stay null unless BOTH the set and the freight were quoted. Falling
+    // back to a bare price here would show the vendor who withheld freight a
+    // smaller number than the one who disclosed it.
+    const n=v=>(typeof v==="number"&&isFinite(v))?v:null;
+    const setPrice=n(Q.price_per_wheel_4set) ?? (n(Q.price_per_wheel_1set)?n(Q.price_per_wheel_1set)*4:null);
+    const freight=n(Q.freight_cif_usd);
+    const landed=(setPrice!==null&&freight!==null)?setPrice+freight:null;
     const rfq=S.rfqs[s.id];
     return `<div class="sup ${OPEN===s.id?'open':''}" id="s-${s.id}">
       <div class="sup-h" onclick="toggle('${s.id}')">
@@ -667,8 +696,14 @@ function render(){
           <div style="margin-top:7px">${pills}</div>
           ${platRow}</div>
         <div class="sup-p">
-          ${L.listed_price_low?`<span>listed $${L.listed_price_low}</span>`:""}
-          ${Q.price_per_wheel_1set?`<div><b>quoted $${Q.price_per_wheel_1set}</b></div>`:""}
+          ${landed!==null
+            ? `<div><b>$${landed.toLocaleString()}</b></div>
+               <span>est. landed / set of 4</span>`
+            : Q.price_per_wheel_1set
+              ? `<div><b>$${Q.price_per_wheel_1set}</b> per wheel</div>
+                 <span>${Q.freight_cif_usd===null||Q.freight_cif_usd===undefined?"no freight quoted":"no set price"}</span>`
+              : L.listed_price_low
+                ? `<span>listed $${L.listed_price_low}</span>` : ""}
         </div>
       </div>
       <div class="body">
@@ -686,6 +721,8 @@ function render(){
         </div>
         <span class="lbl">Quoted data · dashed border means still unanswered</span>
         <div class="grid" style="margin-top:8px">${fields}</div>
+        <span class="lbl" style="margin-top:18px;display:block">Also extracted · kept but never asked, so never counted against them</span>
+        <div class="grid" style="margin-top:8px">${extracted}</div>
       </div></div>`;
   }).join("") || `<div class="hint">Nothing yet. Add listing URLs above and pull.</div>`;
 }

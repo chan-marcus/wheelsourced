@@ -130,6 +130,36 @@ EXTRACTED_ONLY = ("weight_kg", "load_rating_kg", "forged_confirmed", "size_chart
 # something nobody put to them.
 STORED_FIELDS = tuple(ALL_FIELDS) + EXTRACTED_ONLY
 
+# What the GUI puts under each of the kept-but-not-asked fields. ALL_FIELDS
+# carries the question text and doubles as the tooltip there; these have no
+# question to show, and without a line each they were simply absent from the
+# GUI. That left certs_claimed invisible in the only tool for correcting it,
+# while it was being published on the sheet.
+EXTRACTED_DESC = {
+    "weight_kg":         "Weight per wheel in kg. Never asked, only recorded when volunteered.",
+    "load_rating_kg":    "Load rating per wheel in kg. Never asked, only recorded when volunteered.",
+    "forged_confirmed":  "true or false. Drives the Forged column and the forging flags. Flow formed is not forged.",
+    "size_chart":        "The sizes or chart they offered, summarised.",
+    "quote_construction": f"Which construction the stored price is for. Anything but {QUOTE_CONSTRUCTION} means the price was set aside.",
+    "certs_claimed":     "Certifications they name, comma separated. DOT, JWL, VIA, TUV, ECE, SFI, ISO 9001, IATF 16949, CE.",
+}
+
+
+def parse_set_field(k, raw):
+    """Turn a typed-in, comma separated value into the stored tag list.
+
+    The GUI edits every field as a text box, so without this a hand-corrected
+    piece_count is stored as the string "monoblock, 2-piece" where the rest of
+    the code expects a list, and a hand-typed certification bypasses the
+    whitelist that keeps sales lines out. Same normalisers the parser uses.
+    """
+    parts = [p.strip() for p in str(raw).split(",") if p.strip()]
+    if k == "piece_count":
+        return merge_constructions(None, parts)
+    if k == "certs_claimed":
+        return cert_names(parts) or None
+    return raw
+
 # Constructions, in the order they are displayed. Also the whitelist: a reply
 # saying "all options" or "any style" is not a capability, it is a sales line.
 CONSTRUCTIONS = ("monoblock", "2-piece", "3-piece")
@@ -239,7 +269,10 @@ _CERT_TABLE = (
     ("SAE",        r"\bsae\b",                    ("sae",)),
     ("FMVSS",      r"\bfmvss",                    ("fmvss",)),
     ("CCC",        r"\bccc\b",                    ("ccc",)),
-    ("IATF 16949", r"\biatf\b",                   ("iatf",)),
+    # No trailing \b: it cannot match between "iatf" and the digit in
+    # "IATF16949", so the unspaced spelling was silently dropped. Same reason
+    # FMVSS is written open-ended, for "FMVSS110/120".
+    ("IATF 16949", r"\biatf",                     ("iatf",)),
     # TS 16949 was renamed IATF 16949 in 2016, but it keeps its own tag. A
     # supplier still naming the withdrawn standard has not told us they hold
     # the current one, and quietly upgrading the answer would be inventing a

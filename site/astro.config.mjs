@@ -1,5 +1,7 @@
 import { defineConfig } from "astro/config";
 import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 
 // loadWheels() reads ../wheels, which is outside Vite's root, and Vite only
 // watches its own root. So nothing the GUI wrote ever invalidated the dev
@@ -49,8 +51,37 @@ function watchWheels() {
   };
 }
 
+// loadWheels() mirrors each wheel's image out of ../wheels and into public/,
+// and it does that while getStaticPaths runs. Astro has copied public/ into
+// dist/ by then, so on a clean checkout the images never reach the build at
+// all and every wheel page 404s its own photo.
+//
+// It survives locally only by accident: the file is left behind in public/,
+// which is gitignored, and the NEXT build copies it. So the machine that has
+// built before is the one machine where this cannot be reproduced, and CI is
+// guaranteed to hit it on the first deploy.
+//
+// Copy again once dist exists. astro:build:done is the only hook late enough
+// to be sure both the mirror and the output directory are there.
+function mirrorWheelImages() {
+  return {
+    name: "mirror-wheel-images",
+    hooks: {
+      "astro:build:done": ({ dir, logger }) => {
+        const from = path.resolve("./public/wheels");
+        if (!fs.existsSync(from)) return;
+        const to = path.join(fileURLToPath(dir), "wheels");
+        fs.cpSync(from, to, { recursive: true });
+        const n = fs.readdirSync(to).length;
+        logger.info(`mirrored ${n} wheel image folder(s) into dist/wheels`);
+      },
+    },
+  };
+}
+
 export default defineConfig({
   output: "static",
+  integrations: [mirrorWheelImages()],
   server: {
     // Bind IPv4 too. Node resolves "localhost" to ::1 first on macOS, so the
     // default bind answered localhost:4321 but not 127.0.0.1:4321, which is

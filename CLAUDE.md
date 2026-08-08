@@ -294,6 +294,16 @@ results are applied in sorted order exactly as before.
 drives the "weight high for forged" flag. Calibrate it against real quotes.
 If honest suppliers keep tripping it, K is too low.
 
+**The RFQ is written for a second-language reader.** Sales staff answer it one
+number at a time, so each question is a single line of short sentences, one
+thing per sentence, plain word over precise word ("factory" not
+"manufacturer", "how is it made" not "what process"). A question that has to
+be re-read is a question that gets skipped, and a skipped question is a null
+on the sheet. Three sentences that must survive any rewording: the price
+question naming `QUOTE_CONSTRUCTION` twice, "list all, not only this wheel" on
+`piece_count`, and "can you send the certificate?" on `cert_document`. Each is
+load-bearing for a guard downstream, and the reasons are on the fields.
+
 **Two-round questions.** `ROUND2` (cnc_inhouse, heat_treat, payment_terms,
 defect_policy) is held back from first contact: sending all fourteen cold
 tanks the response rate. It unlocks once the supplier has engaged, meaning

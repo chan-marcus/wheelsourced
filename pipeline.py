@@ -52,28 +52,45 @@ TODAY = date.today().isoformat()
 # ask() re-sent it forever.
 QUOTE_CONSTRUCTION = "2-piece"
 
+# The questions are read by sales staff working in a second language, and
+# they are answered one number at a time. Keep each one to a single line of
+# short sentences, ask one thing per sentence, and prefer the plain word:
+# "factory" over "manufacturer", "how is it made" over "what process". A
+# question that has to be re-read is a question that gets skipped, and a
+# skipped question is a null on the sheet.
 QUOTE_ONLY = {
-    "price_per_wheel_1set":  (f"For the {QUOTE_CONSTRUCTION.upper()} construction: "
-                              f"price per single wheel, and price for 1 set (4 pcs)"),
+    # The construction is named twice on purpose. It is already in the
+    # reference spec block, but every stored price is a QUOTE_CONSTRUCTION
+    # price and take_quote() discards anything else, so a supplier who quotes
+    # 3-piece here has their answer thrown away and gets asked again forever.
+    # Built with an f-string for the reason at the top of this file: written
+    # out by hand, the constant and the question drift, and the failure is
+    # silent and total.
+    "price_per_wheel_1set":  (f"Price for one {QUOTE_CONSTRUCTION.upper()} wheel, and for a set of 4. "
+                              f"Please quote {QUOTE_CONSTRUCTION.upper()} only."),
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
-    "forging_process":       "Is the wheel press-forged, or flow-formed / rotary-forged? What press tonnage, and which alloy?",
+    "forging_process":       "How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?",
     # A capability question, not a description of one product. Suppliers
-    # routinely make all three, and the answer is a set.
-    "piece_count":           "Which constructions can you make: monoblock (single-piece), 2-piece, 3-piece? List every one you offer, not just this listing",
-    "cert_document":         "Which certifications do you have? (DOT, JWL, VIA, TUV, etc.) Does it cover this width? Certificate PDF?",
-    "freight_cif_usd":       "Total landed cost to Los Angeles CA 90210: all shipping, duty, port fees, tariffs, and other costs to get the wheels in our warehouse",
-    "hs_code":               "HS code / tariff classification for your wheels",
-    "is_manufacturer":       "Are you the manufacturer or a trading company? Factory address?",
+    # routinely make all three, and the answer is a set. The second sentence
+    # is what stops them answering only for the wheel in the listing.
+    "piece_count":           "Which types can you make: monoblock (1-piece), 2-piece, 3-piece? List all, not only this wheel.",
+    # Two answers in one question, and both are kept: certs_claimed takes the
+    # names, cert_document takes whether the certificate arrived. Drop the
+    # second sentence and cert_document stops being asked at all.
+    "cert_document":         "Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?",
+    "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
+    "hs_code":               "What is the HS code for your wheels?",
+    "is_manufacturer":       "Are you the factory, or a trading company? What is the factory address?",
 }
 
 # Round two. These matter when you are close to ordering, not at first
-# contact. Sending all fourteen questions cold tanks the response rate, so
+# contact. Sending all eleven questions cold tanks the response rate, so
 # they wait until the round-one basics are in.
 ROUND2 = {
-    "cnc_inhouse":    "Do you do the CNC machining in house, or outsource it?",
-    "heat_treat":     "What is your heat treat process? Which temper, and how long?",
+    "cnc_inhouse":    "Do you do the CNC machining in your own factory, or outsource it?",
+    "heat_treat":     "What is your heat treatment process? Which temper (for example T6)? How many hours?",
     "payment_terms":  "What are your payment terms? Is it 50% deposit?",
-    "defect_policy":  "What happens if a wheel arrives out of round or with finish damage?",
+    "defect_policy":  "If a wheel arrives out of round, or the finish is damaged, what do you do?",
 }
 
 ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
@@ -554,9 +571,7 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-{qs}
-
-{f"An extra if you can:{chr(10)}{chr(10)}{ex_block}" if ex else ""}
+{qs}{f"{chr(10)}{chr(10)}An extra if you can:{chr(10)}{chr(10)}{ex_block}" if ex else ""}
 
 Thank you.""".strip() + "\n"
         (out / f"{rec['id']}.txt").write_text(body, encoding="utf-8")

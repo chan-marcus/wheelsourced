@@ -7,8 +7,6 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. HS code / tariff classification for your wheels
-
-
+  1. What is the HS code for your wheels?
 
 Thank you.

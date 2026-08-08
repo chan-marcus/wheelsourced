@@ -7,11 +7,9 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Which certifications do you have? (DOT, JWL, VIA, TUV, etc.) Does it cover this width? Certificate PDF?
-  2. HS code / tariff classification for your wheels
-  3. Do you do the CNC machining in house, or outsource it?
+  1. Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
+  2. What is the HS code for your wheels?
+  3. Do you do the CNC machining in your own factory, or outsource it?
   4. What are your payment terms? Is it 50% deposit?
-
-
 
 Thank you.

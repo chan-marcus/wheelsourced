@@ -173,7 +173,13 @@ footer p{font-family:'IBM Plex Mono';font-size:11px;line-height:1.7;color:var(--
 .masthead{display:flex;flex-direction:column;gap:14px}
 .logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
 .logo .word{font-family:var(--display);font-weight:700;font-size:31px;
-  letter-spacing:-.11em;line-height:1}
+  letter-spacing:-.11em;line-height:1;
+  /* 700 is already the heaviest weight in the stack: the licensed Neue Haas
+     file was never bought (see the @font-face comment above), so this
+     renders in fallback Helvetica Neue Bold, which has no heavier cut to
+     step up to. A hairline stroke in the same colour as the fill thickens
+     the strokes without a real Black/Heavy weight to switch to. */
+  -webkit-text-stroke:0.6px currentColor}
 .logo .word em{font-style:normal;color:var(--bronze)}
 h1{display:none}
 

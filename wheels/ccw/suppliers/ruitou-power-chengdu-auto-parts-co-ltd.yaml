@@ -83,9 +83,11 @@ from_quote:
   certs_claimed:
   - DOT
   - JWL
+  manufacturing_time: null
+  shipping_time: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-07'
+  rfq_sent: '2026-08-08'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
@@ -96,7 +98,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
   reply_count: 1
-  questions_answered: 11/11
+  questions_answered: 11/13
   reply_notes:
   - '2026-08-08: 1-piece $296/pc $1184; 2-piece $462/pc $1848; 3-piece $565/pc $2260.
     Weight stated as 11-12kg range. Supplier provided JWL certificate image. Specific

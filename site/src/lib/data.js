@@ -129,7 +129,14 @@ function normalize(r) {
     response_time: L.response_time || null,
     on_time: L.on_time_dispatch || null,
     reorder: L.reorder_rate || null,
+    // The platform's own transit estimate. Stays the scored figure: swapping
+    // in the quoted one below would move every supplier's score, and this is
+    // the number every vendor has.
     transit: L.transit_time || null,
+    // Quoted, and shown rather than scored. Build time and shipping time are
+    // separate answers: "30-40 days" to make is not "30-40 days" to arrive.
+    lead_time: Q.manufacturing_time || null,
+    ship_time: Q.shipping_time || null,
     moq: L.moq || null,
     // Units sold is the only figure on a listing that reflects actual
     // transactions rather than a claim or a self-reported stat.

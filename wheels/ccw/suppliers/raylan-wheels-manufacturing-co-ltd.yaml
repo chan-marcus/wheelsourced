@@ -94,6 +94,8 @@ from_quote:
   - JWL
   - VIA
   - TUV
+  manufacturing_time: 30-40 days
+  shipping_time: 25-30 days
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
@@ -106,7 +108,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
   reply_count: 1
-  questions_answered: 11/11
+  questions_answered: 13/13
   reply_notes:
   - '2026-08-08: Supplier confirms capability for single-piece, 2-piece, and 3-piece
     constructions. Quoted price is for 18x9.5J 2-piece wheel. Load rating stated as

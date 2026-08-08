@@ -69,7 +69,6 @@ const payload = JSON.stringify({
           <option value="price">cheapest</option>
           <option value="rating">store rating</option>
           <option value="age">store age</option>
-          <option value="response">fastest response</option>
           <option value="reorder">reorder rate</option>
         </select>
         <b id="count"></b>
@@ -86,7 +85,7 @@ const payload = JSON.stringify({
 
   <footer style="margin-top: 60px; padding: 40px 20px; border-top: 1px solid var(--ink); color: var(--soft);">
     <div style="max-width: 900px; margin-left: auto; margin-right: auto;">
-      <p>Store rating, response time, store age, reorder rate and transit time are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
+      <p>Store rating, store age, reorder rate and transit time are the platform's own figures, not vendor claims. Reorder rate is the most telling: it is the share of buyers who came back.</p>
       <p>Best vetted is scored out of 100 and combines landed cost, store rating, store age, review count, response time, reorder rate and transit time. It is scaled by how many of those a vendor actually has, so a thin record cannot outrank a complete one on a lucky average. Expect real numbers in the 40s to 60s: 100 means excellent on every axis at once, which no supplier here is.</p>
       <p>A rating counts for as much as its sample supports: 5.0 from two buyers is not a better rating than 4.8 from eighty-seven, only a less certain one, so ratings are weighted by review count before scoring. Every axis except price is judged against a fixed standard rather than against the other vendors, because a shop with one year and two reviews is thin whether or not a rival is thinner, and a 20% reorder rate is respectable whether or not someone else hit 46%. Price is the exception: these are like-for-like quotes at one reference spec, so the cheapest genuinely is the best price on offer. Only a fully quoted landed cost is scored, so withholding freight cannot make a vendor look cheap.</p>
       <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
@@ -243,7 +242,6 @@ function ordered() {
     case "price":    return by((s) => s.landed ?? s.setPrice, 1);
     case "rating":   return by((s) => s.store_rating, -1);
     case "age":      return by((s) => s.years, -1);
-    case "response": return by((s) => s.respHours, 1);
     case "reorder":  return by((s) => s.reorderPct, -1);
     default:         return by((s) => s.vetScore, -1);
   }
@@ -282,8 +280,6 @@ function render() {
           ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>
         <div class="${sortMode === "age" ? "hl on" : "hl"}">
           <dt>Store age</dt><dd>${s.years ? s.years + (s.years === 1 ? " yr" : " yrs") : "—"}</dd></div>
-        <div class="${sortMode === "response" ? "hl on" : "hl"}">
-          <dt>Response</dt><dd>${s.response_time ?? "—"}</dd></div>
         <div class="${sortMode === "reorder" ? "hl on" : "hl"}">
           <dt>Reorder rate</dt><dd>${s.reorder ?? "—"}</dd></div>
         <div class="hl">
@@ -305,6 +301,8 @@ function render() {
           <div><dt>Set of 4</dt><dd>${
             s.setPrice ? money(s.setPrice) : or(null)}</dd></div>
           <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
+          <div><dt>Shipping time</dt><dd>${or(s.ship_time)}</dd></div>
+          <div><dt>Manufacturing time</dt><dd>${or(s.lead_time)}</dd></div>
           <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
           <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
             : s.forged === false ? "no" : or(null)}</dd></div>

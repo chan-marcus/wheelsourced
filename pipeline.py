@@ -79,6 +79,12 @@ QUOTE_ONLY = {
     # second sentence and cert_document stops being asked at all.
     "cert_document":         "Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?",
     "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
+    # Two answers on one line, the way price 1set/4set and the old weight pair
+    # are. Suppliers already volunteer both together, unprompted and in this
+    # order: "production cycle 30-40 days, transportation 25-30 days".
+    # shipping_time carries no question text of its own, see PAIRED_WITH.
+    "manufacturing_time":    "How many days to make the wheels? How many days to ship them to Los Angeles CA 90210, USA?",
+    "shipping_time":         None,   # asked with manufacturing_time, stored separately
     # hs_code was asked here but never appeared in REPLY_SCHEMA below, so
     # nothing was ever extracted from an answer no matter how clearly a
     # supplier gave one: a dead question from the start, confirmed against
@@ -106,6 +112,7 @@ ALL_FIELDS = {**QUOTE_ONLY, **ROUND2}
 # unanswered.
 PAIRED_WITH = {
     "price_per_wheel_4set": "price_per_wheel_1set",
+    "shipping_time":        "manufacturing_time",
 }
 
 # Every text-less field must name its carrier, or it silently becomes a field
@@ -169,6 +176,8 @@ FIELD_LABELS = {
     "certs_claimed":        "Certification",
     "cert_document":        "Certificate on file",
     "freight_cif_usd":      "Est. shipping cost",
+    "manufacturing_time":   "Manufacturing time",
+    "shipping_time":        "Shipping time",
     "is_manufacturer":      "Manufacturer",
     "cnc_inhouse":          "CNC",
     "heat_treat":           "Heat treat",
@@ -772,6 +781,16 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          chart, summarise the range, e.g. "17-20in, 8-12J,
                          ET-20 to +45, chart attached". Null if not addressed.
   freight_cif_usd        number or null
+  manufacturing_time     string or null. How long to BUILD the wheels, in
+                         their own words, e.g. "30-40 days". Also called
+                         production cycle or lead time. Keep the range as a
+                         range, do not average it to one number.
+  shipping_time          string or null. How long to SHIP them once built,
+                         e.g. "25-30 days". Also called transportation or
+                         transit. This is the second half of "production
+                         cycle 30-40 days, transportation 25-30 days": the
+                         two are different figures and must not be merged, or
+                         a 40 day build reads as a 40 day delivery.
   is_manufacturer        true | false | null
   cnc_inhouse            true | false | null. TRUE only if they say the
                          machining happens at their own factory.

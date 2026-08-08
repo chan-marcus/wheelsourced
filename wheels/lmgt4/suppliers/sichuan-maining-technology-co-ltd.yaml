@@ -84,11 +84,13 @@ from_quote:
   quote_construction: 2-piece
   certs_claimed:
   - DOT
+  manufacturing_time: 30-40 days
+  shipping_time: 30-40 days
 meta:
   listing_seen: '2026-08-07'
-  rfq_sent: '2026-08-07'
+  rfq_sent: '2026-08-08'
   reply_received: '2026-08-08'
-  questions_answered: 10/11
+  questions_answered: 13/13
   rfq_first_sent: '2026-08-07'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece

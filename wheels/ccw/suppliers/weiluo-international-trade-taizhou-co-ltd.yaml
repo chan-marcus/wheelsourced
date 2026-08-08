@@ -112,9 +112,11 @@ from_quote:
   certs_claimed:
   - DOT
   - VIA
+  manufacturing_time: null
+  shipping_time: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-07'
+  rfq_sent: '2026-08-08'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
@@ -128,7 +130,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
   reply_count: 3
-  questions_answered: 10/11
+  questions_answered: 11/13
   reply_notes:
   - '2026-08-08: Price $350/wheel is for 18in size. Polished option adds $30/wheel.
     Door-to-door shipping $340 quoted. Supplier confirmed they do monoblock and 2-piece

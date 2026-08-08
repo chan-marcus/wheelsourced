@@ -7,6 +7,6 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. What is the weight of one wheel in kg? What load can one wheel carry in kg?
+  1. How many days to make the wheels? How many days to ship them to Los Angeles CA 90210, USA?
 
 Thank you.

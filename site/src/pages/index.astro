@@ -84,12 +84,16 @@ const REQUEST_ENDPOINT =
     text-align: center;
   }
   .wheel-image {
-    width: 80px;
-    height: 80px;
+    width: 125px;
+    height: 125px;
     object-fit: contain;
     margin-bottom: 12px;
     transition: transform var(--trans-smooth);
-    background-color: var(--stock);
+    /* No background of its own. The card is transparent at rest and --stock2
+       on hover, so a fixed --stock matte behind the wheel matched the page
+       until the card darkened and then sat there as a pale square. A
+       transparent PNG should take whatever is behind it. The radius stays for
+       a future wheel shot that is an opaque photo rather than line art. */
     border-radius: 4px;
   }
   .wheel-card:hover {

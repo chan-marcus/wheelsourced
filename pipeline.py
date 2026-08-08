@@ -642,11 +642,17 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
                          | "not available" | null. Use "not available" when
                          they say they cannot or do not supply one. That is a
                          disclosure, not a claim.
-  certs_claimed          ARRAY of certification names the SUPPLIER says they
-                         hold, e.g. ["DOT","VIA"] for "our products are DOT &
-                         VIA certified". [] if they name none. Separate from
-                         cert_document: which certifications they claim, and
-                         whether they sent the certificate, are two answers.
+  certs_claimed          ARRAY of certification names the SUPPLIER attaches to
+                         their own wheels. Include a name however they invoke
+                         it: "our products are DOT & VIA certified" is
+                         ["DOT","VIA"], and so is "we build under JWL/VIA
+                         standards". [] if they name none.
+                         Do NOT weigh how strong the claim is or whether they
+                         can evidence it. That is cert_document's job, and the
+                         sheet prints the two side by side, so "JWL, VIA" next
+                         to "none available" is a complete and honest answer.
+                         Dropping the name because the claim looked weak just
+                         loses the half we asked for.
   size_chart             string or null. If they listed sizes or attached a
                          chart, summarise the range, e.g. "17-20in, 8-12J,
                          ET-20 to +45, chart attached". Null if not addressed.
@@ -873,12 +879,24 @@ def backfill(wheel, field, workers=6):
         for t in todo:
             parsed[t[0]] = _ask_model(t[3], REPLY_SCHEMA)
 
+    # Clear first, so a scalar field is rebuilt rather than left holding a
+    # value no reply supports any more.
+    #
+    # Except for the set-valued fields, which accumulate by definition and are
+    # never cleared by ingest either. Rebuilding those from scratch hands a
+    # single weak extraction the power to delete a claim the supplier
+    # definitely made: one run dropped Raylan's certifications despite "we
+    # hold TUV/JWL/VIA certifications" sitting in their reply, and with the
+    # field already blanked there was nothing to fall back on. Union instead,
+    # matching merge_field. To genuinely retract one of these, reset the
+    # record.
     before = {}
     for target in {t[2] for t in todo}:
         rec = yaml.safe_load(target.read_text())
         before[target] = rec["from_quote"].get(field)
-        rec["from_quote"][field] = None
-        target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        if field not in SET_FIELDS:
+            rec["from_quote"][field] = None
+            target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
 
     # Sequential and in sorted order, like ingest: one supplier's replies fold
     # into the same record cumulatively.

@@ -111,7 +111,9 @@ from_quote:
   size_chart: monoblock 15-26 inch; 2-piece and 3-piece 17-30 inch; custom parameters
     available
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - JWL
+  - VIA
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'
@@ -139,4 +141,5 @@ meta:
     reported. Price quoted excludes center caps.'
   factory_address: Zhejiang
 flags:
+- cert claimed, no document
 - quoted 3-piece, no 2-piece price

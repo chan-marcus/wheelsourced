@@ -513,7 +513,7 @@ def pull(wheel):
 # --------------------------------------------------------------------------
 # 2. ask
 # --------------------------------------------------------------------------
-def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
+def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3"):
     out = wdir(wheel) / "outbox"
     out.mkdir(parents=True, exist_ok=True)
 
@@ -567,7 +567,7 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3", finish="Bronze"):
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  {size} \u00b7 {offset} \u00b7 {pcd} \u00b7 {finish} \u00b7 {QUOTE_CONSTRUCTION}
+  {size} \u00b7 {offset} \u00b7 {pcd} \u00b7 {QUOTE_CONSTRUCTION}
 
 Could you confirm:
 
@@ -581,7 +581,7 @@ Thank you.""".strip() + "\n"
         rec["meta"].setdefault("rfq_first_sent", TODAY)
         rec["meta"]["rfq_sent"] = TODAY
         rec["meta"]["rfq_round"] = 2 if round2 else 1
-        rec["meta"]["ref_spec"] = f"{size} {offset} {pcd} {finish} {QUOTE_CONSTRUCTION}"
+        rec["meta"]["ref_spec"] = f"{size} {offset} {pcd} {QUOTE_CONSTRUCTION}"
         f.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
         print(f"  {rec['id']}: round {2 if round2 else 1}, asking {len(missing)} questions")
 
@@ -1081,7 +1081,7 @@ if __name__ == "__main__":
         p = sub.add_parser(name); p.add_argument("--wheel", required=True)
         if name == "ask":
             p.add_argument("--size", default="18x9.5J"); p.add_argument("--offset", default="ET+22")
-            p.add_argument("--pcd", default="5x114.3"); p.add_argument("--finish", default="Bronze")
+            p.add_argument("--pcd", default="5x114.3")
         if name == "ingest":
             p.add_argument("--force", action="store_true",
                            help="re-read every reply, not just changed ones. Needed after adding a field to ALL_FIELDS.")
@@ -1093,7 +1093,7 @@ if __name__ == "__main__":
     a = ap.parse_args()
 
     if a.cmd == "pull": pull(a.wheel)
-    elif a.cmd == "ask": ask(a.wheel, a.size, a.offset, a.pcd, a.finish)
+    elif a.cmd == "ask": ask(a.wheel, a.size, a.offset, a.pcd)
     elif a.cmd == "ingest": ingest(a.wheel, a.force, a.workers)
     elif a.cmd == "mark-parsed": mark_parsed(a.wheel)
     elif a.cmd == "backfill": backfill(a.wheel, a.field, a.workers)

@@ -195,7 +195,7 @@ async def do_pull(req: Request):
 async def do_rfq(req: Request):
     b = await req.json()
     P.ask(b["wheel"], b.get("size", "18x9.5J"), b.get("offset", "ET+22"),
-          b.get("pcd", "5x114.3"), b.get("finish", "Bronze"))
+          b.get("pcd", "5x114.3"))
     out = {}
     for f in (P.wdir(b["wheel"]) / "outbox").glob("*.txt"):
         out[f.stem] = f.read_text()
@@ -486,7 +486,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   <div><span class="lbl">Size</span><input id="size" value="18x9.5J"></div>
   <div><span class="lbl">Offset</span><input id="offset" value="ET+22"></div>
   <div><span class="lbl">Bolt pattern</span><input id="pcd" value="5x114.3"></div>
-  <div><span class="lbl">Finish</span><input id="finish" value="Bronze"></div>
   <button onclick="genRfq()">Generate</button>
 </div>
 <div class="hint">Generated messages appear on each supplier below, with a copy button.</div>
@@ -621,7 +620,7 @@ async function uploadImage(){
 }
 
 async function genRfq(){
-  const r=await post("/api/rfq",{wheel:S.wheel,size:size.value,offset:offset.value,pcd:pcd.value,finish:finish.value});
+  const r=await post("/api/rfq",{wheel:S.wheel,size:size.value,offset:offset.value,pcd:pcd.value});
   S.rfqs=r.rfqs; render();
 }
 

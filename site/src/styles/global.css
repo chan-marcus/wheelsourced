@@ -93,6 +93,24 @@ h1{font-family:'Barlow Condensed';font-weight:700;font-size:clamp(38px,8vw,74px)
    can compare vendors by eye. Tabular figures stop digits from shifting. */
 .specs .num{text-align:right}
 .specs .num dt,.specs .num dd{text-align:right}
+/* Payment terms and the damage policy are sentences, not figures. In a 120px
+   auto-fit column a supplier's two-clause refund policy renders as a tall
+   thin ribbon one or two words wide, which is unreadable next to the
+   single-value cells. Span the whole row instead, and cap the measure so the
+   line does not run the full width of a desktop card.
+
+   max-width in rem, not ch, for the reason on .preamble: ch is the width of
+   the font's "0" and differs between the mono and sans faces, so a ch measure
+   makes two blocks that should line up wrap at different widths. */
+.specs .prose{grid-column:1/-1}
+.specs .prose dd{font-size:13px;font-weight:400;line-height:1.65;
+  max-width:44rem;text-wrap:pretty}
+/* Back to normal flow once the grid is a single column anyway: a full-width
+   span and a 1fr column are the same thing there, and the tighter leading
+   suits the narrower measure. */
+@media(max-width:560px){
+  .specs .prose dd{line-height:1.5}
+}
 .mono,.vp,.specs dd,.chip,.seen{font-variant-numeric:tabular-nums}
 .none{color:var(--soft);font-weight:400;font-style:italic}
 .grey{color:var(--soft);font-weight:400}

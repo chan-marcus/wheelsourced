@@ -315,8 +315,8 @@ function render() {
           <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
           <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
             : s.cnc === false ? "outsourced" : or(null)}</dd></div>
-          <div><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
-          <div><dt>Damage/Defect policy</dt><dd>${or(s.defects)}</dd></div>
+          <div class="prose"><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
+          <div class="prose"><dt>Damage/Defect policy</dt><dd>${or(s.defects)}</dd></div>
         </dl>
       </div>
 

@@ -18,39 +18,58 @@ from_listing:
   listed_lead_time: 40 days (1-4 pieces), to be negotiated for >4 pieces
   sizes_offered:
   - 17x9
-  - 18x9.5
   - 18x10.5
+  - 18x9.5
   - 19x10.5
   bolt_patterns:
-  - 130mm
-  - 120mm
-  - 108mm
-  - 115mm
-  - 112mm
-  - 127mm
   - 100mm
-  - 139.7mm
-  - 98mm
-  - 165.1mm
+  - 108mm
+  - 112mm
   - 114.3mm
+  - 115mm
   - 120.65mm
+  - 120mm
+  - 127mm
+  - 130mm
+  - 139.7mm
   - 143.1mm
+  - 165.1mm
+  - 4x100
+  - 5x100
+  - 5x108
+  - 5x112
+  - 5x114.3
+  - 5x120
+  - 98mm
   offsets_offered:
-  - 10mm
-  - 15mm
-  - 18mm
-  - 20mm
-  - 25mm
-  - 30mm
-  - 35mm
-  - 40mm
-  - 42mm
-  - 45mm
-  - 50mm
-  - 0mm
+  - '0'
   - 0-80mm
+  - 0mm
+  - '10'
+  - 10mm
+  - '15'
+  - 15mm
+  - '18'
+  - 18mm
+  - '20'
+  - 20mm
+  - '25'
+  - 25mm
+  - '30'
+  - 30mm
+  - '35'
+  - 35mm
+  - '40'
+  - 40mm
+  - '42'
+  - 42mm
+  - '45'
+  - 45mm
+  - '50'
+  - 50mm
   finishes:
   - Black
+  - Black Chrome
   - Gloss Black
   construction: forged
   certs_claimed: []
@@ -87,7 +106,7 @@ from_quote:
   manufacturing_time: 30-40 days
   shipping_time: 30-40 days
 meta:
-  listing_seen: '2026-08-07'
+  listing_seen: '2026-08-08'
   rfq_sent: '2026-08-08'
   reply_received: '2026-08-08'
   questions_answered: 13/13
@@ -111,3 +130,4 @@ flags:
 - cert claimed, no document
 - claims factory, profile says trading
 - forging process not actually described
+affiliate_url: null

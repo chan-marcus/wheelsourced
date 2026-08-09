@@ -71,6 +71,7 @@ from_listing:
   - Black
   - Black Chrome
   - Gloss Black
+  - Gunmetal
   construction: forged
   certs_claimed: []
   main_image_url: null
@@ -106,7 +107,7 @@ from_quote:
   manufacturing_time: 30-40 days
   shipping_time: 30-40 days
 meta:
-  listing_seen: '2026-08-08'
+  listing_seen: '2026-08-09'
   rfq_sent: '2026-08-08'
   reply_received: '2026-08-08'
   questions_answered: 13/13

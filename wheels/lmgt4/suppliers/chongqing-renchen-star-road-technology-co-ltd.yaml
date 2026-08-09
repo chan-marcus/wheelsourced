@@ -12,7 +12,7 @@ from_listing:
   factory_area_sqm: null
   verified_supplier: true
   trade_assurance: true
-  response_rate: null
+  response_rate: ≤3h
   listed_price_low: 188
   listed_price_high: 188
   moq: 1 piece
@@ -29,6 +29,7 @@ from_listing:
   bolt_patterns:
   - 114.3mm
   offsets_offered:
+  - 15 mm
   - 15mm
   - 20mm
   finishes:
@@ -36,10 +37,10 @@ from_listing:
   - Gloss Black
   construction: forged
   certs_claimed:
+  - CE
   - DOT
   - JWL
   - VIA
-  - CE
   main_image_url: null
   store_rating: 4.6
   review_count: 282
@@ -69,7 +70,7 @@ from_quote:
   quote_construction: null
   certs_claimed: null
 meta:
-  listing_seen: '2026-08-08'
+  listing_seen: '2026-08-09'
   rfq_sent: '2026-08-08'
   reply_received: null
   questions_answered: null

@@ -13,7 +13,7 @@ What it is actually for: pasting supplier replies and watching the record fill
 in. Everything else is convenience.
 """
 
-import os, re, threading
+import os, re, subprocess, threading
 from pathlib import Path
 from datetime import date
 import base64
@@ -438,6 +438,139 @@ async def reset_supplier(supplier_id: str, req: Request):
 
 
 # --------------------------------------------------------------------------
+# publish: commit + push whatever the GUI has written to wheels/, gated on a
+# clean build. The GUI writes straight to disk on every save; nothing reaches
+# the public site until this runs, because "YAML in git" only works as an
+# audit trail if commits are deliberate checkpoints, not one per keystroke,
+# and because a bad paste should be catchable before it is live rather than
+# after.
+# --------------------------------------------------------------------------
+def _publish_pending():
+    """Bucket `git status` under wheels/ by wheel, with a one-line summary per
+    changed file. Same shape used for the confirm dialog and the commit body,
+    so what you're asked to approve is what actually gets committed.
+    """
+    st = subprocess.run(["git", "status", "--porcelain", "--", "wheels/"],
+                         capture_output=True, text=True).stdout
+    by_wheel = {}
+    for line in st.splitlines():
+        if not line.strip():
+            continue
+        code, path = line[:2], line[3:].strip()
+        parts = Path(path).parts
+        if len(parts) < 2:
+            continue
+        wheel = parts[1]
+        by_wheel.setdefault(wheel, [])
+
+        if len(parts) >= 4 and parts[2] == "suppliers" and path.endswith(".yaml"):
+            sid = Path(path).stem
+            if code.strip() in ("A", "??"):
+                by_wheel[wheel].append(f"added {sid}")
+            elif code.strip() == "D":
+                by_wheel[wheel].append(f"removed {sid}")
+            else:
+                # Modified: say what changed rather than just "updated". Same
+                # diff-and-classify approach used by hand all session: compare
+                # from_quote against HEAD, and call it a reset if nearly
+                # everything that changed went to null, since that is a
+                # different kind of event than a normal correction.
+                try:
+                    old = yaml.safe_load(
+                        subprocess.run(["git", "show", f"HEAD:{path}"],
+                                        capture_output=True, text=True).stdout) or {}
+                    new = yaml.safe_load(Path(path).read_text()) or {}
+                    oq, nq = old.get("from_quote") or {}, new.get("from_quote") or {}
+                    changed = [k for k in set(oq) | set(nq) if oq.get(k) != nq.get(k)]
+                    cleared = sum(1 for k in changed
+                                  if nq.get(k) in (None, "") and oq.get(k) not in (None, ""))
+                    if changed and cleared >= max(3, len(changed) - 1):
+                        by_wheel[wheel].append(f"reset {sid}")
+                    elif changed:
+                        shown = ", ".join(changed[:4])
+                        more = f" +{len(changed)-4} more" if len(changed) > 4 else ""
+                        by_wheel[wheel].append(f"{sid}: {shown}{more}")
+                    else:
+                        by_wheel[wheel].append(f"{sid}: metadata only")
+                except Exception:
+                    by_wheel[wheel].append(f"{sid}: updated")
+        elif path.endswith("picks.txt"):
+            by_wheel[wheel].append("picks.txt updated")
+        elif "/replies/" in path:
+            by_wheel[wheel].append(f"reply pasted: {Path(path).name}")
+        elif "/image." in path:
+            by_wheel[wheel].append("image updated")
+        elif "/outbox/" in path:
+            continue  # generated from the suppliers above, not worth naming twice
+        else:
+            by_wheel[wheel].append(path)
+
+    return {w: items for w, items in by_wheel.items() if items}
+
+
+@app.get("/api/publish-status")
+def publish_status():
+    pending = _publish_pending()
+    return {"pending": sum(len(v) for v in pending.values()), "summary": pending}
+
+
+@app.post("/api/publish")
+def do_publish():
+    pending = _publish_pending()
+    total = sum(len(v) for v in pending.values())
+    if total == 0:
+        return {"ok": False, "error": "Nothing to publish."}
+
+    log(f"publish: build check ({total} pending change(s))")
+    try:
+        build = subprocess.run(["npm", "run", "build"], cwd="site",
+                                capture_output=True, text=True, timeout=180)
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": "Build check timed out after 3 minutes. Nothing published."}
+    if build.returncode != 0:
+        tail = "\n".join((build.stdout + build.stderr).splitlines()[-25:])
+        log(f"publish: build FAILED, nothing committed\n{tail}")
+        return {"ok": False, "error": f"Build failed, nothing published:\n\n{tail}"}
+
+    try:
+        subprocess.run(["git", "add", "wheels/"], check=True, capture_output=True, text=True)
+        # git add can legitimately stage nothing if another process committed
+        # in the gap between the status check above and here. Not an error,
+        # just nothing left to do.
+        if subprocess.run(["git", "diff", "--cached", "--quiet"]).returncode == 0:
+            return {"ok": False, "error": "Nothing to publish (already committed)."}
+
+        lines = [f"Publish {total} change(s) from the GUI", ""]
+        for wheel, items in pending.items():
+            lines.append(f"{wheel}:")
+            lines += [f"  - {it}" for it in items]
+        msg = "\n".join(lines)
+
+        subprocess.run(["git", "commit", "-m", msg], check=True, capture_output=True, text=True)
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                                 capture_output=True, text=True).stdout.strip()
+    except subprocess.CalledProcessError as e:
+        detail = (e.stderr or e.stdout or str(e)).strip()
+        log(f"publish: commit failed: {detail}")
+        return {"ok": False, "error": f"Commit failed: {detail}"}
+
+    # No auto-pull, no auto-merge, no force. A rejected push means the
+    # remote moved since this checkout last synced, and resolving that by
+    # guessing is exactly the kind of git operation that should not run
+    # unattended. The commit is already made and safe on disk either way.
+    push = subprocess.run(["git", "push"], capture_output=True, text=True)
+    if push.returncode != 0:
+        detail = push.stderr.strip()
+        log(f"publish: committed {commit} but push failed: {detail}")
+        return {"ok": False, "error":
+                f"Committed locally ({commit}) but the push was rejected:\n\n{detail}\n\n"
+                "Run 'git pull' then 'git push' from a terminal to resolve."}
+
+    log(f"publish: {commit} pushed, {total} change(s) live shortly")
+    return {"ok": True, "commit": commit, "count": total, "wheels": list(pending.keys())}
+
+
+# --------------------------------------------------------------------------
 # ui
 # --------------------------------------------------------------------------
 PAGE = r"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
@@ -518,6 +651,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
     <div><span class="lbl">Wheel</span><select id="wheel" onchange="boot(this.value)"></select></div>
     <button class="ghost" onclick="newWheel()">New</button>
     <button class="ghost" onclick="window.location.href='http://localhost:4321'">View sourcing sheet</button>
+    <button id="publishbtn" onclick="publish()">Publish</button>
   </div>
 </header>
 
@@ -854,6 +988,51 @@ async function resetSupplier(id,btn){
     if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
   }
 }
+
+// Nothing the GUI writes reaches wheelsourced.com until this runs. It builds
+// the site locally first and refuses to commit or push if that fails, so a
+// bad paste or a broken record cannot go live silently.
+async function publish(){
+  const btn=document.getElementById("publishbtn");
+  const label=btn.textContent;
+  btn.disabled=true;
+  let status;
+  try{
+    status=await (await fetch("/api/publish-status")).json();
+  }catch(e){
+    toast("Could not check for pending changes: "+e.message,"bad");
+    btn.disabled=false; return;
+  }
+  if(!status||!status.pending){
+    toast("Nothing to publish");
+    btn.disabled=false; return;
+  }
+  const body=Object.entries(status.summary).map(([wheel,items])=>
+    `<div style="margin-bottom:10px"><b>${wheel}</b><br>`+
+    items.map(i=>`&middot; ${i}`).join("<br>")+`</div>`
+  ).join("");
+  const ok=await ask({
+    title:`Publish ${status.pending} change${status.pending===1?"":"s"}?`,
+    body:body+`<p style="color:var(--soft);margin-top:6px">Runs a build check first.
+      If it passes, this pushes straight to wheelsourced.com.</p>`,
+    ok:"Publish"});
+  if(!ok){ btn.disabled=false; return; }
+
+  btn.textContent="Building...";
+  try{
+    const r=await post("/api/publish",{});
+    if(r&&r.ok){
+      toast(`Published ${r.count} change${r.count===1?"":"s"} (${r.commit})`);
+    }else{
+      toast((r&&r.error)||"Publish failed","bad");
+    }
+  }catch(e){
+    toast("Publish failed: "+e.message,"bad");
+  }finally{
+    btn.textContent=label; btn.disabled=false;
+  }
+}
+
 boot("");
 </script></body></html>"""
 

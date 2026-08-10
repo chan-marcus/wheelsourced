@@ -116,7 +116,7 @@ from_quote:
   shipping_time: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-08'
+  rfq_sent: '2026-08-09'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
@@ -150,4 +150,4 @@ flags:
 - forging process not actually described
 - dodged the forging question
 - under 3 years listed
-affiliate_url: null
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601517733009

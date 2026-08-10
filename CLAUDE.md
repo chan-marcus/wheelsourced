@@ -358,19 +358,31 @@ not a contradiction.
 ## Scoring
 
 `scoreAll()` in `site/src/lib/data.js` computes the "best vetted" number over
-seven dimensions. A vendor missing a dimension is scored on the rest rather
+six dimensions. A vendor missing a dimension is scored on the rest rather
 than pushed to last place. Flags are computed and stored but do not affect
 the vetting score.
 
-**The score is out of 100 against fixed anchors, and only price is relative.**
-Landed cost is min-maxed because it genuinely is comparative: these are
-like-for-like quotes at one reference spec, so the cheapest really is the best
-price on offer. Everything else is scored against a constant.
+**Price is not one of the six, on purpose.** It was originally the one
+min-maxed, relative dimension, on the reasoning that these are like-for-like
+quotes at one reference spec, so the cheapest genuinely is the best price on
+offer. That reasoning is still true, and is exactly why it does not belong in
+this particular number: "best price" and "most trustworthy" are different
+questions, and scoring them together meant a vendor's *trustworthiness* score
+moved when a competitor happened to quote low, which has nothing to do with
+whether that vendor is trustworthy. Price still drives the "est. landed"
+figure shown on every card, computed exactly as before, and the "cheapest"
+sort option; it simply does not feed the 0-100 number. The min-max / relative
+branch stays in `scoreAll()` as generic machinery (`lowerBetter`, in the code),
+since a genuinely comparative dimension could exist again someday, but nothing
+currently uses it, so every live dimension is scored against a fixed anchor.
 
-Min-max scored the worst vendor in the set at zero and everyone else on a
-curve, so a one-year-old shop only looked bad because a peer happened to be
-five. When every vendor ties on a dimension min-max gives them all full marks,
-which reads as everyone excelling at something none of them has.
+**The score is out of 100 against fixed anchors.** Everything is scored
+against a constant rather than against whoever happens to be in the set,
+because a min-maxed dimension has two failure modes and this project has hit
+both. Min-max scored the worst vendor at zero and everyone else on a curve, so
+a one-year-old shop only looked bad because a peer happened to be five. When
+every vendor ties on a dimension min-max hands them all full marks, which
+reads as everyone excelling at something none of them has.
 
 Reorder rate was the worst case: min-maxed while carrying the heaviest weight
 of all, a quarter of the score. Exactly one supplier could ever score full
@@ -386,9 +398,9 @@ them from the current set's max: that is min-max in a different hat.
 Expect real scores in the 40s to 60s. 100 means excellent on every axis at
 once and nothing real clears it.
 
-Two things still move when the set changes, both deliberate: the landed
-min-max, and the rating prior, which is the set mean. A fixed prior of 4.7
-costs about a point per vendor if that drift ever becomes a problem.
+One thing still moves when the set changes, deliberately: the rating prior,
+which is the set mean. A fixed prior of 4.7 costs about a point per vendor if
+that drift ever becomes a problem.
 
 **Ratings are credibility-weighted before scoring.** A rating is shrunk toward
 the set mean in proportion to how few reviews back it (`RATING_PRIOR_WEIGHT`,
@@ -397,23 +409,28 @@ is a less certain one. Scoring rating and review count as independent
 dimensions let a vendor bank full marks for a figure its own sample could not
 support: the "silence must not pay" rule in a different costume.
 
-**Only a fully quoted landed cost is scored.** The price dimension used
-`landed ?? setPrice`, which compared one vendor's pre-freight number against
-everyone else's post-freight one, so withholding freight made you look cheaper
-than the vendors who disclosed it. Same bug as defaulting freight to zero.
+**Only a fully quoted landed cost is ever shown as one.** This is no longer a
+scoring rule, since price is not scored, but it still governs the "est.
+landed" figure and the "cheapest" sort, and the reasoning is the same one
+that used to protect the score: `landed ?? setPrice` would have compared one
+vendor's pre-freight number against everyone else's post-freight one, so
+withholding freight made a vendor look cheaper than the ones who disclosed
+it. Same bug as defaulting freight to zero, just relocated from the score to
+the display. `landed` stays null in `normalize()` unless both the set price
+and freight were quoted, full stop.
 
 Scaled by coverage: the weighted average is multiplied by
-`0.55 + 0.45 * coverage`, where coverage is the share of the seven dimensions
+`0.55 + 0.45 * coverage`, where coverage is the share of the six dimensions
 the vendor actually has. Before this, a vendor with two populated dimensions
 could outrank one with five on a lucky average, which is the same failure
 mode as defaulting a missing freight cost to zero. The floor of 0.55 means a
 thin record is discounted, not erased.
 
-Weights: reorder 2.0, rating 1.5, store age 1.5, review count 1.3, landed
-cost 1.0, response 0.3, transit 0.3. Adding a dimension changes every score,
-so check the whole table afterwards rather than the one vendor you had in
-mind: adding transit at 0.3 raised a thin vendor's score because it happened
-to be fastest, which is the opposite of what was intended.
+Weights: reorder 2.0, rating 1.5, store age 1.5, review count 1.3, response
+0.3, transit 0.3. Adding a dimension changes every score, so check the whole
+table afterwards rather than the one vendor you had in mind: adding transit at
+0.3 raised a thin vendor's score because it happened to be fastest, which is
+the opposite of what was intended.
 
 ---
 

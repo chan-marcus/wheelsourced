@@ -233,12 +233,19 @@ const clamp01 = (n) => Math.max(0, Math.min(1, n));
 
 // Composite "best vetted", scored out of 100 against fixed anchors.
 //
-// Only landed cost is relative now. It is the one figure that genuinely only
-// means something against the peers: these are like-for-like quotes for the
-// same wheel at the same reference spec, so the cheapest really is the best
-// price on offer.
+// Price is not a dimension here. It used to be, min-maxed as the one
+// genuinely comparative figure (these are like-for-like quotes at one
+// reference spec, so the cheapest really is the best price on offer) — but
+// that made a vendor's TRUSTWORTHINESS score move because a competitor
+// happened to quote low, which is a different question wearing the same
+// number. Price still drives the reference "est. landed" figure shown on
+// each card and the "cheapest" sort, both computed exactly as before; it
+// just no longer feeds the 0-100 score. min-max stays in this function as
+// infrastructure (the `lowerBetter` / relative branch below) in case a future
+// dimension is genuinely comparative rather than absolute, but nothing
+// currently uses it.
 //
-// Everything else is absolute, measured against the anchors above rather than
+// Everything scored is absolute, measured against the anchors above rather than
 // against whoever happens to be in the set. Min-max hid that: it scores the
 // worst vendor at zero and everyone else on a curve, so a one-year-old shop
 // only looked bad because a peer happened to be five. Worse, when every
@@ -272,11 +279,6 @@ function scoreAll(list) {
   };
 
   const dims = [
-    // Landed only. `landed ?? setPrice` compared a vendor's pre-freight
-    // number against everyone else's post-freight one, so withholding freight
-    // made you look cheaper than the vendors who disclosed it. That is the
-    // same bug as defaulting a missing freight cost to zero, wearing a hat.
-    { k: (s) => s.landed,               lowerBetter: true,  w: 1.0 },
     // Minor factor: many fast responders still disappoint.
     { k: (s) => s.respHours, w: 0.3,
       abs: (h) => clamp01((SLOW_RESPONSE_H - h) / (SLOW_RESPONSE_H - FAST_RESPONSE_H)) },

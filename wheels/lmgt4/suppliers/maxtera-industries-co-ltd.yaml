@@ -3,7 +3,7 @@ wheel: lmgt4
 listings:
 - https://www.alibaba.com/product-detail/Maxtera-Forged-Custom-LMGT4-Style-Car_1601738545899.html?chatToken=U1ZkdVJIVkhVRXB3VVd0MVF6QnFTSEJEV21jNEt6SmtiMnBMZWprNGIxVlNlRGRFYm05WmJXa3JlRzlZU2xoNFZVSjRSV0Y2V0dkTVMyWm1Mell4UTJJclNFeFVaRlkwUW5SelVITnZOWFJyU0hRMU1IcGtVV1ozY2tKSGVEWldOaXRoYm1kSVdFOUJUMkpoWnpZd2VtWkpjR2hpVWpneVpISlVUbU0zUVRGV2MwOW5kVXhpYzNobFpVaFZUMXA1UkU1VloyTmlhRTUyWTFWWlZtVXdPRzFxZGxwMGRXNUhRekJsVFRobGNrRkdOMEpZVWpKeVdVbGxSRGRYUVhabiZ2ZXJzaW9uPTIuMC4w&encryptTargetLoginId=8pctgRBMALNgFIr7N10ZWUN%2FdU4qjkfP6wdkfYSa%2Bs4%3D
 supplier_url: https://maxtera.en.alibaba.com/
-affiliate_url: null
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601738545899
 from_listing:
   supplier_name: Maxtera Industries Co., Ltd.
   business_type: manufacturer
@@ -81,7 +81,10 @@ from_quote:
   certs_claimed: null
 meta:
   listing_seen: '2026-08-09'
-  rfq_sent: null
+  rfq_sent: '2026-08-09'
   reply_received: null
   questions_answered: null
+  rfq_first_sent: '2026-08-09'
+  rfq_round: 1
+  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
 flags: []

@@ -1,0 +1,87 @@
+id: maxtera-industries-co-ltd
+wheel: lmgt4
+listings:
+- https://www.alibaba.com/product-detail/Maxtera-Forged-Custom-LMGT4-Style-Car_1601738545899.html?chatToken=U1ZkdVJIVkhVRXB3VVd0MVF6QnFTSEJEV21jNEt6SmtiMnBMZWprNGIxVlNlRGRFYm05WmJXa3JlRzlZU2xoNFZVSjRSV0Y2V0dkTVMyWm1Mell4UTJJclNFeFVaRlkwUW5SelVITnZOWFJyU0hRMU1IcGtVV1ozY2tKSGVEWldOaXRoYm1kSVdFOUJUMkpoWnpZd2VtWkpjR2hpVWpneVpISlVUbU0zUVRGV2MwOW5kVXhpYzNobFpVaFZUMXA1UkU1VloyTmlhRTUyWTFWWlZtVXdPRzFxZGxwMGRXNUhRekJsVFRobGNrRkdOMEpZVWpKeVdVbGxSRGRYUVhabiZ2ZXJzaW9uPTIuMC4w&encryptTargetLoginId=8pctgRBMALNgFIr7N10ZWUN%2FdU4qjkfP6wdkfYSa%2Bs4%3D
+supplier_url: https://maxtera.en.alibaba.com/
+affiliate_url: null
+from_listing:
+  supplier_name: Maxtera Industries Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 2
+  staff_count: 30
+  factory_area_sqm: 1000
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 268
+  listed_price_high: 298
+  moq: 4 pieces
+  listed_lead_time: 15-20 days
+  sizes_offered:
+  - 15"
+  - 16"
+  - 17"
+  - 18"
+  - 19"
+  - 20"
+  - 21"
+  - 22"
+  bolt_patterns:
+  - '4'
+  - '5'
+  - '6'
+  offsets_offered:
+  - 0mm
+  - 10mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 40mm
+  - 42mm
+  - 45mm
+  - 50mm
+  finishes:
+  - Black
+  - Custom
+  construction: forged
+  certs_claimed:
+  - DOT
+  - JWL
+  - VIA
+  main_image_url: null
+  store_rating: 4.7
+  review_count: 45
+  response_time: ≤2h
+  on_time_dispatch: 100.0%
+  reorder_rate: 5%
+  units_sold: null
+  transit_time: Est. 17-24 days
+from_quote:
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  forging_process: null
+  piece_count: null
+  cert_document: null
+  freight_cif_usd: null
+  manufacturing_time: null
+  shipping_time: null
+  is_manufacturer: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+  size_chart: null
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: null
+  quote_construction: null
+  certs_claimed: null
+meta:
+  listing_seen: '2026-08-09'
+  rfq_sent: null
+  reply_received: null
+  questions_answered: null
+flags: []

@@ -1,0 +1,169 @@
+---
+import "../styles/global.css";
+
+// Same endpoint arrangement as the index and per-wheel forms this page
+// replaces/extends: the local GUI in dev, a same-origin Pages Function in a
+// build. Never a hardcoded localhost URL, which is unreachable from a
+// visitor's machine and blocked as mixed content from an https page regardless.
+const REQUEST_ENDPOINT =
+  import.meta.env.PUBLIC_REQUEST_ENDPOINT ||
+  (import.meta.env.DEV ? "http://localhost:8420/api/request-wheel" : "/api/request-wheel");
+const SUGGEST_ENDPOINT =
+  import.meta.env.PUBLIC_SUGGEST_ENDPOINT ||
+  (import.meta.env.DEV ? "http://localhost:8420/api/suggest-supplier" : "/api/suggest-supplier");
+---
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WheelSourced - Request</title>
+<link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <a class="logo" href="/" aria-label="WheelSourced home">
+      <span class="word">Wheel<em>Sourced</em></span>
+    </a>
+  </header>
+
+  <div class="preamble" style="margin-top:26px;">
+    <p><b>Don't see a wheel you're after, or know where to find one?</b> Two ways to point us at it: name the style you want, or send the listing yourself if you've already found a factory making it. Either way it goes into the same vetting queue as everything else here — nothing is published until it has been asked the same questions.</p>
+  </div>
+
+  <div class="band">Request a wheel</div>
+  <form id="wheel-request-form" data-endpoint={REQUEST_ENDPOINT}>
+    <div class="mgrid">
+      <div><label for="wheel-name">Wheel name</label>
+        <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required /></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+      <input id="wheel-alert" type="checkbox" style="width:16px;height:16px;cursor:pointer;" />
+      <label for="wheel-alert" style="font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me once it's vetted</label>
+    </div>
+    <div id="wheel-emailfield" class="mgrid" style="display:none;margin-top:12px;">
+      <div><label for="wheel-email">Email</label>
+        <input id="wheel-email" type="email" placeholder="you@example.com" />
+        <div style="font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:6px;">We'll email you once we have vetted vendors for this wheel.</div></div>
+    </div>
+    <div id="wheel-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--chop);border:1px solid var(--chop);padding:8px 10px;margin-top:14px;"></div>
+    <div class="mfoot"><button class="btn" type="submit">Submit request</button></div>
+  </form>
+
+  <div class="band" style="margin-top:44px;">Suggest a supplier</div>
+  <p class="mhint" style="margin-top:-6px;">An Alibaba or 1688 listing, for a wheel we don't have a page for yet. We do the vetting, so the listing is a starting point rather than a recommendation.</p>
+  <form id="sg-form" data-endpoint={SUGGEST_ENDPOINT}>
+    <div class="mgrid">
+      <div><label for="sg-url">Listing URL</label>
+        <input id="sg-url" type="url" required placeholder="https://www.alibaba.com/product-detail/..." /></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+      <input id="sg-alert" type="checkbox" style="width:16px;height:16px;cursor:pointer;" />
+      <label for="sg-alert" style="font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me when it is vetted</label>
+    </div>
+    <div id="sg-emailfield" class="mgrid" style="display:none;margin-top:12px;">
+      <div><label for="sg-email">Email</label>
+        <input id="sg-email" type="email" placeholder="you@example.com" />
+        <div style="font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:6px;">Used once, to tell you the verdict on this listing.</div></div>
+    </div>
+    <div id="sg-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--chop);border:1px solid var(--chop);padding:8px 10px;margin-top:14px;"></div>
+    <div class="mfoot"><button class="btn" type="submit">Send suggestion</button></div>
+  </form>
+
+  <div id="banner" hidden style="position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--stock);padding:14px 22px;font-family:'IBM Plex Mono';font-size:12.5px;z-index:2000;max-width:90%;text-align:center;"></div>
+
+  <footer style="margin-top:70px;padding:40px 20px;border-top:1px solid var(--ink);text-align:center;color:var(--soft);">
+    <p style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px;">WheelSourced © 2026.</p>
+    <p style="font-size:13px;margin:0;max-width:600px;margin-left:auto;margin-right:auto;">A curated sourcing site for aftermarket wheels made by Chinese factories.</p>
+  </footer>
+
+</div>
+
+<script is:inline>
+const el = (id) => document.getElementById(id);
+
+function banner(msg) {
+  const b = el("banner");
+  b.textContent = msg;
+  b.hidden = false;
+  setTimeout(() => { b.hidden = true; }, 3000);
+}
+
+// Both forms are the same shape: an optional email revealed by a checkbox, a
+// POST on submit, an inline error rather than a swallowed failure. One
+// handler wired twice rather than copied twice, so the two cannot drift.
+function wireAlertCheckbox(checkboxId, fieldId, inputId) {
+  const checkbox = el(checkboxId), field = el(fieldId), input = el(inputId);
+  checkbox.addEventListener("change", () => {
+    if (checkbox.checked) { field.style.display = "grid"; input.focus(); }
+    else { field.style.display = "none"; input.value = ""; }
+  });
+}
+
+function wireForm({ formId, errorId, emailFieldId, buildBody, onSuccess }) {
+  const form = el(formId);
+  const endpoint = form.dataset.endpoint;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const label = btn.textContent;
+    const err = el(errorId);
+    err.style.display = "none";
+    btn.textContent = "Sending..."; btn.disabled = true;
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildBody()),
+      });
+      // Read the body before throwing: the endpoint explains a rejected
+      // input (e.g. a non-Alibaba host), and "Server returned 400" would
+      // hide the one thing worth telling the visitor.
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) throw new Error(data.error || "Server returned " + res.status);
+      form.reset();
+      el(emailFieldId).style.display = "none";
+      onSuccess();
+    } catch (e2) {
+      err.textContent = e2.message || "Could not send that. Please try again.";
+      err.style.display = "block";
+    } finally {
+      btn.textContent = label; btn.disabled = false;
+    }
+  });
+}
+
+wireAlertCheckbox("wheel-alert", "wheel-emailfield", "wheel-email");
+wireForm({
+  formId: "wheel-request-form",
+  errorId: "wheel-error",
+  emailFieldId: "wheel-emailfield",
+  buildBody: () => ({
+    name: el("wheel-name").value.trim(),
+    email: el("wheel-alert").checked ? (el("wheel-email").value.trim() || null) : null,
+  }),
+  onSuccess: () => banner("Request submitted."),
+});
+
+wireAlertCheckbox("sg-alert", "sg-emailfield", "sg-email");
+wireForm({
+  formId: "sg-form",
+  errorId: "sg-error",
+  emailFieldId: "sg-emailfield",
+  buildBody: () => ({
+    url: el("sg-url").value.trim(),
+    wheel: null,
+    email: el("sg-alert").checked ? (el("sg-email").value.trim() || null) : null,
+  }),
+  onSuccess: () => banner("Suggestion received. It goes into the vetting queue."),
+});
+</script>
+</body>
+</html>

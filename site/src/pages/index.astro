@@ -3,16 +3,6 @@ import { loadWheels } from "../lib/data.js";
 import "../styles/global.css";
 
 const wheels = loadWheels();
-
-// Where the request form posts. In dev that is the local GUI on :8420, which
-// writes wheel_requests.json. In a build it is same-origin, handled by the
-// Pages Function in site/functions/api/. The old code hardcoded the localhost
-// URL, so on a public domain every submission failed: the host is not
-// reachable from a visitor's machine, and a browser blocks an http call from
-// an https page as mixed content regardless.
-const REQUEST_ENDPOINT =
-  import.meta.env.PUBLIC_REQUEST_ENDPOINT ||
-  (import.meta.env.DEV ? "http://localhost:8420/api/request-wheel" : "/api/request-wheel");
 ---
 
 <html lang="en">
@@ -201,37 +191,7 @@ const REQUEST_ENDPOINT =
 
   <div class="landing-content" style="margin-top: 80px; margin-bottom: 40px;">
     <p style="font-size: 18px; color: var(--soft);">Don't see a wheel you're interested in?</p>
-    <button onclick="document.getElementById('request-modal').style.display = 'flex'" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; cursor: pointer; transition: all 0.2s;">Request here</button>
-  </div>
-
-  <div id="request-modal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;">
-    <div class="modalbox" style="background: var(--stock); border: 2px solid var(--ink); padding: 40px; max-width: 500px; width: 90%;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="margin: 0; font-family: 'Barlow Condensed'; font-size: 24px; font-weight: 700; text-transform: uppercase;">Request a wheel</h2>
-        <button onclick="document.getElementById('request-modal').style.display = 'none'" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
-      </div>
-      <form id="wheel-request-form" data-endpoint={REQUEST_ENDPOINT} onsubmit="submitWheelRequest(event)" style="display: flex; flex-direction: column; gap: 16px;">
-        <div>
-          <label for="wheel-name" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Wheel name</label>
-          <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <input id="wheel-alert-checkbox" type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" />
-          <label for="wheel-alert-checkbox" style="font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; cursor: pointer; margin: 0;">Alert me</label>
-        </div>
-        <div id="wheel-email-field" style="display: none;">
-          <label for="wheel-email" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Email</label>
-          <input id="wheel-email" type="email" placeholder="you@example.com" style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
-          <div style="font-family: 'IBM Plex Mono'; font-size: 11px; color: var(--soft); margin-top: 6px;">We'll alert you once we have vetted vendors for this wheel</div>
-        </div>
-        <div id="wheel-request-error" role="alert" style="display: none; font-family: 'IBM Plex Mono'; font-size: 11.5px; color: var(--chop); border: 1px solid var(--chop); padding: 8px 10px;"></div>
-        <button type="submit" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); cursor: pointer; transition: all 0.2s;">Submit request</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="confirmation" style="position: fixed; top: 40px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--stock); padding: 16px 24px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 13px; display: none; z-index: 2000; max-width: 90%; text-align: center; animation: slideDown 0.3s ease-out;">
-    Wheel request submitted
+    <a href="/request" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; transition: all 0.2s;">Request here</a>
   </div>
 
   <footer style="margin-top: 120px; padding: 40px 20px; border-top: 1px solid var(--ink); text-align: center; color: var(--soft);">
@@ -242,90 +202,7 @@ const REQUEST_ENDPOINT =
       A curated sourcing site for aftermarket wheels made by Chinese factories.
     </p>
   </footer>
-
-  <style>
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-  </style>
 </div>
 
-<script is:inline>
-// The endpoint arrives on a data attribute rather than via define:vars.
-// define:vars wraps the script in an IIFE, which puts every function in a
-// closure, and the inline onsubmit="submitWheelRequest(event)" attribute
-// resolves against global scope only. The handler became unreachable, the
-// thrown ReferenceError meant preventDefault() never ran, and the form did a
-// native GET submit: the page navigated and that looked exactly like success.
-const el = (id) => document.getElementById(id);
-const REQUEST_ENDPOINT = el("wheel-request-form").dataset.endpoint;
-
-function showConfirmation() {
-  const confirm = el("confirmation");
-  confirm.style.display = "block";
-  setTimeout(() => {
-    confirm.style.display = "none";
-  }, 3000);
-}
-
-function toggleEmailField() {
-  const checkbox = el("wheel-alert-checkbox");
-  const emailField = el("wheel-email-field");
-  const emailInput = el("wheel-email");
-
-  if (checkbox.checked) {
-    emailField.style.display = "block";
-    emailInput.focus();
-  } else {
-    emailField.style.display = "none";
-    emailInput.value = "";
-  }
-}
-
-async function submitWheelRequest(e) {
-  e.preventDefault();
-  const wheelName = el("wheel-name").value.trim();
-  const email = el("wheel-email").value.trim();
-  if (!wheelName) return;
-
-  const btn = e.target.querySelector('button[type="submit"]');
-  const label = btn ? btn.textContent : "";
-  const err = el("wheel-request-error");
-  err.style.display = "none";
-  if (btn) { btn.textContent = "Sending..."; btn.disabled = true; }
-
-  try {
-    const response = await fetch(REQUEST_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: wheelName, email: email || null })
-    });
-    if (!response.ok) throw new Error("Server returned " + response.status);
-
-    el("wheel-name").value = "";
-    el("wheel-email").value = "";
-    el("wheel-alert-checkbox").checked = false;
-    el("wheel-email-field").style.display = "none";
-    el("request-modal").style.display = "none";
-    showConfirmation();
-  } catch (e2) {
-    // A swallowed console.error left the modal open with no feedback, so a
-    // failed request was indistinguishable from one that worked.
-    err.textContent = "Could not send that request. Please try again.";
-    err.style.display = "block";
-  } finally {
-    if (btn) { btn.textContent = label; btn.disabled = false; }
-  }
-}
-
-el("wheel-alert-checkbox").addEventListener("change", toggleEmailField);
-</script>
 </body>
 </html>

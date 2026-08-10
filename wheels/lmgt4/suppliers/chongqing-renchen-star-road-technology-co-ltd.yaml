@@ -53,11 +53,12 @@ from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
   forging_process: null
-  piece_count: null
+  piece_count:
+  - monoblock
   cert_document: null
   freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
+  manufacturing_time: 20-25 days
+  shipping_time: 25 days
   is_manufacturer: null
   cnc_inhouse: null
   heat_treat: null
@@ -72,9 +73,23 @@ from_quote:
 meta:
   listing_seen: '2026-08-09'
   rfq_sent: '2026-08-09'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-08-10'
+  questions_answered: 3/13
   rfq_first_sent: '2026-08-08'
-  rfq_round: 1
+  rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-flags: []
+  off_basis_quotes:
+  - construction: monoblock
+    seen: '2026-08-09'
+    price_per_wheel_1set: 740
+    price_per_wheel_4set: 740
+    freight_cif_usd: 240
+  first_reply: '2026-08-10'
+  reply_count: 1
+  reply_notes:
+  - '2026-08-10: Price 740 USD per wheel for monoblock LMGT4 design. Set of 4 wheels
+    quoted at 740 USD total (appears to be per-wheel pricing applied to set). Includes
+    caps and door-to-door shipping. Price stated as 740 + 40 (caps) + 240 (shipping)
+    = 1020 USD total for 4 wheels.'
+flags:
+- quoted monoblock, no 2-piece price

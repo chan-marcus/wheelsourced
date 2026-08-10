@@ -47,37 +47,45 @@ from_listing:
   units_sold: 8
   transit_time: Est. 20-28 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  forging_process: null
-  piece_count: null
-  cert_document: null
-  freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
+  price_per_wheel_1set: 235
+  price_per_wheel_4set: 940
+  forging_process: press forged, 12,000 ton press, 6061-T6 aluminum alloy
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: claimed without document
+  freight_cif_usd: 285
+  manufacturing_time: 15 days for this model; 25 days for 2-piece; 35 days for 3-piece
+  shipping_time: 25 days by sea; 15 days by air
   is_manufacturer: true
   cnc_inhouse: true
-  heat_treat: null
+  heat_treat: 'T6 heat treatment: solution 530±5℃ for 60–120 minutes; aging 160–170℃
+    for 8–12 hours (standard: 170℃×8h)'
   payment_terms: 50% advance payment
-  defect_policy: null
+  defect_policy: seek compensation from freight company and remake damaged wheels
   size_chart: null
   weight_kg: null
   load_rating_kg: null
-  forged_confirmed: null
+  forged_confirmed: true
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - TUV
 meta:
   listing_seen: '2026-08-09'
   rfq_sent: '2026-08-09'
-  reply_received: '2026-08-09'
-  questions_answered: 3/13
+  reply_received: '2026-08-10'
+  questions_answered: 13/13
   first_reply: '2026-08-09'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-08-09: Supplier states they have their own CNC and are the factory themselves.'
+  - '2026-08-10: Price given per wheel; 4-piece total is 940 USD. Supplier claims
+    TUV certification but no document provided. Freight quote includes route-specific
+    tax optimization via Chinese address.'
   rfq_first_sent: '2026-08-09'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
 flags:
-- constructions offered not confirmed
+- cert claimed, no document
 - under 3 years listed

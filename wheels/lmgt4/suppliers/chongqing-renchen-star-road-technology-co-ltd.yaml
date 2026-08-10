@@ -51,12 +51,12 @@ from_listing:
   transit_time: Est. 17-24 days
 from_quote:
   price_per_wheel_1set: null
-  price_per_wheel_4set: null
+  price_per_wheel_4set: 740
   forging_process: null
   piece_count:
   - monoblock
   cert_document: null
-  freight_cif_usd: null
+  freight_cif_usd: 240
   manufacturing_time: 20-25 days
   shipping_time: 25 days
   is_manufacturer: null
@@ -84,12 +84,18 @@ meta:
     price_per_wheel_1set: 740
     price_per_wheel_4set: 740
     freight_cif_usd: 240
+  - construction: monoblock
+    seen: '2026-08-09'
+    price_per_wheel_4set: 740
+    freight_cif_usd: 240
   first_reply: '2026-08-10'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-08-10: Price 740 USD per wheel for monoblock LMGT4 design. Set of 4 wheels
     quoted at 740 USD total (appears to be per-wheel pricing applied to set). Includes
     caps and door-to-door shipping. Price stated as 740 + 40 (caps) + 240 (shipping)
     = 1020 USD total for 4 wheels.'
+  - '2026-08-10: Price of 740 USD is for 4 wheels (LMGT4 monoblock). Freight 240 USD
+    is included in CIF. Caps 40 USD additional. No price given for single wheel.'
 flags:
 - quoted monoblock, no 2-piece price

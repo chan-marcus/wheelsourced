@@ -77,7 +77,8 @@ from_quote:
   is_manufacturer: true
   cnc_inhouse: true
   heat_treat: null
-  payment_terms: null
+  payment_terms: 50% deposit, remaining balance after production confirmation before
+    shipping
   defect_policy: null
   size_chart: null
   weight_kg: null

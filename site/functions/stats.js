@@ -67,56 +67,51 @@ async function readAll(kv, prefix) {
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
 
-// Roll the per-visitor-per-day keys up into daily totals.
+// Traffic for the page: the recent event feed, plus daily rollups.
 //
-// list() returns at most 1000 keys a page, so this follows the cursor rather
-// than assuming one call is the whole story: at a thousand unique visitors in
-// 90 days a single call would silently start reporting low, which is the worst
-// way for an analytics number to be wrong.
-async function readTraffic(kv, days = 30) {
-  if (!kv) return null;
-  const keys = [];
+// The feed is a single bounded list(). _middleware.js writes pv: keys with an
+// inverted timestamp precisely so KV's lexicographic order returns newest
+// first, which turns "the last 100 views" into one call instead of reading
+// every key in the namespace and sorting.
+async function readFeed(kv, limit = 100) {
+  const { keys } = await kv.list({ prefix: "pv:", limit });
+  const vals = await Promise.all(keys.map((k) => kv.get(k.name, "json")));
+  return vals.filter(Boolean);
+}
+
+// Daily uniques come from the uv: keys, where one key IS one visitor for one
+// day, so counting keys is the whole calculation. Cursor-paginated rather
+// than assuming the 1000-key page is everything: silently reporting low is
+// the worst way for an analytics number to be wrong.
+async function readDaily(kv, days = 30) {
+  const cutoff = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  const byDay = new Map();
   let cursor;
   do {
     const res = await kv.list({ prefix: "uv:", cursor, limit: 1000 });
-    keys.push(...res.keys);
+    for (const k of res.keys) {
+      const day = k.name.split(":")[1];
+      if (day >= cutoff) byDay.set(day, (byDay.get(day) || 0) + 1);
+    }
     cursor = res.list_complete ? null : res.cursor;
   } while (cursor);
+  return [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+}
 
-  const cutoff = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
-  const recent = keys.filter((k) => k.name.split(":")[1] >= cutoff);
-
-  const vals = await Promise.all(recent.map((k) => kv.get(k.name, "json")));
-  const byDay = new Map();
-  const countries = new Map();
-  const pathHits = new Map();
-  let totalViews = 0;
-
-  recent.forEach((k, i) => {
-    const v = vals[i];
-    if (!v) return;
-    const day = k.name.split(":")[1];
-    const d = byDay.get(day) || { uniques: 0, views: 0 };
-    d.uniques += 1;                    // one key IS one unique visitor that day
-    d.views += v.views || 0;
-    byDay.set(day, d);
-    totalViews += v.views || 0;
-    if (v.country) countries.set(v.country, (countries.get(v.country) || 0) + 1);
-    (v.paths || []).forEach((p) => pathHits.set(p, (pathHits.get(p) || 0) + 1));
-  });
-
+async function readTraffic(kv) {
+  if (!kv) return null;
+  const [feed, daily] = await Promise.all([readFeed(kv), readDaily(kv)]);
   const today = new Date().toISOString().slice(0, 10);
   return {
-    days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0])),
-    totalViews,
-    // Sum of daily uniques, NOT distinct people: the visitor id is salted with
-    // the date and rotates nightly, so someone who came back on three days is
-    // three here. Labelled in the UI to match, rather than being passed off as
-    // a unique-visitor total it cannot be.
-    totalUniqueDays: recent.length,
-    today: byDay.get(today) || { uniques: 0, views: 0 },
-    countries: [...countries.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8),
-    paths: [...pathHits.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10),
+    feed,
+    daily,
+    uniquesToday: daily.find(([d]) => d === today)?.[1] || 0,
+    uniques30: daily.reduce((t, [, n]) => t + n, 0),
+    // Distinct people in the feed window, which the stable visitor id makes
+    // answerable at all: the rotating id this replaced could not tell one
+    // person on three days from three people.
+    people: new Set(feed.map((v) => v.vid)).size,
+    newPeople: feed.filter((v) => v.isNew).length,
   };
 }
 
@@ -160,6 +155,16 @@ button{font-family:'IBM Plex Mono';font-size:11.5px;font-weight:600;letter-spaci
 .bar .fill{background:var(--bronze);height:100%}
 .bar .n{font-size:11.5px;text-align:right}
 .bar .n b{font-weight:600}
+.vid{font-size:12px;letter-spacing:.02em}
+/* The whole point of the feed: a first-ever visit is called out, everything
+   else is quiet. Bronze because it is already the accent everywhere else. */
+.badge{display:inline-block;margin-left:8px;font-size:9px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--bronze);
+  border:1px solid var(--bronze);border-radius:9px;padding:1px 7px;vertical-align:1px}
+tr.new td{background:rgba(138,106,47,.07)}
+tr.new:hover td{background:rgba(138,106,47,.13)}
+td.dim{color:var(--soft)}
+.when{white-space:nowrap}
 </style></head><body><div class="sheet">
 <header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/stats?logout=1">Log out</a>' : ""}</header>
 ${body.html}
@@ -203,41 +208,47 @@ export async function onRequestGet({ request, env }) {
     `<td>${esc(s.wheel || "")}</td><td>${esc(s.date)}</td><td>${esc(s.email || "")}</td></tr>`
   ).join("");
 
-  const bar = (label, n, max, extra = "") => `
+  const bar = (label, n, max) => `
     <div class="bar"><span>${esc(label)}</span>
       <div class="track"><div class="fill" style="width:${max ? Math.round((n / max) * 100) : 0}%"></div></div>
-      <div class="n"><b>${n}</b>${extra}</div></div>`;
+      <div class="n"><b>${n}</b></div></div>`;
 
   let trafficHtml;
   if (!traffic) {
     trafficHtml = `<p class="empty">Visitor tracking is not configured (SITE_STATS not bound).</p>`;
-  } else if (!traffic.days.length) {
+  } else if (!traffic.feed.length) {
     trafficHtml = `<p class="empty">No visits recorded yet. Counting starts from the next page view.</p>`;
   } else {
-    const maxU = Math.max(...traffic.days.map(([, d]) => d.uniques));
+    const maxU = Math.max(...traffic.daily.map(([, n]) => n), 1);
+    const feedRows = traffic.feed.map((v) => `
+      <tr class="${v.isNew ? "new" : ""}">
+        <td class="vid">${esc(v.vid)}${v.isNew ? '<span class="badge">New</span>' : ""}</td>
+        <td>${esc(v.path)}</td>
+        <td class="when dim">${esc(new Date(v.ts).toLocaleString("en-US", {
+          timeZone: "America/Los_Angeles", dateStyle: "short", timeStyle: "medium" }))}</td>
+        <td class="dim">${v.ref ? `<a href="${esc(v.ref)}" rel="noopener nofollow">${esc(v.ref)}</a>` : "Direct"}</td>
+        <td class="dim">${esc(v.country || "")}</td>
+      </tr>`).join("");
+
     trafficHtml = `
       <dl class="tiles">
-        <div class="tile key"><dt>Unique visitors today</dt><dd>${traffic.today.uniques}</dd></div>
-        <div class="tile"><dt>Page views today</dt><dd>${traffic.today.views}</dd></div>
-        <div class="tile key"><dt>Unique visitors / 30d</dt><dd>${traffic.totalUniqueDays}<small> visitor-days</small></dd></div>
-        <div class="tile"><dt>Page views / 30d</dt><dd>${traffic.totalViews}</dd></div>
+        <div class="tile key"><dt>Unique visitors today</dt><dd>${traffic.uniquesToday}</dd></div>
+        <div class="tile key"><dt>New visitors <small>(last ${traffic.feed.length} views)</small></dt><dd>${traffic.newPeople}</dd></div>
+        <div class="tile"><dt>Distinct visitors <small>(same window)</small></dt><dd>${traffic.people}</dd></div>
+        <div class="tile"><dt>Visitor-days / 30d</dt><dd>${traffic.uniques30}</dd></div>
       </dl>
-      <p style="font-size:11.5px;color:var(--soft);margin:0 0 18px">
-        A visitor is counted once per day. The 30-day figure sums those days, so
-        someone who came back three times is three visitor-days, not one person.
-        Identification is a salted daily hash of IP and browser; no IP is stored
-        and the hash cannot follow anyone past midnight UTC.</p>
+      <p style="font-size:11.5px;color:var(--soft);margin:0 0 22px">
+        A visitor is one browser, identified by a salted hash of IP and user agent;
+        no IP is stored. <b style="color:var(--bronze)">New</b> means never seen
+        before, not just new today. Visitor-days counts each visitor once per day,
+        so someone who came back three times is three.</p>
 
-      <h1>By day</h1>
-      <div class="bars">${traffic.days.map(([day, d]) =>
-        bar(day, d.uniques, maxU, ` <small style="color:var(--soft)">/ ${d.views} views</small>`)
-      ).join("")}</div>
+      <h1>Recent page views</h1>
+      <table><thead><tr><th>Visitor ID</th><th>Path</th><th>Visited at</th><th>Referrer</th><th>Country</th></tr></thead>
+      <tbody>${feedRows}</tbody></table>
 
-      ${traffic.paths.length ? `<h1>Top pages</h1><div class="bars">${
-        traffic.paths.map(([p, n]) => bar(p, n, traffic.paths[0][1])).join("")}</div>` : ""}
-
-      ${traffic.countries.length ? `<h1>Countries</h1><div class="bars">${
-        traffic.countries.map(([c, n]) => bar(c, n, traffic.countries[0][1])).join("")}</div>` : ""}
+      <h1>Unique visitors by day</h1>
+      <div class="bars">${traffic.daily.map(([day, n]) => bar(day, n, maxU)).join("")}</div>
     `;
   }
 

@@ -1,8 +1,12 @@
-// Cloudflare Pages Function serving /requests: the admin view of what has
-// come in through the two public forms. Password-gated, because the two KV
-// stores it reads hold real people's email addresses, and the local
+// Cloudflare Pages Function serving /stats: traffic, plus the admin view of
+// what has come in through the two public forms. Password-gated, because the
+// KV stores it reads hold real people's email addresses, and the local
 // equivalent (app.py's /requests) was only ever safe to leave open because
 // nothing outside this machine could reach it.
+//
+// Visitor numbers come from the keys _middleware.js writes, one per visitor
+// per day. See that file for why the shape is what it is and what is and is
+// not stored about a visitor.
 //
 // Stateless session: the cookie is not a token looked up in storage, it is
 // HMAC-SHA256(ADMIN_KEY, a fixed string), recomputed and compared on every
@@ -63,7 +67,60 @@ async function readAll(kv, prefix) {
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
 
-function page({ body, title = "WheelSourced - Requests" }) {
+// Roll the per-visitor-per-day keys up into daily totals.
+//
+// list() returns at most 1000 keys a page, so this follows the cursor rather
+// than assuming one call is the whole story: at a thousand unique visitors in
+// 90 days a single call would silently start reporting low, which is the worst
+// way for an analytics number to be wrong.
+async function readTraffic(kv, days = 30) {
+  if (!kv) return null;
+  const keys = [];
+  let cursor;
+  do {
+    const res = await kv.list({ prefix: "uv:", cursor, limit: 1000 });
+    keys.push(...res.keys);
+    cursor = res.list_complete ? null : res.cursor;
+  } while (cursor);
+
+  const cutoff = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  const recent = keys.filter((k) => k.name.split(":")[1] >= cutoff);
+
+  const vals = await Promise.all(recent.map((k) => kv.get(k.name, "json")));
+  const byDay = new Map();
+  const countries = new Map();
+  const pathHits = new Map();
+  let totalViews = 0;
+
+  recent.forEach((k, i) => {
+    const v = vals[i];
+    if (!v) return;
+    const day = k.name.split(":")[1];
+    const d = byDay.get(day) || { uniques: 0, views: 0 };
+    d.uniques += 1;                    // one key IS one unique visitor that day
+    d.views += v.views || 0;
+    byDay.set(day, d);
+    totalViews += v.views || 0;
+    if (v.country) countries.set(v.country, (countries.get(v.country) || 0) + 1);
+    (v.paths || []).forEach((p) => pathHits.set(p, (pathHits.get(p) || 0) + 1));
+  });
+
+  const today = new Date().toISOString().slice(0, 10);
+  return {
+    days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0])),
+    totalViews,
+    // Sum of daily uniques, NOT distinct people: the visitor id is salted with
+    // the date and rotates nightly, so someone who came back on three days is
+    // three here. Labelled in the UI to match, rather than being passed off as
+    // a unique-visitor total it cannot be.
+    totalUniqueDays: recent.length,
+    today: byDay.get(today) || { uniques: 0, views: 0 },
+    countries: [...countries.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8),
+    paths: [...pathHits.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10),
+  };
+}
+
+function page({ body, title = "WheelSourced - Stats" }) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title>
@@ -89,15 +146,29 @@ input[type=password]{width:100%;font-family:'IBM Plex Mono';font-size:14px;paddi
 button{font-family:'IBM Plex Mono';font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:10px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--stock);cursor:pointer;width:100%}
 .err{color:var(--chop);font-size:12px;margin-bottom:12px}
 .logout{font-size:11px;color:var(--soft);text-decoration:none}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 20px;margin-bottom:8px}
+.tile dt{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
+.tile dd{margin:0;font-family:'Barlow Condensed';font-weight:700;font-size:34px;line-height:1}
+/* Unique visitors is the number actually being asked for, so it is the one
+   thing on the page in the accent colour. Everything else is context for it. */
+.tile.key dd{color:var(--bronze)}
+.tile dd small{font-family:'IBM Plex Mono';font-size:11px;font-weight:400;color:var(--soft)}
+.bars{margin:10px 0 24px}
+.bar{display:grid;grid-template-columns:92px 1fr 88px;align-items:center;gap:10px;padding:2px 0}
+.bar span{font-size:11.5px;color:var(--soft)}
+.bar .track{background:var(--stock2);height:14px;position:relative}
+.bar .fill{background:var(--bronze);height:100%}
+.bar .n{font-size:11.5px;text-align:right}
+.bar .n b{font-weight:600}
 </style></head><body><div class="sheet">
-<header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/requests?logout=1">Log out</a>' : ""}</header>
+<header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/stats?logout=1">Log out</a>' : ""}</header>
 ${body.html}
 </div></body></html>`;
 }
 
 function loginForm(error) {
   return `<form class="login" method="POST">
-    <h1 style="margin-top:0">Requests</h1>
+    <h1 style="margin-top:0">Stats</h1>
     ${error ? `<div class="err">${esc(error)}</div>` : ""}
     <input type="password" name="password" placeholder="Password" autofocus required>
     <button type="submit">Log in</button>
@@ -109,7 +180,7 @@ export async function onRequestGet({ request, env }) {
   if (url.searchParams.get("logout")) {
     return new Response(null, {
       status: 303,
-      headers: { Location: "/requests", "Set-Cookie": `${COOKIE}=; Path=/; Max-Age=0` },
+      headers: { Location: "/stats", "Set-Cookie": `${COOKIE}=; Path=/; Max-Age=0` },
     });
   }
 
@@ -118,9 +189,10 @@ export async function onRequestGet({ request, env }) {
       { headers: { "content-type": "text/html;charset=utf-8" } });
   }
 
-  const [reqs, sugs] = await Promise.all([
+  const [reqs, sugs, traffic] = await Promise.all([
     readAll(env.WHEEL_REQUESTS, "req:"),
     readAll(env.SUPPLIER_SUGGESTIONS, "sug:"),
+    readTraffic(env.SITE_STATS, 30),
   ]);
 
   const reqRows = reqs.map((r) =>
@@ -131,7 +203,48 @@ export async function onRequestGet({ request, env }) {
     `<td>${esc(s.wheel || "")}</td><td>${esc(s.date)}</td><td>${esc(s.email || "")}</td></tr>`
   ).join("");
 
+  const bar = (label, n, max, extra = "") => `
+    <div class="bar"><span>${esc(label)}</span>
+      <div class="track"><div class="fill" style="width:${max ? Math.round((n / max) * 100) : 0}%"></div></div>
+      <div class="n"><b>${n}</b>${extra}</div></div>`;
+
+  let trafficHtml;
+  if (!traffic) {
+    trafficHtml = `<p class="empty">Visitor tracking is not configured (SITE_STATS not bound).</p>`;
+  } else if (!traffic.days.length) {
+    trafficHtml = `<p class="empty">No visits recorded yet. Counting starts from the next page view.</p>`;
+  } else {
+    const maxU = Math.max(...traffic.days.map(([, d]) => d.uniques));
+    trafficHtml = `
+      <dl class="tiles">
+        <div class="tile key"><dt>Unique visitors today</dt><dd>${traffic.today.uniques}</dd></div>
+        <div class="tile"><dt>Page views today</dt><dd>${traffic.today.views}</dd></div>
+        <div class="tile key"><dt>Unique visitors / 30d</dt><dd>${traffic.totalUniqueDays}<small> visitor-days</small></dd></div>
+        <div class="tile"><dt>Page views / 30d</dt><dd>${traffic.totalViews}</dd></div>
+      </dl>
+      <p style="font-size:11.5px;color:var(--soft);margin:0 0 18px">
+        A visitor is counted once per day. The 30-day figure sums those days, so
+        someone who came back three times is three visitor-days, not one person.
+        Identification is a salted daily hash of IP and browser; no IP is stored
+        and the hash cannot follow anyone past midnight UTC.</p>
+
+      <h1>By day</h1>
+      <div class="bars">${traffic.days.map(([day, d]) =>
+        bar(day, d.uniques, maxU, ` <small style="color:var(--soft)">/ ${d.views} views</small>`)
+      ).join("")}</div>
+
+      ${traffic.paths.length ? `<h1>Top pages</h1><div class="bars">${
+        traffic.paths.map(([p, n]) => bar(p, n, traffic.paths[0][1])).join("")}</div>` : ""}
+
+      ${traffic.countries.length ? `<h1>Countries</h1><div class="bars">${
+        traffic.countries.map(([c, n]) => bar(c, n, traffic.countries[0][1])).join("")}</div>` : ""}
+    `;
+  }
+
   const html = `
+    <h1 style="margin-top:0">Traffic</h1>
+    ${trafficHtml}
+
     <h1>Wheel requests</h1>
     <table><thead><tr><th>Wheel name</th><th>Date</th><th>Email</th></tr></thead>
     <tbody>${reqRows || '<tr><td colspan="3" class="empty">No requests yet</td></tr>'}</tbody></table>
@@ -163,7 +276,7 @@ export async function onRequestPost({ request, env }) {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: "/requests",
+      Location: "/stats",
       "Set-Cookie": `${COOKIE}=${token}; Path=/; Max-Age=${MAX_AGE}; HttpOnly; Secure; SameSite=Lax`,
     },
   });

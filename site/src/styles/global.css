@@ -181,7 +181,12 @@ footer p{font-family:'IBM Plex Mono';font-size:11px;line-height:1.7;color:var(--
      the strokes without a real Black/Heavy weight to switch to. */
   -webkit-text-stroke:0.6px currentColor}
 .logo .word em{font-style:normal;color:var(--bronze)}
-h1{display:none}
+/* There was a blanket h1{display:none} here, left over from when the masthead
+   wordmark replaced a heading and the old h1 needed suppressing. Nothing has
+   referenced it since, and it silently hid every h1 added afterwards: the two
+   pages that now have one rendered it at zero height. A hidden heading is
+   worse than no heading, because it is also the element search engines weigh
+   most and discount when it is invisible. The pages style their own. */
 
 /* ---- headline metrics ---- */
 .headline{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));

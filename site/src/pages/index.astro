@@ -13,6 +13,27 @@ const wheels = loadWheels();
 const REQUEST_ENDPOINT =
   import.meta.env.PUBLIC_REQUEST_ENDPOINT ||
   (import.meta.env.DEV ? "http://localhost:8420/api/request-wheel" : "/api/request-wheel");
+
+const canonical = new URL("/", Astro.site).href;
+const supplierCount = wheels.reduce((n, w) => n + w.suppliers.length, 0);
+const description =
+  `Independent vetting of Chinese factories making forged aftermarket wheels. ` +
+  `${supplierCount} suppliers quoted at one reference spec, with prices ` +
+  `published as given.`;
+
+// Organization only, and only facts that are true. No aggregateRating, no
+// invented founding date, no social profiles that do not exist: schema is
+// read by machines that have no way to check, which is exactly why putting
+// anything unverifiable in it is a bad habit to start.
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "WheelSourced",
+  url: canonical,
+  logo: new URL("/favicon-192.png", Astro.site).href,
+  description:
+    "A curated sourcing site for aftermarket wheels made by Chinese factories.",
+};
 ---
 
 <html lang="en">
@@ -20,6 +41,20 @@ const REQUEST_ENDPOINT =
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>WheelSourced</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="WheelSourced" />
+<!-- og:title mirrors the title element rather than writing a better one of
+     its own, so the two cannot say different things about the same page. -->
+<meta property="og:title" content="WheelSourced" />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={new URL("/favicon-192.png", Astro.site).href} />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="WheelSourced" />
+<meta name="twitter:description" content={description} />
+<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} is:inline />
 <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
 <link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192" />
 <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -40,7 +75,8 @@ const REQUEST_ENDPOINT =
     text-align: center;
     margin-bottom: 60px;
   }
-  .landing h1 {
+  /* Was .landing h1. Same type, no longer a heading: see the markup. */
+  .wordmark-hero {
     font-family: 'Barlow Condensed';
     font-size: clamp(48px, 10vw, 96px);
     font-weight: 700;
@@ -48,9 +84,34 @@ const REQUEST_ENDPOINT =
     line-height: 0.9;
     text-transform: uppercase;
   }
-  .landing h1 em {
+  .wordmark-hero em {
     font-style: normal;
     color: var(--bronze);
+  }
+  .landing h1 {
+    font-family: 'Barlow Condensed';
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 700;
+    margin: 0 0 24px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+  .landing p.method {
+    font-size: 16px;
+    border-top: 1px solid var(--rule, #A9AFA5);
+    padding-top: 20px;
+    margin-top: 24px;
+  }
+  .grid-heading {
+    font-family: 'Barlow Condensed';
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--soft);
   }
   .landing p {
     font-size: 18px;
@@ -170,8 +231,24 @@ const REQUEST_ENDPOINT =
   </header>
 
   <div class="landing-content">
-    <h1>Wheel<em>Sourced</em></h1>
+    <!-- The wordmark is the visual hero but no longer the h1. As an h1 the
+         only heading on the page was the brand name, which is the one term
+         nobody searches for before they have heard of you. -->
+    <div class="wordmark-hero">Wheel<em>Sourced</em></div>
+    <h1>Forged wheel factories, vetted and compared</h1>
+    <p>Every factory here was asked the same questions at the same reference
+      spec, and the answers are published as they were given. Prices are
+      quoted directly, never scraped from a listing. A supplier who ignores a
+      question twice is recorded as "not disclosed" rather than quietly
+      filled in.</p>
+    <p class="method">Flow forming is not forging, and a vendor who calls it
+      that is not taken at their word. A cast three-piece is an honest product
+      and is not marked down for being one. Landed cost appears only when both
+      the wheel price and the freight were quoted, so withholding one can
+      never make a factory look cheaper than one that disclosed both.</p>
   </div>
+
+  <h2 class="grid-heading">Wheels sourced so far</h2>
 
   {wheels.length > 0 ? (
     <div class="wheels-grid">

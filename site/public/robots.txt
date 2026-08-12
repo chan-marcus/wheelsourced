@@ -1,0 +1,28 @@
+# The sourcing sheets are the point of the site and are meant to be indexed.
+User-agent: *
+Allow: /
+
+# Admin. Password-gated already, but it holds email addresses typed into a
+# public form by people who are not us, so it has no business being crawled
+# or appearing in results. Disallow is a request, not access control; the
+# password is what actually protects it.
+Disallow: /stats
+Disallow: /api/
+
+# AI answer engines are allowed on purpose. "Which Alibaba factory should I
+# use for forged wheels" is exactly the question this site answers, and these
+# crawlers mostly do not execute JavaScript, which is why the supplier tables
+# are rendered at build time rather than drawn by script.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://wheelsourced.com/sitemap.xml

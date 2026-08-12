@@ -79,7 +79,7 @@ export function loadWheels() {
 
       return {
         slug,
-        title: titleize(slug),
+        title: wheelName(slug),
         suppliers: scoreAll(suppliers),
         ...publishImage(slug),
       };
@@ -208,6 +208,24 @@ function normalize(r) {
 
 function titleize(s) {
   return String(s).replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Display names that titleize() cannot derive. A slug is lowercase by the time
+// it is a directory name, and nothing in the string says CCW is an initialism
+// while Mesh Futura is two words, so the exceptions are written down. Without
+// this the cards and the <title> read "Ccw-style" and "Lmgt4-style", which is
+// the primary term of the page, misspelled, in its most weighted element.
+//
+// Only wheel slugs. Supplier ids go through plain titleize() and should:
+// "Taizhou Gushi Technology Co Ltd" is right, and a per-supplier exception
+// list would be a list of every supplier.
+const WHEEL_NAMES = {
+  ccw: "CCW",
+  lmgt4: "LMGT4",
+};
+
+export function wheelName(slug) {
+  return WHEEL_NAMES[slug] || titleize(slug);
 }
 
 export function loadVehicles() {

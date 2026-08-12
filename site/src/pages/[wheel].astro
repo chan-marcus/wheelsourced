@@ -1,5 +1,6 @@
 ---
 import { loadWheels } from "../lib/data.js";
+import { renderRows } from "../lib/card.js";
 import "../styles/global.css";
 
 export async function getStaticPaths() {
@@ -29,9 +30,42 @@ const quoted = wheel.suppliers.filter((s) => s.replies).length;
 // payload in plain sight of View Source, which is not hidden at all on a
 // public domain. Ship only what the page needs: whether the vendor is clean,
 // for the "top" badge.
-const payload = JSON.stringify({
-  suppliers: wheel.suppliers.map(({ flags, ...s }) => ({ ...s, clean: !flags.length })),
-});
+const shipped = wheel.suppliers.map(({ flags, ...s }) => ({ ...s, clean: !flags.length }));
+const payload = JSON.stringify({ suppliers: shipped });
+
+// The rows are built here, at build time, rather than by the script below.
+// See lib/card.js: rendered only in the browser, the entire dataset was
+// invisible to any crawler that does not execute JS, which is most of them
+// outside Google. The same module re-sorts in the browser, so there is one
+// template rather than two that drift.
+const rowsHtml = renderRows(shipped, { sortMode: "vetting" });
+
+const canonical = new URL(`/${wheel.slug}/`, Astro.site).href;
+const ogImage = wheel.hasImage
+  ? new URL(`/wheels/${wheel.slug}/image${wheel.imageExt}`, Astro.site).href
+  : null;
+
+// Written from the data rather than hand-typed per wheel, so adding a wheel
+// cannot leave a stale or missing description behind. Kept near 155
+// characters: past roughly that, Google truncates it in the results.
+const description =
+  `${wheel.suppliers.length} Chinese factories building ${wheel.title}-style ` +
+  `forged wheels, quoted at one reference spec. Landed cost, forging process, ` +
+  `certifications and store history.`;
+
+// BreadcrumbList only. Deliberately NOT Product or AggregateRating, which
+// would put star ratings in the results and is exactly why it is tempting:
+// the scores here are computed by scoreAll(), not reviews left by buyers of a
+// thing we sell, and marking them up as review data is the kind of thing that
+// earns a manual action. Losing the domain is a bad trade for stars.
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: new URL("/", Astro.site).href },
+    { "@type": "ListItem", position: 2, name: `${wheel.title}-style`, item: canonical },
+  ],
+};
 ---
 
 <html lang="en">
@@ -39,6 +73,21 @@ const payload = JSON.stringify({
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>WheelSourced - {wheel.title.toUpperCase()}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="WheelSourced" />
+<!-- og:title mirrors the title element rather than writing a better one of
+     its own, so the two cannot say different things about the same page. -->
+<meta property="og:title" content={`WheelSourced - ${wheel.title.toUpperCase()}`} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={`WheelSourced - ${wheel.title.toUpperCase()}`} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} is:inline />
 <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
 <link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192" />
 <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -54,7 +103,7 @@ const payload = JSON.stringify({
       <span class="word">Wheel<em>Sourced</em></span>
     </a>
     <div class="eyebrow" style="display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; width: 100%;">
-      <span style="font-size: 28px; font-weight: 700; flex: 1;">{wheel.title}<span style="font-size: 0.6em;">-style</span></span>
+      <h1 style="font-size: 28px; font-weight: 700; flex: 1; margin: 0; font-family: inherit; letter-spacing: inherit; text-transform: inherit; line-height: inherit;">{wheel.title}<span style="font-size: 0.6em;">-style</span> forged wheels</h1>
       <span style="text-align: right; white-space: nowrap;">{wheel.suppliers.length} suppliers tracked</span>
     </div>
   </header>
@@ -75,10 +124,10 @@ const payload = JSON.stringify({
           <option value="age">store age</option>
           <option value="reorder">reorder rate</option>
         </select>
-        <b id="count"></b>
+        <b id="count">{wheel.suppliers.length} suppliers</b>
       </span>
     </div>
-    <div id="rows"></div>
+    <div id="rows" set:html={rowsHtml}></div>
   </section>
 
   <section style="margin-top: 48px; padding: 28px 20px; border: 1px solid var(--ink); text-align: center;">
@@ -156,52 +205,13 @@ const payload = JSON.stringify({
 </div>
 
 <script id="data" type="application/json" set:html={payload}></script>
-<script is:inline>
+<script>
+import { renderRows } from "../lib/card.js";
+
 const D = JSON.parse(document.getElementById("data").textContent);
 const el = (id) => document.getElementById(id);
 let sortMode = "vetting";
 let current = null;
-
-const money = (n) => "$" + Math.round(n).toLocaleString();
-// Escape before interpolating into an HTML attribute. The outbound link is now
-// an affiliate URL typed into a form rather than a scraped listing, and a
-// quote in it would close the href early and let the rest parse as markup.
-const attr = (v) => String(v ?? "")
-  .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
-  .replace(/</g, "&lt;").replace(/>/g, "&gt;");
-// "4 pieces" -> "4". The Min. order label already says what is being counted.
-// Only piece/pieces: a "2 sets" MOQ means something different from "2" and
-// keeps its unit. Display only, because s.moq is compared as a whole string
-// above to decide whether a per-wheel figure is meaningful.
-const moqCount = (v) =>
-  typeof v === "string" ? v.replace(/\s*pieces?\b\.?/i, "").trim() || v : v;
-// Whether the certificate itself ever arrived, shown grey beside the names
-// because it qualifies them rather than answering for them. "DOT, VIA" with
-// nothing attached is a claim, and the sheet has to keep saying so.
-//
-// Short forms only when they follow the names, where "claimed" would just
-// repeat the names being right there. Standing alone the stored phrase is
-// left long, because it has to describe itself: a bare "no document" would
-// not say that a certification was claimed at all.
-const CERT_DOC = {
-  "provided": "on file",
-  "promised": "promised",
-  "claimed without document": "no document",
-  "not available": "none available",
-};
-const certDoc = (v) =>
-  v ? ` <span class="grey">${CERT_DOC[v] || v}</span>` : "";
-
-// Standing alone the stored phrase is usually self-describing, so it is used
-// as it is. "not available" is the exception: printed raw it sits one word
-// away from the "not disclosed" that means the supplier never answered, and a
-// supplier who told us they have no certificate must not read like one who
-// ignored the question.
-const CERT_DOC_ALONE = { "not available": "none available" };
-const certAlone = (v) => (v ? CERT_DOC_ALONE[v] || v : null);
-const or = (v, unit = "") =>
-  v === null || v === undefined || v === ""
-    ? `<span class="none">not disclosed</span>` : `${v}${unit}`;
 
 el("sort").addEventListener("change", (e) => { sortMode = e.target.value; render(); });
 
@@ -234,107 +244,9 @@ function setOpen(article, id, want) {
   }
 }
 
-function ordered() {
-  const l = D.suppliers.slice();
-  const by = (get, dir) => l.sort((a, b) => {
-    const av = get(a), bv = get(b);
-    if (av == null && bv == null) return b.answered - a.answered;
-    if (av == null) return 1;
-    if (bv == null) return -1;
-    return dir * (av - bv);
-  });
-  switch (sortMode) {
-    case "price":    return by((s) => s.landed ?? s.setPrice, 1);
-    case "rating":   return by((s) => s.store_rating, -1);
-    case "age":      return by((s) => s.years, -1);
-    case "reorder":  return by((s) => s.reorderPct, -1);
-    default:         return by((s) => s.vetScore, -1);
-  }
-}
-
 function render() {
-  const hit = ordered();
-  el("count").textContent = `${hit.length} suppliers`;
-
-  el("rows").innerHTML = hit.map((s, i) => `
-    <article class="v ${sortMode === "vetting" && i === 0 && s.clean ? "top" : ""}">
-      <div class="vh">
-        <div class="vinfo">
-          <div class="vn">${s.name}</div>
-          <div class="vm" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
-            ${s.verified ? `<span class="tag good">verified supplier</span>` : ""}
-            ${s.business_type ? `<span class="tag">${s.business_type}</span>` : ""}
-            <span class="tag">${s.forged === true ? "forged" : s.forged === false ? "not forged" : "forging unconfirmed"}</span>
-            ${Array.isArray(s.pieces) ? s.pieces.map(p => `<span class="tag">${p}</span>`).join("") : `<span class="tag">${s.pieces || "piece count unknown"}</span>`}
-          </div>
-        </div>
-        <div class="vp">
-          ${s.landed
-            ? `<b>${money(s.landed)}</b><small>est. landed / set of 4</small>`
-            : s.setPrice
-              ? `<b>${money(s.setPrice)}</b><small>set of 4, before freight</small>
-                 <small class="warnsm">freight not quoted</small>`
-              : `<b class="grey">${s.listed_price ? money(s.listed_price * 4) : "—"}</b>
-                 <small>listed only, not quoted</small>`}
-        </div>
-      </div>
-
-      <div class="headline" data-toggle="${s.id}" style="cursor: pointer;">
-        <div class="${sortMode === "rating" ? "hl on" : "hl"}">
-          <dt>Store rating</dt><dd>${s.store_rating ? s.store_rating + "/5" : "—"}
-          ${s.review_count ? `<em>(${s.review_count})</em>` : ""}</dd></div>
-        <div class="${sortMode === "age" ? "hl on" : "hl"}">
-          <dt>Store age</dt><dd>${s.years ? s.years + (s.years === 1 ? " yr" : " yrs") : "—"}</dd></div>
-        <div class="${sortMode === "reorder" ? "hl on" : "hl"}">
-          <dt>Reorder rate</dt><dd>${s.reorder ?? "—"}</dd></div>
-        <div class="hl">
-          <dt>Shipping time</dt><dd>${
-            s.ship_time ? s.ship_time
-            : s.transit ? `${s.transit.replace(/^Est\.\s*/, "")} <em>listed</em>`
-            : "—"}</dd></div>
-        <div class="${sortMode === "vetting" ? "hl on" : "hl"}">
-          <dt>Vetting score</dt><dd>${s.vetScore ?? "—"}<em>/100</em></dd></div>
-      </div>
-
-      <div style="margin-top: 12px;">
-        <button class="btn ghost" data-toggle="${s.id}" data-toggle-btn
-          aria-controls="specs-${s.id}" aria-expanded="${open.has(s.id)}"
-          >${open.has(s.id) ? "Hide details" : "Show details"}</button>
-        <dl class="specs" id="specs-${s.id}"
-          style="margin-top:12px;max-height:${open.has(s.id) ? "999px" : "0"};opacity:${open.has(s.id) ? "1" : "0"};overflow:hidden;transition:max-height 250ms cubic-bezier(0.4,0,0.2,1), opacity 250ms cubic-bezier(0.4,0,0.2,1);">
-          <div><dt>Per wheel</dt><dd>${
-            s.price ? money(s.price)
-            : s.listed_price ? `<span class="grey">${money(s.listed_price)} listed</span>`
-            : or(null)}</dd></div>
-          <div><dt>Set of 4</dt><dd>${
-            s.setPrice ? money(s.setPrice) : or(null)}</dd></div>
-          <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
-          <div><dt>Total delivered</dt><dd>${
-            s.landed
-              ? money(s.landed) + (s.landed_quoted ? ` <em>quoted all-in</em>` : "")
-              : or(null)}</dd></div>
-          <div><dt>Manufacturing time</dt><dd>${or(s.lead_time)}</dd></div>
-          <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
-          <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"
-            : s.forged === false ? "no" : or(null)}</dd></div>
-          <div><dt>Process stated</dt><dd>${or(s.forging_process)}</dd></div>
-          <div><dt>Pieces</dt><dd>${or(s.pieces)}</dd></div>
-          <div><dt>Certification</dt><dd>${
-            s.certs ? s.certs.join(", ") + certDoc(s.cert) : or(certAlone(s.cert))}</dd></div>
-          <div><dt>Heat treat</dt><dd>${or(s.heat_treat)}</dd></div>
-          <div><dt>CNC</dt><dd>${s.cnc === true ? "in house"
-            : s.cnc === false ? "outsourced" : or(null)}</dd></div>
-          <div class="prose"><dt>Payment terms</dt><dd>${or(s.payment)}</dd></div>
-          <div class="prose"><dt>Damage/Defect policy</dt><dd>${or(s.defects)}</dd></div>
-        </dl>
-      </div>
-
-      <div class="vf" style="margin-top:12px;">
-        <button class="btn" data-rfq="${s.id}">Write quote request</button>
-        ${s.url ? `<a class="btn ghost" href="${attr(s.url)}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
-        <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>
-      </div>
-    </article>`).join("");
+  el("count").textContent = `${D.suppliers.length} suppliers`;
+  el("rows").innerHTML = renderRows(D.suppliers, { sortMode, open });
 }
 
 el("rows").addEventListener("click", (e) => {
@@ -480,7 +392,9 @@ async function copy(txt, btn, label) {
 el("mcopy").addEventListener("click", (e) => copy(buildMsg(current, readSpec()), e.target, "Copy message"));
 el("mskip").addEventListener("click", (e) => copy(buildMsg(current, null), e.target, "Copy without spec"));
 
-render();
+// Deliberately no render() on load. The rows are already in the HTML from the
+// build, so calling it here would throw away correct markup and rebuild it
+// identically, costing a paint and risking a flash. render() runs on sort.
 </script>
 </body>
 </html>

@@ -80,6 +80,12 @@ function mirrorWheelImages() {
 }
 
 export default defineConfig({
+  // Needed for absolute URLs: canonical tags, og:url and the sitemap all have
+  // to name a full origin, and Astro has no way to guess one. Apex rather
+  // than www because both currently answer 200 with the same content, which
+  // splits every page's ranking signals across two URLs; the canonical tags
+  // this enables are what consolidate them.
+  site: "https://wheelsourced.com",
   output: "static",
   integrations: [mirrorWheelImages()],
   server: {

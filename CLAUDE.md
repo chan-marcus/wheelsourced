@@ -359,10 +359,19 @@ number at a time, so each question is a single line of short sentences, one
 thing per sentence, plain word over precise word ("factory" not
 "manufacturer", "how is it made" not "what process"). A question that has to
 be re-read is a question that gets skipped, and a skipped question is a null
-on the sheet. Three sentences that must survive any rewording: the price
-question naming `QUOTE_CONSTRUCTION` twice, "list all, not only this wheel" on
-`piece_count`, and "can you send the certificate?" on `cert_document`. Each is
-load-bearing for a guard downstream, and the reasons are on the fields.
+on the sheet. Two sentences that must survive any rewording: "list all, not
+only this wheel" on `piece_count`, and "can you send the certificate?" on
+`cert_document`. Each is load-bearing for a guard downstream, and the reasons
+are on the fields.
+
+The price question used to name `QUOTE_CONSTRUCTION` twice for the same
+reason, but that direct ask was dropped on request: the reference spec block
+above the questions still states the construction, just as context rather
+than a direct ask. A supplier who prices something else still has it
+discarded by `take_quote()` and gets asked again, same guard as before;
+expect more replies to land in `meta.off_basis_quotes` instead of on the
+sheet, since nothing in the message now tells them which construction to
+price.
 
 **Two-round questions.** `ROUND2` (cnc_inhouse, heat_treat, payment_terms,
 defect_policy) is held back from first contact: sending all fourteen cold

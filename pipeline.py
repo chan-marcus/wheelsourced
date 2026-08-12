@@ -59,15 +59,14 @@ QUOTE_CONSTRUCTION = "2-piece"
 # question that has to be re-read is a question that gets skipped, and a
 # skipped question is a null on the sheet.
 QUOTE_ONLY = {
-    # The construction is named twice on purpose. It is already in the
-    # reference spec block, but every stored price is a QUOTE_CONSTRUCTION
-    # price and take_quote() discards anything else, so a supplier who quotes
-    # 3-piece here has their answer thrown away and gets asked again forever.
-    # Built with an f-string for the reason at the top of this file: written
-    # out by hand, the constant and the question drift, and the failure is
-    # silent and total.
-    "price_per_wheel_1set":  (f"Price for one {QUOTE_CONSTRUCTION.upper()} wheel, and for a set of 4. "
-                              f"Please quote {QUOTE_CONSTRUCTION.upper()} only."),
+    # No longer names the construction directly, on request. It is still in
+    # the reference spec block above the questions, but that is context, not
+    # a direct ask, and the direct ask is what used to make a supplier price
+    # QUOTE_CONSTRUCTION specifically rather than whatever they build by
+    # default. A supplier who prices something else still has that price
+    # discarded by take_quote() and asked again, same as before; expect more
+    # replies to land in meta.off_basis_quotes instead of on the sheet.
+    "price_per_wheel_1set":  "Price for one wheel, and for a set of 4.",
     "price_per_wheel_4set":  None,   # asked together with 1set, stored separately
     "forging_process":       "How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?",
     # A capability question, not a description of one product. Suppliers
@@ -731,7 +730,7 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3"):
         numbered = [k for k in pool if k in want]
         extras = [k for k in missing if k in EXTRAS and pool.get(k)]
 
-        qs = "\n".join(f"  {i}. {pool[k]}" for i, k in enumerate(numbered, 1))
+        qs = "\n".join(f"  - {pool[k]}" for k in numbered)
 
         ex = [pool[k] for k in extras]
         ex_block = "\n".join(f"  - {e}" for e in ex) if ex else ""

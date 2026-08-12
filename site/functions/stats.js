@@ -220,15 +220,29 @@ export async function onRequestGet({ request, env }) {
     trafficHtml = `<p class="empty">No visits recorded yet. Counting starts from the next page view.</p>`;
   } else {
     const maxU = Math.max(...traffic.daily.map(([, n]) => n), 1);
-    const feedRows = traffic.feed.map((v) => `
+    // The feed is one row per view, so the same visitor loading three pages
+    // in a row printed the same hash three times in a column meant to help
+    // you spot repeat visitors, not bury them in their own noise. Collapse
+    // it the way a grouped report does: show the id where the visitor
+    // actually changes, blank the cell for the run of rows underneath that
+    // are still them. Only ever compares to the row directly above, so two
+    // separate visits by the same person with anyone else's view between
+    // them still print the id again -- "collapsed" means "consecutive", not
+    // "this hash already appeared somewhere above".
+    let lastVid = null;
+    const feedRows = traffic.feed.map((v) => {
+      const sameAsAbove = v.vid === lastVid;
+      lastVid = v.vid;
+      return `
       <tr class="${v.isNew ? "new" : ""}">
-        <td class="vid">${esc(v.vid)}${v.isNew ? '<span class="badge">New</span>' : ""}</td>
+        <td class="vid">${sameAsAbove ? "" : esc(v.vid)}${v.isNew ? '<span class="badge">New</span>' : ""}</td>
         <td>${esc(v.path)}</td>
         <td class="when dim">${esc(new Date(v.ts).toLocaleString("en-US", {
           timeZone: "America/Los_Angeles", dateStyle: "short", timeStyle: "medium" }))}</td>
         <td class="dim">${v.ref ? `<a href="${esc(v.ref)}" rel="noopener nofollow">${esc(v.ref)}</a>` : "Direct"}</td>
         <td class="dim">${esc(v.country || "")}</td>
-      </tr>`).join("");
+      </tr>`;
+    }).join("");
 
     trafficHtml = `
       <dl class="tiles">

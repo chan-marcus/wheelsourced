@@ -20,7 +20,8 @@ import base64
 
 import yaml
 from fastapi import FastAPI, File, Form, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import (HTMLResponse, JSONResponse, FileResponse,
+                               RedirectResponse)
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -108,7 +109,11 @@ def save(wheel, rec):
 @app.get("/api/state")
 def state(wheel: str = ""):
     ws = wheels()
-    w = wheel or (ws[0] if ws else "")
+    # Fall back when the name is unknown, not just when it is empty. The wheel
+    # now comes from the URL, so it can be typed, stale or bookmarked against a
+    # wheel that has since been renamed, and an unchecked name loads an empty
+    # supplier list that reads as "every record vanished".
+    w = wheel if wheel in ws else (ws[0] if ws else "")
     # `fields` stays the ASKED set and nothing else, because the GUI counts
     # answered against it and that fraction is questions_answered. `extracted`
     # is everything else that gets stored, sent separately so it can be shown
@@ -648,7 +653,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <header>
   <h1>Wheel sourcing</h1>
   <div style="display:flex;gap:10px;align-items:flex-end">
-    <div><span class="lbl">Wheel</span><select id="wheel" onchange="boot(this.value)"></select></div>
+    <div><span class="lbl">Wheel</span><select id="wheel" onchange="go(this.value)"></select></div>
     <button class="ghost" onclick="newWheel()">New</button>
     <button class="ghost" onclick="window.location.href='http://localhost:4321'">View sourcing sheet</button>
     <button id="publishbtn" onclick="publish()">Publish</button>
@@ -702,10 +707,31 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 <script>
 let S={wheel:"",suppliers:[],fields:{},extracted:{},labels:{},rfqs:{}}, OPEN=null;
 
+// The wheel lives in the URL, so a refresh comes back to the one you were on.
+const wheelFromUrl=()=>{
+  const m=location.pathname.match(/^\/w\/([^/]+)/);
+  return m?decodeURIComponent(m[1]):"";
+};
+// Switching wheels is a navigation and gets a history entry, so Back returns
+// to the wheel you came from. boot() never touches the URL by itself, because
+// it is also how the current wheel is reloaded after a pull, and that must not
+// stack up history entries for a page you never left.
+function go(w){
+  if(w && w!==wheelFromUrl()) history.pushState({},"","/w/"+encodeURIComponent(w));
+  boot(w);
+}
+addEventListener("popstate",()=>boot(wheelFromUrl()));
+
 async function boot(w){
   const r = await (await fetch("/api/state?wheel="+encodeURIComponent(w||""))).json();
   S.wheel=r.wheel; S.suppliers=r.suppliers; S.fields=r.fields; S.extracted=r.extracted||{};
   S.labels=r.labels||{};
+  // Correct the address bar when it does not already name the wheel being
+  // shown: booting "" from a bare URL, or a bookmark pointing at a wheel that
+  // no longer exists. replaceState, not push: neither is a navigation the user
+  // made, and pushing would make Back a no-op that reloads the same wheel.
+  if(r.wheel && r.wheel!==wheelFromUrl())
+    history.replaceState({},"","/w/"+encodeURIComponent(r.wheel));
   const sel=document.getElementById("wheel");
   sel.innerHTML=r.wheels.map(x=>`<option ${x===r.wheel?"selected":""}>${x}</option>`).join("");
   if(r.wheel){
@@ -720,7 +746,7 @@ async function boot(w){
 }
 async function newWheel(){
   const n=prompt("Wheel slug, e.g. mesh-futura"); if(!n) return;
-  await post("/api/wheel",{name:n}); boot(n.toLowerCase().replace(/[^a-z0-9-]+/g,"-"));
+  await post("/api/wheel",{name:n}); go(n.toLowerCase().replace(/[^a-z0-9-]+/g,"-"));
 }
 const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(r=>r.json());
 
@@ -1033,7 +1059,7 @@ async function publish(){
   }
 }
 
-boot("");
+boot(wheelFromUrl());
 </script></body></html>"""
 
 
@@ -1222,8 +1248,26 @@ def show_requests():
 </html>"""
 
 
+# Every wheel is its own URL. Refreshing used to reset the picker to whichever
+# wheel sorted first, because the page always booted with an empty name and the
+# server answered with wheels()[0]: the wheel you were working on was never
+# written down anywhere, so a reload could not restore it.
+#
+# One page, served at both paths. The wheel is read from the URL in the
+# browser, so this route only has to hand over the same HTML and let the client
+# ask for the right records.
+@app.get("/w/{wheel}", response_class=HTMLResponse)
+def wheel_page(wheel: str):
+    return PAGE
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
+    # Send the bare host to a real wheel URL so the address bar always names
+    # what is on screen, and a refresh from there stays put.
+    ws = wheels()
+    if ws:
+        return RedirectResponse(f"/w/{ws[0]}", status_code=307)
     return PAGE
 
 

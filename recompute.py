@@ -52,7 +52,7 @@ for d in dirs:
         # questions_answered counts populated ALL_FIELDS, so changing the
         # question set leaves every stored fraction wrong until it is redone.
         # Derived straight from the record, no model call, same as the flags.
-        n = sum(1 for k in P.ALL_FIELDS if rec["from_quote"].get(k) not in (None, ""))
+        n = len(P.answered_keys(rec["from_quote"]))
         qa = f"{n}/{len(P.ALL_FIELDS)}"
         if rec.setdefault("meta", {}).get("questions_answered") not in (None, qa):
             print(f"{f.stem}\n   answered {rec['meta']['questions_answered']} -> {qa}")

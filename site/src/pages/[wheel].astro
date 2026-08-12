@@ -309,6 +309,10 @@ function render() {
           <div><dt>Set of 4</dt><dd>${
             s.setPrice ? money(s.setPrice) : or(null)}</dd></div>
           <div><dt>Est. Shipping Cost</dt><dd>${s.freight ? money(s.freight) : or(null)}</dd></div>
+          <div><dt>Total delivered</dt><dd>${
+            s.landed
+              ? money(s.landed) + (s.landed_quoted ? ` <em>quoted all-in</em>` : "")
+              : or(null)}</dd></div>
           <div><dt>Manufacturing time</dt><dd>${or(s.lead_time)}</dd></div>
           <div><dt>Min. order</dt><dd>${or(moqCount(s.moq))}</dd></div>
           <div><dt>Forged</dt><dd>${s.forged === true ? "confirmed"

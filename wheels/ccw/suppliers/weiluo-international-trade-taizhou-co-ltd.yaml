@@ -114,6 +114,7 @@ from_quote:
   - VIA
   manufacturing_time: null
   shipping_time: null
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-09'

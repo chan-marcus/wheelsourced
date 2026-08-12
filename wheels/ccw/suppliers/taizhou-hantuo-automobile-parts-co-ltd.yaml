@@ -114,6 +114,7 @@ from_quote:
   certs_claimed: null
   manufacturing_time: at least 2 months
   shipping_time: null
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-09'

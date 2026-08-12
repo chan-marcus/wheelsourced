@@ -78,7 +78,13 @@ QUOTE_ONLY = {
     # names, cert_document takes whether the certificate arrived. Drop the
     # second sentence and cert_document stops being asked at all.
     "cert_document":         "Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?",
-    "freight_cif_usd":       "Total cost to deliver to Los Angeles CA 90210, USA? Include shipping, duty, port fees and tariffs.",
+    # "Total cost to deliver" reads as the grand total, not the shipping half,
+    # and Maxtera answered it that way three times: "the total price is 1500
+    # USD, including wheels, shipping fees, and customs duties". That is a
+    # landed figure, and it went into a column that means ex-freight. Ask for
+    # shipping on its own. Suppliers will still answer all-in sometimes, which
+    # is what landed_total_usd is for.
+    "freight_cif_usd":       "How much is the shipping to Los Angeles CA 90210, USA? Please give the shipping cost by itself. Do not include the price of the wheels. Include duty, port fees and tariffs.",
     # Two answers on one line, the way price 1set/4set and the old weight pair
     # are. Suppliers already volunteer both together, unprompted and in this
     # order: "production cycle 30-40 days, transportation 25-30 days".
@@ -152,7 +158,22 @@ EXTRACTED_ONLY = ("size_chart", "weight_kg", "load_rating_kg",
                   # products are DOT & VIA certified" and the sheet showed
                   # only "claimed without document", throwing away the part
                   # of the answer the question actually asked for.
-                  "certs_claimed")
+                  "certs_claimed",
+                  # An all-in price: wheels plus shipping plus duties, quoted
+                  # as one number the supplier will not break down. Same split
+                  # as forged vs piece_count, one column over: "what do the
+                  # wheels cost" and "what does the whole thing cost delivered"
+                  # are different questions, and a landed number dropped into
+                  # price_per_wheel_4set is compared against everyone else's
+                  # ex-freight figure.
+                  #
+                  # Not a numbered question. The RFQ already asks for the price
+                  # and the shipping separately; this is where the answer goes
+                  # when a supplier declines to separate them, the same way
+                  # off_basis_quotes keeps a price we cannot use in the column
+                  # it was quoted for. Extracted rather than asked, so it never
+                  # counts against a supplier who did give the breakdown.
+                  "landed_total_usd")
 
 # What gets persisted. ALL_FIELDS stays the *asked* set, so it remains the
 # denominator for questions_answered: a supplier has not failed to answer
@@ -188,6 +209,7 @@ FIELD_LABELS = {
     "forged_confirmed":     "Forged",
     "size_chart":           "Size chart",
     "quote_construction":   "Quoted construction",
+    "landed_total_usd":     "Total delivered",
 }
 
 
@@ -203,6 +225,7 @@ EXTRACTED_DESC = {
     "forged_confirmed":  "true or false. Drives the Forged column and the forging flags. Flow formed is not forged.",
     "quote_construction": f"Which construction the stored price is for. Anything but {QUOTE_CONSTRUCTION} means the price was set aside.",
     "certs_claimed":     "Certifications they name, comma separated. DOT, JWL, VIA, TUV, ECE, SFI, ISO 9001, IATF 16949, CE.",
+    "landed_total_usd":  "All-in price for a set of 4 delivered: wheels plus shipping plus duties, when they quote one number and will not split it. Leave the price and shipping fields blank in that case.",
 }
 
 # EXTRACTED_DESC is what makes an EXTRACTED_ONLY field visible in the GUI.
@@ -244,7 +267,12 @@ _CONSTRUCTION_ALIASES = {
 
 
 # The price fields, which are only meaningful for QUOTE_CONSTRUCTION.
-PRICE_FIELDS = ("price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd")
+# landed_total_usd is one of them: an all-in figure for a 3-piece is no more
+# comparable than a 3-piece unit price, and leaving it out would let the guard
+# be walked straight around by a supplier who quotes delivered rather than ex
+# works.
+PRICE_FIELDS = ("price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd",
+                "landed_total_usd")
 
 
 def take_quote(got, rec):
@@ -282,6 +310,27 @@ def take_quote(got, rec):
     return qc
 
 
+def answered_keys(Q):
+    """Which asked questions this record has an answer for.
+
+    A set of ALL_FIELDS keys, so the count can never exceed the denominator
+    however the fields are populated.
+
+    An all-in total counts as the set-of-4 price, because that is what it is:
+    a price for four wheels, inclusive of shipping. Counting it as nothing
+    took a point off Maxtera for answering "1500 USD including wheels,
+    shipping and duties" instead of quoting ex works, which is principle 3
+    read in the mirror, the same way the piece_count overwrite once cost
+    Hantuo their ranking. It does NOT count as the shipping question: that
+    answer is inside the total and cannot be recovered from it, so ask()
+    rightly keeps asking for the split.
+    """
+    got = {k for k in ALL_FIELDS if Q.get(k) not in (None, "")}
+    if Q.get("landed_total_usd") not in (None, ""):
+        got.add("price_per_wheel_4set")
+    return got
+
+
 # Fields where a changed answer is a real contradiction worth flagging.
 # Deliberately only numbers and booleans. The prose fields are the model's
 # summary of what a supplier wrote, and re-reading the same reply rewords it:
@@ -290,6 +339,7 @@ def take_quote(got, rec):
 # rounds" flag for a sentence the supplier never revised.
 REVISION_FIELDS = (
     "price_per_wheel_1set", "price_per_wheel_4set", "freight_cif_usd",
+    "landed_total_usd",
     "weight_kg", "load_rating_kg", "forged_confirmed", "is_manufacturer",
     "cnc_inhouse",
 )
@@ -780,7 +830,14 @@ Return one JSON object. Extract ONLY what the supplier actually stated.
   size_chart             string or null. If they listed sizes or attached a
                          chart, summarise the range, e.g. "17-20in, 8-12J,
                          ET-20 to +45, chart attached". Null if not addressed.
-  freight_cif_usd        number or null
+  freight_cif_usd        number or null. The shipping cost BY ITSELF, not
+                         counting the wheels. If their figure covers the
+                         wheels too, it is not this field, see below.
+  landed_total_usd       number or null. One all-in price for a set of 4
+                         delivered: wheels plus shipping plus duties, stated
+                         as a single number. "The total price is 1500 USD,
+                         including wheels, shipping fees, and customs duties"
+                         is 1500 here.
   manufacturing_time     string or null. How long to BUILD the wheels, in
                          their own words, e.g. "30-40 days". Also called
                          production cycle or lead time. Keep the range as a
@@ -815,6 +872,14 @@ Critical rules:
   only appears in a message we sent, and never one they denied ("no TUV").
 - If a price is given without stating quantity, put it in
   price_per_wheel_1set and say so in notes.
+- An all-in figure goes in landed_total_usd ALONE. Leave
+  price_per_wheel_1set, price_per_wheel_4set and freight_cif_usd null, and do
+  not divide it by 4 or subtract a guessed shipping cost to fill them. Only
+  the supplier knows the split, and a number we invented for them would be
+  compared against figures every other supplier actually quoted.
+- The reverse also holds: a price that excludes shipping is NOT
+  landed_total_usd, however it is worded. "Total for 4 wheels, shipping
+  extra" is price_per_wheel_4set.
 - For forging_process, record their exact claim. "Forged" alone with no
   process detail or press tonnage is "not stated clearly".
 - forged_confirmed and piece_count are separate axes. Answering one tells you
@@ -942,8 +1007,7 @@ def ingest(wheel, force=False, workers=6):
 
         # Cumulative across every reply, matching what the GUI reports. A
         # per-reply count made a supplier's second message look like a regression.
-        total_filled = sum(1 for k in ALL_FIELDS
-                           if rec["from_quote"].get(k) not in (None, ""))
+        total_filled = len(answered_keys(rec["from_quote"]))
 
         asked = rec["meta"].get("rfq_sent")
         rec["meta"]["reply_received"] = datestr or TODAY
@@ -1053,7 +1117,7 @@ def backfill(wheel, field, workers=6):
     if field in ALL_FIELDS:
         for target in before:
             rec = yaml.safe_load(target.read_text())
-            n = sum(1 for k in ALL_FIELDS if rec["from_quote"].get(k) not in (None, ""))
+            n = len(answered_keys(rec["from_quote"]))
             rec["meta"]["questions_answered"] = f"{n}/{len(ALL_FIELDS)}"
             target.write_text(yaml.safe_dump(rec, sort_keys=False, allow_unicode=True), encoding="utf-8")
 

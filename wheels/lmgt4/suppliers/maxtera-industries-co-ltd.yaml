@@ -61,7 +61,7 @@ from_listing:
   transit_time: Est. 17-24 days
 from_quote:
   price_per_wheel_1set: null
-  price_per_wheel_4set: 1500
+  price_per_wheel_4set: null
   forging_process: press forged, 10000 and 12000 ton forging presses, 6061-T6 aluminum
     alloy
   piece_count:
@@ -82,6 +82,7 @@ from_quote:
   load_rating_kg: null
   forged_confirmed: true
   quote_construction: null
+  landed_total_usd: 1500
   certs_claimed:
   - DOT
   - JWL

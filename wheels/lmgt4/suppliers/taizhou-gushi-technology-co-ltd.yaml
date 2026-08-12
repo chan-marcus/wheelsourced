@@ -71,6 +71,7 @@ from_quote:
   quote_construction: null
   certs_claimed:
   - TUV
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-09'
   rfq_sent: '2026-08-09'

@@ -108,6 +108,7 @@ from_quote:
   - DOT
   manufacturing_time: 30-40 days
   shipping_time: 30-40 days
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-09'
   rfq_sent: '2026-08-08'

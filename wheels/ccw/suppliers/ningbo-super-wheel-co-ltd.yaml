@@ -115,6 +115,7 @@ from_quote:
   - VIA
   manufacturing_time: null
   shipping_time: null
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-09'
@@ -131,7 +132,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-10'
   reply_count: 3
-  questions_answered: 7/13
+  questions_answered: 10/13
   reply_notes:
   - '2026-08-08: Price per wheel (480 USD) stated for 1 set of 4 wheels; weight given
     as 13-14kg range for unspecified dimensions; load capacity 750-900kg per wheel

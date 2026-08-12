@@ -96,6 +96,7 @@ from_quote:
   - TUV
   manufacturing_time: 30-40 days
   shipping_time: 25-30 days
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
   rfq_sent: '2026-08-07'

@@ -106,7 +106,17 @@ function normalize(r) {
   // Only a real landed cost when BOTH parts were quoted. Adding zero for an
   // undisclosed freight cost makes the least forthcoming vendor look like the
   // cheapest, which is exactly backwards.
-  const landed = setPrice && freight !== null ? setPrice + freight : null;
+  //
+  // A supplier can also quote the landed figure outright, as one all-in
+  // number they will not break down, and that answer is MORE complete than
+  // the two parts, not less. It takes precedence: computing it from parts
+  // that are null by definition in that case would leave the most forthcoming
+  // vendor as the only one with no landed cost at all, which is the rule
+  // above read in the mirror. The parts stay null and print as not disclosed,
+  // because splitting the total would mean inventing the split.
+  const landedQuoted = num(Q.landed_total_usd);
+  const landed = landedQuoted ??
+    (setPrice && freight !== null ? setPrice + freight : null);
 
   const fields = Object.values(Q);
   const answered = fields.filter((v) => v !== null && v !== undefined && v !== "").length;
@@ -156,6 +166,10 @@ function normalize(r) {
     freight,
     freight_estimated: price && freight === null,
     landed,
+    // Whether the landed figure was quoted whole or added up from the parts.
+    // The sheet says so: "not disclosed" in every other price cell means
+    // something different when the supplier gave one all-in number instead.
+    landed_quoted: landedQuoted !== null,
     setPrice,
     weight: num(Q.weight_kg),
     load_rating: num(Q.load_rating_kg),

@@ -288,6 +288,42 @@ principle 3, and the product here is the vetting. A supplier who has not
 answered reads "not disclosed" like any other field. `from_listing.certs_claimed`
 is still stored and still canonicalised, it just does not reach the sheet.
 
+**An all-in price is a third answer, not a set price.** `landed_total_usd`
+holds one number covering wheels, shipping and duties, quoted by a supplier
+who will not break it down. Same split as forged vs piece_count, one column
+over: "what do the wheels cost" and "what does the whole thing cost delivered"
+are different questions.
+
+The old freight question asked "Total cost to deliver to Los Angeles ...
+Include shipping, duty, port fees and tariffs." To a second-language reader
+that is the grand total, and Maxtera answered it that way three times: "the
+total price is 1500 USD, including wheels, shipping fees, and customs duties."
+With nowhere else to put it, the parser filed a landed figure under
+`price_per_wheel_4set`, where it sat against everyone else's ex-freight
+numbers, while `freight_cif_usd` stayed null so `landed` came out null too.
+The supplier who gave the most complete price answer on the sheet was the only
+one with no landed cost and no place in the "cheapest" sort. That is principle
+3 read in the mirror, the same shape as the piece_count overwrite that cost
+Hantuo their ranking.
+
+So `landed` prefers the quoted total over the computed one, and the parts stay
+null: only the supplier knows the split, and inventing it would put a number
+we made up beside figures everyone else actually quoted. The sheet prints
+"quoted all-in" next to it, because "not disclosed" in the other three price
+cells means something different when one number already covers them.
+
+`answered_keys()` counts an all-in total as the set-of-4 price, or moving the
+figure out of that field would have docked the supplier a point for answering
+more fully. It deliberately does not count as the shipping question: that
+answer is inside the total and cannot be recovered, so `ask()` keeps asking
+for the split. The question now asks for shipping "by itself", but suppliers
+will still answer all-in, which is why the field exists rather than a better
+prompt: same reasoning as `off_basis_quotes`.
+
+`landed_total_usd` is in `PRICE_FIELDS`, so `take_quote()` discards it for the
+wrong construction like any other price. Left out, it would be the one way
+around that guard.
+
 **`PHOTO_ASK` is dead.** It is defined and never referenced, so nothing asks
 for the scale photo. Weight arrives only when a supplier volunteers it.
 

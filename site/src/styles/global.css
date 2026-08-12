@@ -159,6 +159,11 @@ footer p{font-family:'IBM Plex Mono';font-size:11px;line-height:1.7;color:var(--
 .preamble p{margin:0 0 9px;font-size:14.5px;max-width:36rem;text-wrap:pretty}
 .preamble p.est{font-family:'IBM Plex Mono';font-size:12.5px;line-height:1.7;color:var(--soft)}
 .preamble p.est b{color:var(--ink)}
+/* Quieter again than .est, which is already the muted register. Small enough
+   to stay out of the way, not small enough to be arguable: 11.5px is the size
+   the masthead and footer labels already use, so it reads as part of the
+   document rather than as fine print someone hoped you would miss. */
+.preamble p.disclose{font-size:11.5px;line-height:1.6;opacity:.92}
 
 .platform{margin-top:13px;padding-top:12px;border-top:1px solid var(--rule)}
 .plabel{font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.14em;

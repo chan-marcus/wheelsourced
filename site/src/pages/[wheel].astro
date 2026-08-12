@@ -111,6 +111,13 @@ const breadcrumbs = {
   <div class="preamble">
     <p><b>Every shop here builds to order.</b> You choose diameter, width, offset and finish when you contact them, so there is nothing to filter. What matters is which vendor is worth talking to.</p>
     <p class="est">Pricing is a <b>like-for-like estimate quoted at 18x9.5J</b>, asked of every vendor with the same spec so the figures compare. Your own size and lip depth will move it. Treat this as a ranking, not a quote. Shipping costs are based on quotes to Los Angeles, CA.</p>
+    <!-- Affiliate disclosure. Deliberately quiet, deliberately not hidden: it
+         sits above the supplier list rather than only in the footer, because
+         a disclosure a reader meets after the links it describes is not one.
+         Both facts after the first are the ones a reader actually cares
+         about, and both are true: the rate is identical across suppliers, and
+         affiliate_url is not an input to scoreAll() or to any sort. -->
+    <p class="est disclose">Listing links are affiliate links and earn us a commission. The rate is the same for every supplier and is not part of the vetting score.</p>
   </div>
 
   <section class="block">
@@ -144,6 +151,7 @@ const breadcrumbs = {
       <p>Price is not part of that score. It is shown as its own figure instead: est. landed cost per set, only ever computed when a vendor has quoted both the price and the freight, so withholding one cannot make a vendor look cheaper than someone who disclosed both. A low price says nothing about whether a vendor is trustworthy, which is the question the score answers.</p>
       <p>Grey figures come from the listing. Black figures were quoted directly. Blank means asked and not answered.</p>
       <p>Wheels are described by construction and geometry, never as another maker's product.</p>
+      <p>Open listing links are affiliate links, and we earn a commission on orders placed through them. The rate is the same for every supplier here, and whether a supplier has an affiliate link is not an input to the score, the sort, or which suppliers get listed.</p>
       <p><a href="/methodology/" style="color: var(--bronze);">How the vetting works in full</a></p>
     </div>
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--ink); max-width: 900px; margin-left: auto; margin-right: auto; text-align: center;">

@@ -158,7 +158,7 @@ export function supplierCard(s, { sortMode = "vetting", i = 0, open = new Set() 
 
       <div class="vf" style="margin-top:12px;">
         <button class="btn" data-rfq="${s.id}">Write quote request</button>
-        ${s.url ? `<a class="btn ghost" href="${attr(s.url)}" rel="nofollow noopener" target="_blank">Open listing</a>` : ""}
+        ${s.url ? `<a class="btn ghost" href="${attr(s.url)}" rel="sponsored nofollow noopener" target="_blank">Open listing</a>` : ""}
         <span class="seen">${s.verified_on ? "last verified " + s.verified_on : ""}</span>
       </div>
     </article>`;

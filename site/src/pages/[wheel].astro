@@ -361,8 +361,7 @@ function buildMsg(s, spec) {
   const zipline = spec?.zip ? `\n\nShipping zip code: ${spec.zip}` : "";
 
   const ask = [];
-  ask.push("Price per wheel (1 set of 4 wheels and for 4 sets if available)");
-  ask.push("Shipping cost to the zip code above");
+  ask.push("Total price for a set of 4 wheels shipped to the zip code above.");
 
   return `Hello,
 

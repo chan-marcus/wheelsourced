@@ -324,6 +324,9 @@ export async function onRequestGet({ request, env }) {
         before, not just new today. Visitor-days counts each visitor once per day,
         so someone who came back three times is three.</p>
 
+      <h1>Unique visitors by day</h1>
+      <div class="bars">${traffic.daily.map(([day, n]) => bar(day, n, maxU)).join("")}</div>
+
       <h1>Recent page views</h1>
       <table id="feed"><thead><tr><th>Visitor ID</th><th>Path</th><th>Visited at</th><th>Referrer</th><th>Country</th></tr></thead>
       <tbody>${feedRows}</tbody></table>
@@ -338,9 +341,6 @@ export async function onRequestGet({ request, env }) {
         });
       });
       </script>
-
-      <h1>Unique visitors by day</h1>
-      <div class="bars">${traffic.daily.map(([day, n]) => bar(day, n, maxU)).join("")}</div>
     `;
   }
 

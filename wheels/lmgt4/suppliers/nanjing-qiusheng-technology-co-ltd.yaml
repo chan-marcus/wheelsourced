@@ -92,7 +92,7 @@ from_quote:
   landed_total_usd: null
 meta:
   listing_seen: '2026-08-09'
-  rfq_sent: '2026-08-09'
+  rfq_sent: '2026-08-12'
   reply_received: '2026-08-10'
   questions_answered: 10/13
   rfq_first_sent: '2026-08-09'

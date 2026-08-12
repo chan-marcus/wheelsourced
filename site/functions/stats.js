@@ -165,6 +165,12 @@ tr.new td{background:rgba(138,106,47,.07)}
 tr.new:hover td{background:rgba(138,106,47,.13)}
 td.dim{color:var(--soft)}
 .when{white-space:nowrap}
+tr.group-toggle{cursor:pointer}
+tr.group-toggle .arrow{display:inline-block;font-size:9px;width:10px;transition:transform .12s;color:var(--soft)}
+tr.group-toggle.open .arrow{transform:rotate(90deg)}
+tr.group-toggle .count{margin-left:8px;font-size:10.5px;color:var(--soft)}
+tr.child td{background:var(--stock2)}
+tr.child.hidden{display:none}
 </style></head><body><div class="sheet">
 <header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/stats?logout=1">Log out</a>' : ""}</header>
 ${body.html}
@@ -222,27 +228,51 @@ export async function onRequestGet({ request, env }) {
     const maxU = Math.max(...traffic.daily.map(([, n]) => n), 1);
     // The feed is one row per view, so the same visitor loading three pages
     // in a row printed the same hash three times in a column meant to help
-    // you spot repeat visitors, not bury them in their own noise. Collapse
-    // it the way a grouped report does: show the id where the visitor
-    // actually changes, blank the cell for the run of rows underneath that
-    // are still them. Only ever compares to the row directly above, so two
-    // separate visits by the same person with anyone else's view between
-    // them still print the id again -- "collapsed" means "consecutive", not
-    // "this hash already appeared somewhere above".
-    let lastVid = null;
-    const feedRows = traffic.feed.map((v) => {
-      const sameAsAbove = v.vid === lastVid;
-      lastVid = v.vid;
-      return `
-      <tr class="${v.isNew ? "new" : ""}">
-        <td class="vid">${sameAsAbove ? "" : esc(v.vid)}${v.isNew ? '<span class="badge">New</span>' : ""}</td>
+    // you spot repeat visitors, not bury them in their own noise. Group
+    // consecutive same-visitor rows under one summary row (id + view count),
+    // hide the individual views, and reveal them on click. Only ever
+    // compares to the row directly above, so two separate visits by the same
+    // person with anyone else's view between them still get their own group
+    // -- "grouped" means "consecutive", not "this hash already appeared
+    // somewhere above".
+    const when = (v) => esc(new Date(v.ts).toLocaleString("en-US", {
+      timeZone: "America/Los_Angeles", dateStyle: "short", timeStyle: "medium" }));
+    const ref = (v) => v.ref ? `<a href="${esc(v.ref)}" rel="noopener nofollow">${esc(v.ref)}</a>` : "Direct";
+
+    const rowsHtml = [];
+    let i = 0, gid = 0;
+    while (i < traffic.feed.length) {
+      let j = i + 1;
+      while (j < traffic.feed.length && traffic.feed[j].vid === traffic.feed[i].vid) j++;
+      const group = traffic.feed.slice(i, j);
+      const head = group[0];
+      const rest = group.slice(1);
+      const isGroup = rest.length > 0;
+      const groupIsNew = group.some((v) => v.isNew);
+      const g = `g${gid++}`;
+
+      rowsHtml.push(`
+      <tr class="${groupIsNew ? "new" : ""} ${isGroup ? "group-toggle" : ""}" ${isGroup ? `data-group="${g}"` : ""}>
+        <td class="vid">${isGroup ? '<span class="arrow">&#9656;</span>' : ""}${esc(head.vid)}${isGroup ? `<span class="count">${group.length} views</span>` : ""}${groupIsNew ? '<span class="badge">New</span>' : ""}</td>
+        <td>${esc(head.path)}</td>
+        <td class="when dim">${when(head)}</td>
+        <td class="dim">${ref(head)}</td>
+        <td class="dim">${esc(head.country || "")}</td>
+      </tr>`);
+
+      for (const v of rest) {
+        rowsHtml.push(`
+      <tr class="child hidden ${v.isNew ? "new" : ""}" data-group="${g}">
+        <td class="vid"></td>
         <td>${esc(v.path)}</td>
-        <td class="when dim">${esc(new Date(v.ts).toLocaleString("en-US", {
-          timeZone: "America/Los_Angeles", dateStyle: "short", timeStyle: "medium" }))}</td>
-        <td class="dim">${v.ref ? `<a href="${esc(v.ref)}" rel="noopener nofollow">${esc(v.ref)}</a>` : "Direct"}</td>
+        <td class="when dim">${when(v)}</td>
+        <td class="dim">${ref(v)}</td>
         <td class="dim">${esc(v.country || "")}</td>
-      </tr>`;
-    }).join("");
+      </tr>`);
+      }
+      i = j;
+    }
+    const feedRows = rowsHtml.join("");
 
     trafficHtml = `
       <dl class="tiles">
@@ -258,8 +288,19 @@ export async function onRequestGet({ request, env }) {
         so someone who came back three times is three.</p>
 
       <h1>Recent page views</h1>
-      <table><thead><tr><th>Visitor ID</th><th>Path</th><th>Visited at</th><th>Referrer</th><th>Country</th></tr></thead>
+      <table id="feed"><thead><tr><th>Visitor ID</th><th>Path</th><th>Visited at</th><th>Referrer</th><th>Country</th></tr></thead>
       <tbody>${feedRows}</tbody></table>
+      <script>
+      document.getElementById('feed').addEventListener('click', (e) => {
+        const tr = e.target.closest('tr.group-toggle');
+        if (!tr) return;
+        const g = tr.dataset.group;
+        const open = tr.classList.toggle('open');
+        document.querySelectorAll('tr.child[data-group="' + g + '"]').forEach((r) => {
+          r.classList.toggle('hidden', !open);
+        });
+      });
+      </script>
 
       <h1>Unique visitors by day</h1>
       <div class="bars">${traffic.daily.map(([day, n]) => bar(day, n, maxU)).join("")}</div>

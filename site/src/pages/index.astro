@@ -75,33 +75,32 @@ const orgSchema = {
     text-align: center;
     margin-bottom: 60px;
   }
-  /* Was .landing h1. Same type, no longer a heading: see the markup. */
-  .wordmark-hero {
-    font-family: 'Barlow Condensed';
-    font-size: clamp(48px, 10vw, 96px);
-    font-weight: 700;
-    margin: 0 0 20px;
-    line-height: 0.9;
-    text-transform: uppercase;
-  }
-  .wordmark-hero em {
-    font-style: normal;
-    color: var(--bronze);
-  }
+  /* The h1 is the hero now that the wordmark repeat is gone, so it takes the
+     display size the wordmark had rather than sitting under it as a subhead. */
   .landing h1 {
     font-family: 'Barlow Condensed';
-    font-size: clamp(24px, 4vw, 34px);
+    font-size: clamp(38px, 7vw, 68px);
     font-weight: 700;
     margin: 0 0 24px;
-    line-height: 1.1;
+    line-height: 0.95;
     text-transform: uppercase;
     letter-spacing: 0.01em;
   }
-  .landing p.method {
+  .landing p.lede {
     font-size: 16px;
-    border-top: 1px solid var(--rule, #A9AFA5);
-    padding-top: 20px;
-    margin-top: 24px;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .landing p.lede a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--bronze);
+    font-family: 'IBM Plex Mono';
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .grid-heading {
     font-family: 'Barlow Condensed';
@@ -231,21 +230,20 @@ const orgSchema = {
   </header>
 
   <div class="landing-content">
-    <!-- The wordmark is the visual hero but no longer the h1. As an h1 the
-         only heading on the page was the brand name, which is the one term
-         nobody searches for before they have heard of you. -->
-    <div class="wordmark-hero">Wheel<em>Sourced</em></div>
+    <!-- No wordmark hero. It repeated the masthead logo directly above it,
+         and the brand name is the one term nobody searches for before they
+         have heard of you. The h1 carries the page instead. -->
     <h1>Forged wheel factories, vetted and compared</h1>
-    <p>Every factory here was asked the same questions at the same reference
-      spec, and the answers are published as they were given. Prices are
-      quoted directly, never scraped from a listing. A supplier who ignores a
-      question twice is recorded as "not disclosed" rather than quietly
-      filled in.</p>
-    <p class="method">Flow forming is not forging, and a vendor who calls it
-      that is not taken at their word. A cast three-piece is an honest product
-      and is not marked down for being one. Landed cost appears only when both
-      the wheel price and the freight were quoted, so withholding one can
-      never make a factory look cheaper than one that disclosed both.</p>
+    <!-- The methodology used to be printed here in full. It is real content
+         and worth having, but it belongs on its own page rather than as a
+         wall of prose on a deliberately sparse landing: a page of its own
+         gets its own title and can answer "is flow formed the same as
+         forged" directly, which body copy buried under a wordmark never
+         would. Not hidden, moved. Hiding it with CSS would be the one
+         version of this that risks the domain. -->
+    <p class="lede">Every factory is asked the same questions at the same
+      reference spec, and the answers are published as they were given.
+      <a href="/methodology/">How the vetting works</a></p>
   </div>
 
   <h2 class="grid-heading">Wheels sourced so far</h2>

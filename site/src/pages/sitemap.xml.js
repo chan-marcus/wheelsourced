@@ -26,6 +26,7 @@ export function GET({ site }) {
       priority: "0.9",
       lastmod: lastmodOf(w),
     })),
+    { loc: `${base}/methodology/`, priority: "0.7" },
     { loc: `${base}/request/`, priority: "0.5" },
   ];
 

@@ -1,0 +1,195 @@
+---
+// The vetting rules, as their own page.
+//
+// This material was briefly printed on the landing page, which was the wrong
+// place for it twice over: it buried a sparse design under prose, and body
+// copy under a wordmark cannot rank for the questions it actually answers.
+// Here it has a title and a URL of its own, so "is flow formed the same as
+// forged" can land on the paragraph that answers it.
+//
+// It is also the only content on this site that is argument rather than data,
+// which makes it the page most likely to be linked to or quoted, and links
+// are the thing the sourcing sheets cannot generate for themselves.
+import { loadWheels } from "../lib/data.js";
+import "../styles/global.css";
+
+const wheels = loadWheels();
+const supplierCount = wheels.reduce((n, w) => n + w.suppliers.length, 0);
+
+const canonical = new URL("/methodology/", Astro.site).href;
+const description =
+  `How WheelSourced vets Chinese wheel factories: one reference spec, ` +
+  `quoted prices only, and why flow forming is never recorded as forging.`;
+
+const breadcrumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: new URL("/", Astro.site).href },
+    { "@type": "ListItem", position: 2, name: "Methodology", item: canonical },
+  ],
+};
+---
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WheelSourced - Methodology</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="WheelSourced" />
+<meta property="og:title" content="WheelSourced - Methodology" />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="WheelSourced - Methodology" />
+<meta name="twitter:description" content={description} />
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} is:inline />
+<link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="/favicon-192.png" sizes="192x192" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  .doc { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  .doc h1 {
+    font-family: 'Barlow Condensed';
+    font-size: clamp(32px, 6vw, 48px);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 40px 0 8px;
+  }
+  .doc .sub {
+    font-family: 'IBM Plex Mono';
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--soft);
+    margin: 0 0 36px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .doc h2 {
+    font-family: 'Barlow Condensed';
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 40px 0 10px;
+  }
+  .doc p { font-size: 16px; line-height: 1.65; color: var(--soft); margin: 0 0 16px; }
+  .doc p b { color: var(--ink); }
+  .doc .back {
+    display: inline-block;
+    font-family: 'IBM Plex Mono';
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="masthead">
+    <a class="logo" href="/" aria-label="WheelSourced home">
+      <span class="word">Wheel<em>Sourced</em></span>
+    </a>
+  </header>
+</div>
+
+<div class="doc">
+  <h1>How the vetting works</h1>
+  <p class="sub">{supplierCount} suppliers &middot; {wheels.length} wheels &middot; updated continuously</p>
+
+  <p>Every factory listed here was contacted directly and asked the same
+    questions about the same reference specification. What follows is what we
+    do with the answers, including the answers we do not get.</p>
+
+  <h2>One reference spec, so the prices compare</h2>
+  <p>Quotes are requested at a single specification, the same one for every
+    factory. A price for a different construction is not converted or adjusted
+    to fit the column; it is set aside and the question is asked again. Two
+    numbers only belong side by side if they answer the same question.</p>
+
+  <h2>Flow forming is not forging</h2>
+  <p>"Rotary forged" and "flow formed" describe a <b>cast centre with a spun
+    barrel</b>. It is a legitimate process and it produces a decent wheel, but
+    it is not forging, and a supplier who answers the forging question with it
+    is recorded as having described flow forming.</p>
+  <p>The reverse matters just as much. "Machined from a forged blank" is
+    ordinary forging and is recorded as forged. Suppliers routinely answer
+    this question in the negative, too, because we ask them to: "fully forged,
+    not flow-formed" is a claim of forging, not a confession of it.</p>
+
+  <h2>Construction and forging are separate questions</h2>
+  <p>Whether a wheel is forged and how many pieces it has are independent.
+    A <b>cast three-piece is an honest product</b> and is not marked down for
+    being one, and a forged monoblock is not "fewer pieces" as though that
+    were a defect. Neither field is ever inferred from the other, and the
+    number of constructions a factory can build is recorded as a capability
+    rather than being narrowed to whichever one they last quoted.</p>
+
+  <h2>Missing answers are published as missing</h2>
+  <p>When a supplier does not answer a question twice, the sheet says
+    <b>not disclosed</b>. Nothing is estimated, inferred or filled in to make
+    a row look complete, and a blank is never quietly treated as a zero.</p>
+  <p>That rule exists because the opposite has a direction. Landed cost was
+    once computed by treating an unquoted freight charge as nothing, which
+    made the factory that withheld its shipping cost look like the cheapest on
+    the page. <b>Landed cost is now shown only when both the wheel price and
+    the freight were quoted</b>, so declining to answer can never look better
+    than answering.</p>
+  <p>The same principle runs the other way: a supplier is never penalised for
+    telling us more. One who quotes a single all-in figure covering wheels,
+    shipping and duties has answered more completely than one who quotes ex
+    works, and is recorded that way rather than being dropped from the
+    comparison for refusing to break it down.</p>
+
+  <h2>Quoted figures and listing figures are kept apart</h2>
+  <p>Every value carries its origin. Figures a factory gave us directly are
+    printed in black; figures taken from a platform listing are printed grey
+    and labelled. The two are never merged, and a listing claim is never
+    allowed to stand in for an answer to a question. Certifications are shown
+    only as the supplier stated them, because listings overclaim and rendering
+    an unvetted list beside a short honest one would reward the overclaim.</p>
+  <p>Naming a certification and having sent the certificate are also separate
+    facts. A supplier who says they hold DOT approval but sends nothing is
+    recorded as having claimed it without a document, and a supplier who says
+    plainly that they cannot supply one is recorded as having said so, which
+    is a useful and honest answer rather than a failure.</p>
+
+  <h2>What the score is, and what it is not</h2>
+  <p>The vetting score is out of 100 and combines store rating, store age,
+    review count, response time, reorder rate and transit time. Every axis is
+    judged against a fixed standard rather than against the other factories in
+    the set, so a young shop is thin whether or not a rival is thinner.</p>
+  <p>A rating counts for as much as its sample supports: 5.0 from two buyers
+    is not a better rating than 4.8 from eighty-seven, only a less certain
+    one, so ratings are weighted by review count before scoring. The result is
+    scaled by how many axes a factory actually has, so a sparse record cannot
+    outrank a complete one on a lucky average. Expect real numbers in the 40s
+    to 60s.</p>
+  <p><b>Price is deliberately not part of the score.</b> "Cheapest" and "most
+    trustworthy" are different questions, and scoring them together meant a
+    factory's trustworthiness moved when a competitor happened to quote low.
+    Price is shown as its own figure and drives its own sort.</p>
+
+  <h2>What we do not do</h2>
+  <p>We do not sell wheels and we do not take payment from the factories for
+    placement. We do not give fitment advice, because whether a wheel clears
+    your particular car is a judgement we are not positioned to make. And we
+    describe wheels by construction and geometry rather than as another
+    maker's product, which is both more accurate and more honest about what a
+    factory is actually offering to build.</p>
+
+  <a class="back" href="/">&larr; Back to the sourcing sheets</a>
+</div>
+</body>
+</html>

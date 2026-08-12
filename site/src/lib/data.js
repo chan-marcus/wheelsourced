@@ -92,11 +92,15 @@ function normalize(r) {
   const L = r.from_listing || {};
   const Q = r.from_quote || {};
 
-  const price = num(Q.price_per_wheel_1set);
+  const price1quoted = num(Q.price_per_wheel_1set);
   const price4quoted = num(Q.price_per_wheel_4set);
   const freight = num(Q.freight_cif_usd);
-  // Set of 4 price, preferring vendor's actual quote over calculated
-  const setPrice = price4quoted ?? (price ? price * 4 : null);
+  // Per-wheel and set-of-4 are the same quoted number two ways, so either
+  // one covers for the other. Both sides still trace back to from_quote,
+  // never to a listing figure, so the black/grey provenance split in
+  // principle 1 is untouched: a derived number here is still a quoted one.
+  const price = price1quoted ?? (price4quoted ? price4quoted / 4 : null);
+  const setPrice = price4quoted ?? (price1quoted ? price1quoted * 4 : null);
   // The number that actually matters. Null unless BOTH parts are quoted:
   // a landed cost built on a listing price is a made-up number.
   // Only a real landed cost when BOTH parts were quoted. Adding zero for an

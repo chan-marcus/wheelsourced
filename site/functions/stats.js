@@ -171,8 +171,15 @@ tr.group-toggle.open .arrow{transform:rotate(90deg)}
 tr.group-toggle .count{margin-left:8px;font-size:10.5px;color:var(--soft)}
 tr.child td{background:var(--stock2)}
 tr.child.hidden{display:none}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.tab{font-family:'IBM Plex Mono';font-size:11.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;text-decoration:none;color:var(--soft);padding:10px 16px;
+  border:1px solid var(--rule);border-bottom:none;background:var(--stock2)}
+.tab.on{color:var(--ink);background:var(--stock);border-color:var(--ink);
+  position:relative;top:2px}
 </style></head><body><div class="sheet">
 <header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/stats?logout=1">Log out</a>' : ""}</header>
+${body.tabs || ""}
 ${body.html}
 </div></body></html>`;
 }
@@ -200,24 +207,54 @@ export async function onRequestGet({ request, env }) {
       { headers: { "content-type": "text/html;charset=utf-8" } });
   }
 
-  const [reqs, sugs, traffic] = await Promise.all([
-    readAll(env.WHEEL_REQUESTS, "req:"),
-    readAll(env.SUPPLIER_SUGGESTIONS, "sug:"),
-    readTraffic(env.SITE_STATS, 30),
-  ]);
+  // Which tab, and only fetch what that tab needs: the two KV namespaces
+  // behind Requests and the one behind Traffic have nothing in common, and
+  // Traffic already costs a cursor-paginated scan (readDaily), so reading it
+  // on every load of a page someone opened to see Requests was pure waste.
+  const tab = url.searchParams.get("tab") === "traffic" ? "traffic" : "requests";
 
-  const reqRows = reqs.map((r) =>
-    `<tr><td>${esc(r.name)}</td><td>${esc(r.date)}</td><td>${esc(r.email || "")}</td></tr>`
-  ).join("");
-  const sugRows = sugs.map((s) =>
-    `<tr><td><a href="${esc(s.url)}" rel="nofollow noopener" target="_blank">${esc(s.url)}</a></td>` +
-    `<td>${esc(s.wheel || "")}</td><td>${esc(s.date)}</td><td>${esc(s.email || "")}</td></tr>`
-  ).join("");
+  const tabsHtml = `
+    <div class="tabs">
+      <a class="tab ${tab === "requests" ? "on" : ""}" href="/stats?tab=requests">Requests</a>
+      <a class="tab ${tab === "traffic" ? "on" : ""}" href="/stats?tab=traffic">Traffic</a>
+    </div>`;
 
   const bar = (label, n, max) => `
     <div class="bar"><span>${esc(label)}</span>
       <div class="track"><div class="fill" style="width:${max ? Math.round((n / max) * 100) : 0}%"></div></div>
       <div class="n"><b>${n}</b></div></div>`;
+
+  let html;
+
+  if (tab === "requests") {
+    const [reqs, sugs] = await Promise.all([
+      readAll(env.WHEEL_REQUESTS, "req:"),
+      readAll(env.SUPPLIER_SUGGESTIONS, "sug:"),
+    ]);
+
+    const reqRows = reqs.map((r) =>
+      `<tr><td>${esc(r.name)}</td><td>${esc(r.date)}</td><td>${esc(r.email || "")}</td></tr>`
+    ).join("");
+    const sugRows = sugs.map((s) =>
+      `<tr><td><a href="${esc(s.url)}" rel="nofollow noopener" target="_blank">${esc(s.url)}</a></td>` +
+      `<td>${esc(s.wheel || "")}</td><td>${esc(s.date)}</td><td>${esc(s.email || "")}</td></tr>`
+    ).join("");
+
+    html = `
+      <h1 style="margin-top:0">Wheel requests</h1>
+      <table><thead><tr><th>Wheel name</th><th>Date</th><th>Email</th></tr></thead>
+      <tbody>${reqRows || '<tr><td colspan="3" class="empty">No requests yet</td></tr>'}</tbody></table>
+
+      <h1>Supplier suggestions</h1>
+      <table><thead><tr><th>Listing</th><th>Wheel</th><th>Date</th><th>Email</th></tr></thead>
+      <tbody>${sugRows || '<tr><td colspan="4" class="empty">No suggestions yet</td></tr>'}</tbody></table>
+    `;
+
+    return new Response(page({ body: { html, tabs: tabsHtml, showLogout: true } }),
+      { headers: { "content-type": "text/html;charset=utf-8" } });
+  }
+
+  const traffic = await readTraffic(env.SITE_STATS, 30);
 
   let trafficHtml;
   if (!traffic) {
@@ -307,20 +344,12 @@ export async function onRequestGet({ request, env }) {
     `;
   }
 
-  const html = `
+  html = `
     <h1 style="margin-top:0">Traffic</h1>
     ${trafficHtml}
-
-    <h1>Wheel requests</h1>
-    <table><thead><tr><th>Wheel name</th><th>Date</th><th>Email</th></tr></thead>
-    <tbody>${reqRows || '<tr><td colspan="3" class="empty">No requests yet</td></tr>'}</tbody></table>
-
-    <h1>Supplier suggestions</h1>
-    <table><thead><tr><th>Listing</th><th>Wheel</th><th>Date</th><th>Email</th></tr></thead>
-    <tbody>${sugRows || '<tr><td colspan="4" class="empty">No suggestions yet</td></tr>'}</tbody></table>
   `;
 
-  return new Response(page({ body: { html, showLogout: true } }),
+  return new Response(page({ body: { html, tabs: tabsHtml, showLogout: true } }),
     { headers: { "content-type": "text/html;charset=utf-8" } });
 }
 

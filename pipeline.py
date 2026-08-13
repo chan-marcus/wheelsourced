@@ -749,7 +749,7 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3"):
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  {size} \u00b7 {offset} \u00b7 {pcd} \u00b7 {QUOTE_CONSTRUCTION}
+  {size} \u00b7 {offset} \u00b7 {pcd}
 
 Could you confirm:
 

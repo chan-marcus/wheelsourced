@@ -365,13 +365,16 @@ only this wheel" on `piece_count`, and "can you send the certificate?" on
 are on the fields.
 
 The price question used to name `QUOTE_CONSTRUCTION` twice for the same
-reason, but that direct ask was dropped on request: the reference spec block
-above the questions still states the construction, just as context rather
-than a direct ask. A supplier who prices something else still has it
-discarded by `take_quote()` and gets asked again, same guard as before;
-expect more replies to land in `meta.off_basis_quotes` instead of on the
-sheet, since nothing in the message now tells them which construction to
-price.
+reason: once as a direct ask, once in the reference spec block above the
+questions. Both were dropped on request, one commit apart, and the message a
+supplier receives now does not name the construction anywhere. A supplier who
+prices something else still has it discarded by `take_quote()` and gets asked
+again, same guard as before; expect more replies to land in
+`meta.off_basis_quotes` instead of on the sheet, since nothing in the message
+tells them which construction to price. `meta["ref_spec"]` still records
+`QUOTE_CONSTRUCTION` alongside the size, offset and bolt pattern, so the
+record of what was actually quoted for is unaffected; only the outbound
+message changed.
 
 **Two-round questions.** `ROUND2` (cnc_inhouse, heat_treat, payment_terms,
 defect_policy) is held back from first contact: sending all fourteen cold

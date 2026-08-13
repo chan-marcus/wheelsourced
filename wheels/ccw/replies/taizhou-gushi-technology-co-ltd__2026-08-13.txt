@@ -1,0 +1,1 @@
+The production cycle for this wheel model is 15 days, the production time for 2-piece wheels is 25 days, and 3-piece wheels require 35 days. The transport time is about 25 days by sea to reach the port, and about 15 days by air to reach the port.

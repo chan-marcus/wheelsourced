@@ -83,6 +83,7 @@ from_quote:
   forging_process: machined from a forged blank
   piece_count:
   - 2-piece
+  - 3-piece
   cert_document: claimed without document
   freight_cif_usd: 280
   hs_code: null
@@ -97,12 +98,12 @@ from_quote:
   size_chart: 15-30 inches diameter range possible
   quote_construction: 2-piece
   certs_claimed: null
-  manufacturing_time: null
-  shipping_time: null
+  manufacturing_time: 15 days for this model, 25 days for 2-piece, 35 days for 3-piece
+  shipping_time: 25 days by sea, 15 days by air
   landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-09'
+  rfq_sent: '2026-08-12'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
@@ -115,15 +116,17 @@ meta:
     taizhou-gushi-technology-co-ltd__2026-08-07.txt: c36acf1367327e86
     taizhou-gushi-technology-co-ltd__2026-08-08.txt: 4a57faf2229c1c73
   first_reply: '2026-08-08'
-  reply_received: '2026-08-08'
-  reply_count: 2
-  questions_answered: 11/13
+  reply_received: '2026-08-13'
+  reply_count: 3
+  questions_answered: 13/13
   reply_notes:
   - '2026-08-08: Supplier claims JWL/VIA/TUV certifications in product listing but
     did not provide documents or confirm coverage of specific width. CNC in-house
     status not explicitly stated. Payment terms not confirmed despite question asking
     about 50% deposit.'
   - '2026-08-08: HS code / tariff classification not provided in response'
+  - '2026-08-13: Shipping times are port-to-port transit times, not door-to-door delivery
+    times'
   factory_address: Taixing, Jiangsu
 flags:
 - under 3 years listed

@@ -1,0 +1,8 @@
+Il. Post-Machining Stage (Stress Relief & Coating)
+Note: High-temperature tempering or aging must never be repeated after final machining, as it will over-age the alloy and cause a severe drop in material strength.
+• 1. Stress Relief Baking (Optional - Used after heavy CNC milling to prevent distortion)
+• Temperature: 110°C - 130°C
+• Duration: 2 - 3 hours
+• 2. Coating & Painting Baking (Paint Curing)
+• Temperature: 180°C - 190°C (Strictly controlled)
+• Duration: 20 - 30 minutes (Exceeding this duration will degrade the wheel strength and hardness)

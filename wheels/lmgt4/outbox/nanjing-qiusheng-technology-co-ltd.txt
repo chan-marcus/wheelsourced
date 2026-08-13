@@ -7,8 +7,8 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
-  2. What is your heat treatment process? Which temper (for example T6)? How many hours?
-  3. If a wheel arrives out of round, or the finish is damaged, what do you do?
+  - Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
+  - What is your heat treatment process? Which temper (for example T6)? How many hours?
+  - If a wheel arrives out of round, or the finish is damaged, what do you do?
 
 Thank you.

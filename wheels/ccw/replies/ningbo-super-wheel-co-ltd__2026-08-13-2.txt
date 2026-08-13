@@ -1,0 +1,9 @@
+I. Forged Blank Stage (Core Heat Treatment: T6 Hardening)
+Note: For aluminum alloys, the industry uses the term "Solution Treatment + Aging" instead of "Quenching + Tempering". This is the critical stage that determines whee!
+strength.
+• 1. Solution Treatment (Pre-quenching Heating)
+• Temperature: 530°C
+• Duration: 3 - 5 hours (Followed by rapid water quenching within 15 seconds)
+• 2. Artificial Aging (The "Tempering" Stage)
+• Temperature: 170°C - 175°C
+• Duration: 6 - 8 hours

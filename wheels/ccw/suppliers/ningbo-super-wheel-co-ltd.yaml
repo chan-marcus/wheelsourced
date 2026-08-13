@@ -90,8 +90,9 @@ from_listing:
   transit_time: Est. 17-24 days
 from_quote:
   price_per_wheel_1set: 480
-  price_per_wheel_4set: 1920
-  forging_process: machined from forged blank, 6061-T6 aviation grade aluminium
+  price_per_wheel_4set: 1660
+  forging_process: Solution treatment 530°C for 3-5 hours, rapid water quenching within
+    15 seconds, artificial aging 170-175°C for 6-8 hours
   piece_count:
   - monoblock
   - 2-piece
@@ -104,12 +105,13 @@ from_quote:
   is_manufacturer: true
   size_chart: monoblock 15-26in; 2-piece and 3-piece 17-30in; fully customizable parameters
   cnc_inhouse: true
-  heat_treat: null
+  heat_treat: Stress relief baking optional at 110-130°C for 2-3 hours after CNC milling;
+    coating and painting baking at 180-190°C for 20-30 minutes
   payment_terms: full payment upfront, or 50% deposit with balance after production
   defect_policy: 3-year structural warranty on custom products; strict packaging with
     double-layered cartons and foam rings; shipping insurance purchased
   forged_confirmed: true
-  quote_construction: null
+  quote_construction: 2-piece
   certs_claimed:
   - JWL
   - VIA
@@ -118,7 +120,7 @@ from_quote:
   landed_total_usd: null
 meta:
   listing_seen: '2026-08-05'
-  rfq_sent: '2026-08-09'
+  rfq_sent: '2026-08-12'
   rfq_first_sent: '2026-08-06'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
@@ -130,9 +132,9 @@ meta:
     price_per_wheel_4set: 1920
     freight_cif_usd: 320
   first_reply: '2026-08-08'
-  reply_received: '2026-08-10'
-  reply_count: 3
-  questions_answered: 10/13
+  reply_received: '2026-08-13'
+  reply_count: 6
+  questions_answered: 11/13
   reply_notes:
   - '2026-08-08: Price per wheel (480 USD) stated for 1 set of 4 wheels; weight given
     as 13-14kg range for unspecified dimensions; load capacity 750-900kg per wheel
@@ -146,6 +148,18 @@ meta:
     as 750-900kg per piece, reported as midpoint. Weight given as range 13-14kg, reported
     as midpoint. Certification requires minimum 20-sample order. Silver face with
     polish lip finish.'
+  - '2026-08-13: Price is 1660 USD for a set of 4 x 18-inch 2-piece wheels, all polish,
+    excluding center caps. Shipping 320 USD. DDP terms stated. 3D design confirmation
+    required before production begins.'
+  - '2026-08-13: This appears to be technical documentation of a heat treatment process
+    rather than a supplier quote. No pricing, construction details, or supplier capabilities
+    stated.'
+  - '2026-08-13: Technical specification document describing post-machining heat treatment
+    and coating procedures; no supplier identification or commercial terms provided'
   factory_address: Zhejiang
-flags: []
+  revisions:
+  - '2026-08-13 price_per_wheel_4set: 1920 -> 1660'
+flags:
+- forging process not actually described
+- changed answer between rounds
 affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601363897866

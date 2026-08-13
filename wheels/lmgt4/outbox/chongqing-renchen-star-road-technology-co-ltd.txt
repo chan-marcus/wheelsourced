@@ -7,13 +7,13 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  1. Price for one 2-PIECE wheel, and for a set of 4. Please quote 2-PIECE only.
-  2. How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?
-  3. Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
-  4. Are you the factory, or a trading company? What is the factory address?
-  5. Do you do the CNC machining in your own factory, or outsource it?
-  6. What is your heat treatment process? Which temper (for example T6)? How many hours?
-  7. What are your payment terms? Is it 50% deposit?
-  8. If a wheel arrives out of round, or the finish is damaged, what do you do?
+  - Price for one wheel, and for a set of 4.
+  - How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?
+  - Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
+  - Are you the factory, or a trading company? What is the factory address?
+  - Do you do the CNC machining in your own factory, or outsource it?
+  - What is your heat treatment process? Which temper (for example T6)? How many hours?
+  - What are your payment terms? Is it 50% deposit?
+  - If a wheel arrives out of round, or the finish is damaged, what do you do?
 
 Thank you.

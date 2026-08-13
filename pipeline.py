@@ -710,6 +710,15 @@ def ask(wheel, size="18x9.5J", offset="ET+22", pcd="5x114.3"):
 
         missing = [k for k in pool if not answered(k)]
         if not missing:
+            # Nothing left to ask, so nothing left to send. Remove whatever
+            # outbox file is still sitting there rather than leaving it: the
+            # GUI's rfq endpoint globs every .txt in outbox/ after calling
+            # ask(), not just the ones this run touched, so a file this old
+            # loop had no reason to rewrite was displayed under "Message to
+            # send" indefinitely, quoting the price question by its wording
+            # from whenever it was last generated. A supplier who has
+            # answered everything gets no message, not a stale one.
+            (out / f"{rec['id']}.txt").unlink(missing_ok=True)
             continue
 
         # Only ask what the listing could not answer. Shorter asks get

@@ -26,12 +26,15 @@
      dark page the way they read as "sunken" on a light one, and doing it the
      old way here would make every card look like a hole punched in the page.
      chop and bronze are both brightened for legibility against a dark
-     ground; the rest of the ratios are checked, not eyeballed: ink 14.3:1,
-     soft 7.3:1, chop 4.6:1, bronze 7.3:1 against --stock, all still 3.8:1+
-     against the lighter --stock2 card surfaces. */
-  --stock:#1D2018; --stock2:#2A2E24; --stock3:#373B30;
+     ground; the rest of the ratios are checked, not eyeballed. Against
+     --stock: ink 11.9:1, soft 6.1:1, chop 4.4:1, bronze 6.1:1. Against the
+     lighter --stock2 card surfaces: ink 9.8:1, soft 5.1:1, chop 3.9:1,
+     bronze 5.0:1. Nudged one step lighter than the first pass (11%/16%/21%
+     lightness -> 16%/21%/26%) on request; chop was bumped again with it,
+     since it is the one color that was already closest to its floor. */
+  --stock:#2A2F23; --stock2:#373C2F; --stock3:#44493C;
   --ink:#EDEFEB; --soft:#A9AFA1; --rule:#53594A;
-  --chop:#E46B58; --bronze:#CFA659;
+  --chop:#E67765; --bronze:#CFA659;
   --trans-fast:150ms cubic-bezier(0.4,0,0.2,1);
   --trans-smooth:250ms cubic-bezier(0.4,0,0.2,1);
 }

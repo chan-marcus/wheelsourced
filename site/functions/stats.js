@@ -126,7 +126,7 @@ function page({ body, title = "WheelSourced - Stats" }) {
    standalone Cloudflare Function and cannot import that stylesheet. Dark
    theme: --ink is the light text/border color, --stock the dark page bg,
    --stock2 a lighter (elevated) surface, same as the main site now. */
-:root{--stock:#1D2018;--stock2:#2A2E24;--ink:#EDEFEB;--soft:#A9AFA1;--rule:#53594A;--chop:#E46B58;--bronze:#CFA659}
+:root{--stock:#2A2F23;--stock2:#373C2F;--ink:#EDEFEB;--soft:#A9AFA1;--rule:#53594A;--chop:#E67765;--bronze:#CFA659}
 *{box-sizing:border-box}
 body{margin:0;background:var(--stock);color:var(--ink);font:15px/1.5 'IBM Plex Mono',monospace;padding:0 20px 80px}
 .sheet{max-width:1060px;margin:0 auto}

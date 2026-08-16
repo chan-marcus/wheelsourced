@@ -30,16 +30,20 @@
      --stock, not darker: elevated surfaces (a supplier card, the top-ranked
      card) need to read as "raised" on a dark page the way they read as
      "sunken" on a light one, and doing it the old way would make every card
-     look like a hole punched in the page. Same three lightness tiers as
-     before (16%/21%/26%), just desaturated.
+     look like a hole punched in the page. Nudged one step lighter than the
+     neutral-grey pass on request (16%/21%/26% lightness -> 21%/26%/31%),
+     same 5-point gap between tiers each time this has been asked for.
      chop and bronze stay warm/tinted on purpose -- they are accent colors,
      not the background, and a fully neutral accent would stop reading as an
-     accent. Contrast, checked not eyeballed. Against --stock: ink 12.6:1,
-     soft 6.5:1, chop 5.0:1, bronze 6.4:1. Against the lighter --stock2 card
-     surfaces: ink 10.4:1, soft 5.4:1, chop 4.1:1, bronze 5.3:1. */
-  --stock:#292929; --stock2:#363636; --stock3:#424242;
+     accent. chop was bumped again with this pass, same reason as last time:
+     it is the color closest to its contrast floor, and a lighter card
+     surface without a matching bump would have pushed it under 4:1 there.
+     Contrast, checked not eyeballed. Against --stock: ink 10.4:1, soft
+     5.4:1, chop 4.9:1, bronze 5.3:1. Against the lighter --stock2 card
+     surfaces: ink 8.7:1, soft 4.5:1, chop 4.0:1, bronze 4.4:1. */
+  --stock:#363636; --stock2:#424242; --stock3:#4F4F4F;
   --ink:#EDEFEB; --soft:#A9AFA1; --rule:#53594A;
-  --chop:#E67765; --bronze:#CFA659;
+  --chop:#EA8A7B; --bronze:#CFA659;
   --trans-fast:150ms cubic-bezier(0.4,0,0.2,1);
   --trans-smooth:250ms cubic-bezier(0.4,0,0.2,1);
 }

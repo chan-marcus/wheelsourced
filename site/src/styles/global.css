@@ -30,20 +30,24 @@
      --stock, not darker: elevated surfaces (a supplier card, the top-ranked
      card) need to read as "raised" on a dark page the way they read as
      "sunken" on a light one, and doing it the old way would make every card
-     look like a hole punched in the page. Nudged one step lighter than the
-     neutral-grey pass on request (16%/21%/26% lightness -> 21%/26%/31%),
-     same 5-point gap between tiers each time this has been asked for.
+     look like a hole punched in the page. Third lightening pass, same
+     5-point-per-tier step each time (16/21/26 -> 21/26/31 -> 26/31/36).
      chop and bronze stay warm/tinted on purpose -- they are accent colors,
      not the background, and a fully neutral accent would stop reading as an
-     accent. chop was bumped again with this pass, same reason as last time:
-     it is the color closest to its contrast floor, and a lighter card
-     surface without a matching bump would have pushed it under 4:1 there.
-     Contrast, checked not eyeballed. Against --stock: ink 10.4:1, soft
-     5.4:1, chop 4.9:1, bronze 5.3:1. Against the lighter --stock2 card
-     surfaces: ink 8.7:1, soft 4.5:1, chop 4.0:1, bronze 4.4:1. */
-  --stock:#363636; --stock2:#424242; --stock3:#4F4F4F;
-  --ink:#EDEFEB; --soft:#A9AFA1; --rule:#53594A;
-  --chop:#EA8A7B; --bronze:#CFA659;
+     accent.
+     This pass is the first to also move a foreground color other than chop:
+     at this lightness, soft dropped to 3.6:1 against --stock2, and soft is
+     not just a label color here, it carries the disclosure paragraph and the
+     preamble body copy -- real sentences, not just tags. soft, chop and
+     bronze are all bumped brighter with this pass. Getting close to the
+     ceiling on this approach: another step this size will start crowding the
+     accent colors together rather than reading as distinct.
+     Contrast, checked not eyeballed. Against --stock: ink 8.7:1, soft 5.4:1,
+     chop 4.9:1, bronze 5.0:1. Against the lighter --stock2 card surfaces:
+     ink 7.1:1, soft 4.4:1, chop 4.0:1, bronze 4.1:1. */
+  --stock:#424242; --stock2:#4F4F4F; --stock3:#5C5C5C;
+  --ink:#EDEFEB; --soft:#BBC0B5; --rule:#53594A;
+  --chop:#EBA498; --bronze:#D6B271;
   --trans-fast:150ms cubic-bezier(0.4,0,0.2,1);
   --trans-smooth:250ms cubic-bezier(0.4,0,0.2,1);
 }

@@ -153,7 +153,9 @@ const orgSchema = {
   .wheel-card:hover {
     background: var(--stock2);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    /* Light glow, not a dark shadow: a black shadow is invisible against the
+       dark theme's near-black page background. */
+    box-shadow: 0 8px 24px rgba(237,239,235,0.06);
   }
   .wheel-card:hover .wheel-image {
     transform: scale(1.05);

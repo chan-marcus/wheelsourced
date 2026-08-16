@@ -122,7 +122,11 @@ function page({ body, title = "WheelSourced - Stats" }) {
 <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--stock:#E2E5DE;--stock2:#D7DBD3;--ink:#1B211C;--soft:#5A6259;--rule:#A9AFA5;--chop:#B0301F;--bronze:#8A6A2F}
+/* Kept in step with site/src/styles/global.css by hand: this page is a
+   standalone Cloudflare Function and cannot import that stylesheet. Dark
+   theme: --ink is the light text/border color, --stock the dark page bg,
+   --stock2 a lighter (elevated) surface, same as the main site now. */
+:root{--stock:#1D2018;--stock2:#2A2E24;--ink:#EDEFEB;--soft:#A9AFA1;--rule:#53594A;--chop:#E46B58;--bronze:#CFA659}
 *{box-sizing:border-box}
 body{margin:0;background:var(--stock);color:var(--ink);font:15px/1.5 'IBM Plex Mono',monospace;padding:0 20px 80px}
 .sheet{max-width:1060px;margin:0 auto}

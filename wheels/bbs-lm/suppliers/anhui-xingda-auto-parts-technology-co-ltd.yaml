@@ -6,7 +6,7 @@ listings:
 - https://www.alibaba.com/product-detail/Forged-Wheels-Custom-Explained-Sizes-Offset_1601829846550.html?spm=a2700.image-text-search.normal_offer.d_title.a87967afJ7UHLD&priceId=6e812450c2e747bb9853c78c2c3c667a
 - https://www.alibaba.com/product-detail/Center-Lock-Forged-Wheels-Custom-Size_1601829960024.html?spm=a2700.image-text-search.normal_offer.d_title.a87967afJ7UHLD&priceId=6e812450c2e747bb9853c78c2c3c667a
 supplier_url: https://xdwheel.en.alibaba.com/
-affiliate_url: null
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601797635903
 from_listing:
   supplier_name: Anhui Xingda Auto Parts Technology Co., Ltd.
   business_type: manufacturer
@@ -101,7 +101,10 @@ from_quote:
   landed_total_usd: null
 meta:
   listing_seen: '2026-08-15'
-  rfq_sent: null
+  rfq_sent: '2026-08-15'
   reply_received: null
   questions_answered: null
+  rfq_first_sent: '2026-08-15'
+  rfq_round: 1
+  ref_spec: 18x9.5J ET+22 5x114.3 2-piece
 flags: []

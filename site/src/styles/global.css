@@ -13,6 +13,11 @@
 }
 
 :root{
+  /* Same signal as the <meta name="color-scheme"> tag in each page's <head>,
+     stated as CSS too: some contexts (an inline style block reached before
+     the page's own <head> parses, a browser reading this property directly)
+     check the CSS form rather than the meta tag. */
+  color-scheme: dark;
   --cond:'Barlow Condensed','Arial Narrow',sans-serif;
   --display:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
   /* A real dark theme, not just a dimmer paper. --ink and --stock swap roles

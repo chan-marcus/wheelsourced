@@ -40,6 +40,12 @@ const orgSchema = {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Tells the browser this page already handles its own theming, so a
+     browser-level "force dark mode for sites that don't support it" feature
+     has no reason to step in and re-theme an already-dark page. Also switches
+     native form controls (date pickers, checkboxes, scrollbars) to their dark
+     rendering instead of a jarring light default. -->
+<meta name="color-scheme" content="dark" />
 <title>WheelSourced</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />

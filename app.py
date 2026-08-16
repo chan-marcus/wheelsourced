@@ -442,6 +442,43 @@ async def reset_supplier(supplier_id: str, req: Request):
     return JSONResponse({"ok": False, "error": f"supplier not found: {supplier_id}"}, status_code=404)
 
 
+@app.post("/api/delete-supplier/{supplier_id:path}")
+async def delete_supplier(supplier_id: str, req: Request):
+    """Remove a supplier from a wheel entirely: the record and its outbox file.
+
+    Different from reset, which clears a record's answers but keeps it
+    tracked. This is for a supplier that should not be on the sheet at all --
+    pulled by mistake, a duplicate, the wrong factory.
+
+    wheel is required, not inferred by scanning every wheel dir for a match.
+    Reset does that as a convenience because clearing a record is undoable by
+    re-parsing the same replies; deleting one is not, and guessing the wrong
+    wheel here means deleting the wrong company's data.
+
+    Raw replies in replies/ are left on disk untouched, same as reset: they
+    are the archive of what a supplier actually said, and this endpoint only
+    removes what the pipeline tracks *of* them, not the record that they were
+    ever said. ingest() and mark_parsed() only ever glob replies against
+    suppliers/*.yaml, so an orphaned reply file left behind is inert, not a
+    dangling reference that breaks anything.
+    """
+    try:
+        wheel = (await req.json()).get("wheel")
+    except Exception:
+        wheel = None
+    if not wheel:
+        return JSONResponse({"ok": False, "error": "wheel is required"}, status_code=400)
+
+    sup_file = Path("wheels") / wheel / "suppliers" / f"{supplier_id}.yaml"
+    if not sup_file.exists():
+        return JSONResponse({"ok": False, "error": f"supplier not found: {supplier_id}"}, status_code=404)
+
+    sup_file.unlink()
+    (Path("wheels") / wheel / "outbox" / f"{supplier_id}.txt").unlink(missing_ok=True)
+    log(f"{supplier_id}: deleted from {wheel}")
+    return {"ok": True, "id": supplier_id}
+
+
 # --------------------------------------------------------------------------
 # publish: commit + push whatever the GUI has written to wheels/, gated on a
 # clean build. The GUI writes straight to disk on every save; nothing reaches
@@ -595,6 +632,7 @@ select,input,textarea{font-family:'IBM Plex Mono',monospace;font-size:13px;backg
 textarea{resize:vertical;line-height:1.6}
 button{font-family:'IBM Plex Mono';font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid var(--ink);background:var(--ink);color:var(--stock);cursor:pointer}
 button.ghost{background:transparent;color:var(--ink)}
+button.danger{background:transparent;color:var(--chop);border-color:var(--chop)}
 button:disabled{opacity:.4;cursor:not-allowed}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
 .band{font-family:'IBM Plex Mono';font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:6px;margin:38px 0 16px;display:flex;justify-content:space-between;align-items:baseline}
@@ -949,6 +987,7 @@ function render(){
             <input id="dt-${s.id}" value="${new Date().toISOString().slice(0,10)}"></div>
           <button data-send="${s.id}" onclick="sendReply('${s.id}', this)">Parse reply</button>
           <button class="ghost" onclick="resetSupplier('${s.id}', this)">Reset data</button>
+          <button class="danger" onclick="deleteSupplier('${s.id}', this)">Delete supplier</button>
         </div>
         <span class="lbl">Quoted data · dashed border means still unanswered</span>
         <div class="grid" style="margin-top:8px">${fields}${extracted}</div>
@@ -1012,6 +1051,33 @@ async function resetSupplier(id,btn){
     toast("Reset failed: "+e.message,"bad");
   }finally{
     if(btn&&btn.isConnected){btn.textContent=label;btn.disabled=false;}
+  }
+}
+async function deleteSupplier(id,btn){
+  const ok=await ask({
+    title:"Delete "+id.replace(/-/g," "),
+    body:`<p>Removes this supplier from the sheet entirely. Unlike Reset, this
+      is not something re-parsing their replies can undo.</p>
+      <p><b>Raw replies stay on disk</b> in <code>replies/</code>, but nothing
+      on the sheet will reference this supplier again.</p>`,
+    ok:"Delete supplier"});
+  if(!ok) return;
+  const label=btn.textContent;
+  btn.textContent="Deleting...";btn.disabled=true;
+  try{
+    const r=await post("/api/delete-supplier/"+id,{wheel:S.wheel});
+    if(r&&r.ok){
+      S.suppliers=S.suppliers.filter(s=>s.id!==id);
+      if(OPEN===id)OPEN=null;
+      render();
+      toast(id+" deleted.");
+    }else{
+      toast("Delete failed: "+((r&&r.error)||"the server did not return a result."),"bad");
+      if(btn.isConnected){btn.textContent=label;btn.disabled=false;}
+    }
+  }catch(e){
+    toast("Delete failed: "+e.message,"bad");
+    if(btn.isConnected){btn.textContent=label;btn.disabled=false;}
   }
 }
 

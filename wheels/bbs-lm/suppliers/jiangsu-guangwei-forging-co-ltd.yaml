@@ -1,0 +1,98 @@
+id: jiangsu-guangwei-forging-co-ltd
+wheel: bbs-lm
+listings:
+- https://www.alibaba.com/product-detail/GVICHN-Brand-High-Quality-Car-Forged_10000006663362.html?spm=a2700.image-text-search.normal_offer.d_title.a87967afJ7UHLD&priceId=6e812450c2e747bb9853c78c2c3c667a
+supplier_url: https://gwwheels.en.alibaba.com/
+affiliate_url: null
+from_listing:
+  supplier_name: Jiangsu Guangwei Forging Co., Ltd.
+  business_type: manufacturer
+  years_on_platform: 5
+  staff_count: 60
+  factory_area_sqm: 5000
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 380
+  listed_price_high: 380
+  moq: 4 pieces
+  listed_lead_time: 20-28 days
+  sizes_offered:
+  - 15"
+  - 16"
+  - 17"
+  - 18"
+  - 19"
+  - 20"
+  - 21"
+  - 22"
+  - 24"
+  - 26"
+  bolt_patterns:
+  - 5 hole
+  - 6 hole
+  - 100mm
+  - 108mm
+  - 112mm
+  - 114.3mm
+  - 115mm
+  - 120mm
+  - 120.65mm
+  - 127mm
+  - 130mm
+  - 139.7mm
+  - 165.1mm
+  offsets_offered:
+  - 0mm
+  - 10mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 40mm
+  - 42mm
+  - 45mm
+  finishes:
+  - Hyper Black
+  - Polished
+  - Brushed
+  - Deep Dish
+  construction: forged
+  certs_claimed: []
+  main_image_url: null
+  store_rating: 4.8
+  review_count: 558
+  response_time: ≤2h
+  on_time_dispatch: 98.8%
+  reorder_rate: 25%
+  units_sold: null
+  transit_time: Est. 20-28 days
+from_quote:
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  forging_process: null
+  piece_count: null
+  cert_document: null
+  freight_cif_usd: null
+  manufacturing_time: null
+  shipping_time: null
+  is_manufacturer: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+  size_chart: null
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: null
+  quote_construction: null
+  certs_claimed: null
+  landed_total_usd: null
+meta:
+  listing_seen: '2026-08-15'
+  rfq_sent: null
+  reply_received: null
+  questions_answered: null
+flags: []

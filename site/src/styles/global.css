@@ -23,21 +23,21 @@
   /* A real dark theme, not just a dimmer paper. --ink and --stock swap roles
      rather than getting new names, because every rule in this file already
      reads "text is ink, background is stock" and renaming would mean
-     touching every one of them for no visual reason. Same warm sage hue
-     family (~85°) the light theme used, kept dark instead of generic
-     charcoal, so it still reads as this site.
-     --stock2/--stock3 go LIGHTER than --stock now, not darker: elevated
-     surfaces (a supplier card, the top-ranked card) read as "raised" on a
-     dark page the way they read as "sunken" on a light one, and doing it the
-     old way here would make every card look like a hole punched in the page.
-     chop and bronze are both brightened for legibility against a dark
-     ground; the rest of the ratios are checked, not eyeballed. Against
-     --stock: ink 11.9:1, soft 6.1:1, chop 4.4:1, bronze 6.1:1. Against the
-     lighter --stock2 card surfaces: ink 9.8:1, soft 5.1:1, chop 3.9:1,
-     bronze 5.0:1. Nudged one step lighter than the first pass (11%/16%/21%
-     lightness -> 16%/21%/26%) on request; chop was bumped again with it,
-     since it is the one color that was already closest to its floor. */
-  --stock:#2A2F23; --stock2:#373C2F; --stock3:#44493C;
+     touching every one of them for no visual reason.
+     --stock is neutral grey, no hue tint, on request: the first two passes
+     kept the light theme's warm sage hue (~85°) at dark lightness, which
+     read as olive rather than grey. --stock2/--stock3 stay LIGHTER than
+     --stock, not darker: elevated surfaces (a supplier card, the top-ranked
+     card) need to read as "raised" on a dark page the way they read as
+     "sunken" on a light one, and doing it the old way would make every card
+     look like a hole punched in the page. Same three lightness tiers as
+     before (16%/21%/26%), just desaturated.
+     chop and bronze stay warm/tinted on purpose -- they are accent colors,
+     not the background, and a fully neutral accent would stop reading as an
+     accent. Contrast, checked not eyeballed. Against --stock: ink 12.6:1,
+     soft 6.5:1, chop 5.0:1, bronze 6.4:1. Against the lighter --stock2 card
+     surfaces: ink 10.4:1, soft 5.4:1, chop 4.1:1, bronze 5.3:1. */
+  --stock:#292929; --stock2:#363636; --stock3:#424242;
   --ink:#EDEFEB; --soft:#A9AFA1; --rule:#53594A;
   --chop:#E67765; --bronze:#CFA659;
   --trans-fast:150ms cubic-bezier(0.4,0,0.2,1);

@@ -51,15 +51,18 @@ from_listing:
   units_sold: 200
   transit_time: Est. 20-28 days
 from_quote:
-  price_per_wheel_1set: null
+  price_per_wheel_1set: 367
   price_per_wheel_4set: null
-  forging_process: null
-  piece_count: null
-  cert_document: null
-  freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
-  is_manufacturer: null
+  forging_process: fully forged, 6061-T6, 12000 tons press
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: claimed without document
+  freight_cif_usd: 305
+  manufacturing_time: 30-45 days for 2-piece
+  shipping_time: 22 days after ship departs
+  is_manufacturer: true
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
@@ -67,16 +70,29 @@ from_quote:
   size_chart: null
   weight_kg: null
   load_rating_kg: null
-  forged_confirmed: null
-  quote_construction: null
-  certs_claimed: null
-  landed_total_usd: null
+  forged_confirmed: true
+  quote_construction: 2-piece
+  certs_claimed:
+  - JWL
+  - VIA
+  landed_total_usd: 1773
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-08-15'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-08-23'
+  questions_answered: 8/13
   rfq_first_sent: '2026-08-15'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-flags: []
+  first_reply: '2026-08-23'
+  reply_count: 2
+  reply_notes:
+  - '2026-08-23: No pricing provided. Forging process specifies 6061-T6 material and
+    12000 tons press. JWL/VIA compliance claimed but no documentation offered.'
+  - '2026-08-23: Monoblock option also quoted at $178/wheel, $1017 all-in. Supplier
+    states 12000 ton press capacity. JWL/VIA standards claimed but no certification
+    document provided.'
+  catalog_offered: true
+  factory_address: Taizhou, Jiangsu province
+flags:
+- cert claimed, no document

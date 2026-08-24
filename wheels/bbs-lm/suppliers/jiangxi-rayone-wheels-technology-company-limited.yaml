@@ -60,7 +60,7 @@ from_quote:
   freight_cif_usd: null
   manufacturing_time: null
   shipping_time: null
-  is_manufacturer: null
+  is_manufacturer: true
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
@@ -74,10 +74,16 @@ from_quote:
   landed_total_usd: null
 meta:
   listing_seen: '2026-08-15'
-  rfq_sent: '2026-08-15'
-  reply_received: null
-  questions_answered: null
+  rfq_sent: '2026-08-24'
+  reply_received: '2026-08-24'
+  questions_answered: 1/13
   rfq_first_sent: '2026-08-15'
-  rfq_round: 1
+  rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-flags: []
+  first_reply: '2026-08-24'
+  reply_count: 1
+  reply_notes:
+  - '2026-08-24: Supplier stated only ''We are a factory'' with no technical details
+    provided'
+flags:
+- constructions offered not confirmed

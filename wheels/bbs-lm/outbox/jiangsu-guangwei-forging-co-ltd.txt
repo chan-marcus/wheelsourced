@@ -7,12 +7,6 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  - Price for one wheel, and for a set of 4.
-  - How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?
-  - Which types can you make: monoblock (1-piece), 2-piece, 3-piece? List all, not only this wheel.
-  - Which certifications does this wheel have? (DOT, JWL, VIA, TUV, etc.) Can you send the certificate?
-  - How much is the shipping to Los Angeles CA 90210, USA? Please give the shipping cost by itself. Do not include the price of the wheels. Include duty, port fees and tariffs.
-  - How many days to make the wheels? How many days to ship them to Los Angeles CA 90210, USA?
-  - Are you the factory, or a trading company? What is the factory address?
+  - What is your heat treatment process? Which temper (for example T6)? How many hours?
 
 Thank you.

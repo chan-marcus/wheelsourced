@@ -75,24 +75,37 @@ from_quote:
   certs_claimed:
   - JWL
   - VIA
-  landed_total_usd: 1773
+  landed_total_usd: 1933
 meta:
   listing_seen: '2026-08-15'
-  rfq_sent: '2026-08-15'
-  reply_received: '2026-08-23'
+  rfq_sent: '2026-08-24'
+  reply_received: '2026-08-24'
   questions_answered: 8/13
   rfq_first_sent: '2026-08-15'
-  rfq_round: 1
+  rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-08-23'
-  reply_count: 2
+  reply_count: 5
   reply_notes:
   - '2026-08-23: No pricing provided. Forging process specifies 6061-T6 material and
     12000 tons press. JWL/VIA compliance claimed but no documentation offered.'
   - '2026-08-23: Monoblock option also quoted at $178/wheel, $1017 all-in. Supplier
     states 12000 ton press capacity. JWL/VIA standards claimed but no certification
     document provided.'
+  - '2026-08-23: Price $367 per wheel quoted for 1 set; includes options: lip polished
+    $20x4, brushed aluminum $20x4. Shipping $305 door-to-door including tax. Total
+    $1933 for wheels and shipping. Custom aluminum caps $10/piece or Nissan plastic
+    caps free. Shipping time 22 days after departure.'
+  - '2026-08-23: Single all-in figure for wheels and shipping combined; no separate
+    component prices provided'
+  - '2026-08-24: Price per wheel stated as $367. Lip polished $20/wheel, brushed aluminum
+    $20/wheel available. Shipping $305 door-to-door including all tax. Total $1933
+    for set of 4 wheels plus shipping. Center cap options: Nissan plastic free or
+    custom aluminum $10/piece.'
   catalog_offered: true
   factory_address: Taizhou, Jiangsu province
+  revisions:
+  - '2026-08-23 landed_total_usd: 1773 -> 1933'
 flags:
 - cert claimed, no document
+- changed answer between rounds

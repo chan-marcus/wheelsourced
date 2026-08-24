@@ -1,0 +1,110 @@
+热处埋实体检验报告
+Heat Treatment Inspection Report
+1、检测目的 Purpose of Inspection
+根据控制计划取样验证热处理工艺。
+Sampling according to control plan and verify the heat treatment process.
+2、样品信息 Sample information
+
+样品名称 Sample description
+轿车轮
+型号规格 Model No.
+HD022
+样品数量 Sample quantity
+1
+取样日期 Date of sample
+2022-3-5
+
+锻造 1#机模具号
+旋压模具号
+1#
+1#Forging machine mould number
+Spinning mould No.
+1#
+
+
+锻造 2#机模具号
+2#Forging machine mould number
+
+1#
+1#锻造+2#旋压+1#热处理
+样品状态
+1#Forgedt2#flow formingtl#Heat
+Sample status
+Treatment
+锻造 3#机模具号
+3#Forging machine mould number
+1#
+炉号
+1# date: 2022-3-4
+Furnace No.
+3、检测项目、依据标准、设备及结论 Testing items, standards, equipment and conclusions.
+
+序号 检测项目
+依据标准
+检测设备
+No.
+Test item
+Standards
+Equipment
+结论
+Result
+1
+化学成分
+GB/T3190-1996 变形铝及铝合金化学成分
+ARL3460 光谱仪
+chemical
+GB/T3190-1996 Chemical
+composition of
+ARL3460 spectrograph PASS
+composition
+aluminum and aluminum alloy
+合格
+2
+机械性能
+GB/T228.1-2010 金属材料 拉伸试验
+WDW-50电子万能试验机 合格
+Mechanical
+GB/T228. 1-2010 Tensile testing of metallic
+50 Electronic
+PASS
+properties
+materials
+universal testing machine
+检测结果 Test result
+4.1化学成分（单位：%）chemical composition （Unit：%）
+元素
+element
+Si %
+Fe %
+Cu %
+Mn %
+Mg %
+Zn %
+Cr %
+Ti %
+A1 %
+要求
+standard
+0.7-0.7
+8
+0. 20-0.
+25
+0. 27-0.3
+0. 1-0.15
+1.05-1.
+15
+≤0.10
+0. 23-0.30
+0. 003-0.05
+
+结果
+Result
+0. 7400
+0. 2249
+0. 2948
+0.1113
+1.1085
+0. 0134
+0. 2434
+0. 0194
+97. 2105

@@ -80,7 +80,33 @@ export async function onRequestPost({ request, env }) {
   // lose entries whenever two people submit at once, since KV has no
   // compare-and-set. List them with the "sug:" prefix to read them back.
   const key = `sug:${Date.now()}:${crypto.randomUUID()}`;
-  await env.SUPPLIER_SUGGESTIONS.put(key, JSON.stringify(entry));
+
+  // The write is the whole endpoint, so a failed write has to be reported as
+  // one. Left unguarded, a KV error escaped the handler and Pages turned it
+  // into a bare 500: the visitor read "Server returned 500", had no way to
+  // tell whether the fault was theirs or ours, and the submission existed
+  // nowhere. The realistic cause is the free tier's 1,000 writes a day, which
+  // is an account-wide budget shared with the visitor counter in
+  // _middleware.js, so it runs out exactly when traffic is heaviest and a
+  // lead is worth the most.
+  //
+  // Same reasoning as the 503 above, one failure mode over: a form that
+  // cannot store a submission has to say so rather than accept it into
+  // nothing. The message says nothing was recorded because that is what makes
+  // retrying the right move instead of a risk of sending twice.
+  //
+  // console.error is the only trace a dropped submission leaves. Without it
+  // the failure is invisible from this end and reads identically to nobody
+  // having submitted at all.
+  try {
+    await env.SUPPLIER_SUGGESTIONS.put(key, JSON.stringify(entry));
+  } catch (e) {
+    console.error("SUPPLIER_SUGGESTIONS put failed", key, e);
+    return json({
+      ok: false,
+      error: "Could not save that right now. Nothing was recorded, so please try again later.",
+    }, 503);
+  }
 
   return json({ ok: true }, 200);
 }

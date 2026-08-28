@@ -7,9 +7,6 @@ Reference spec for all pricing:
 
 Could you confirm:
 
-  - Price for one wheel, and for a set of 4.
-  - Do you do the CNC machining in your own factory, or outsource it?
   - What is your heat treatment process? Which temper (for example T6)? How many hours?
-  - If a wheel arrives out of round, or the finish is damaged, what do you do?
 
 Thank you.

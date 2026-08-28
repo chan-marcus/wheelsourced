@@ -80,7 +80,7 @@ from_listing:
   transit_time: Est. 16-23 days
 from_quote:
   price_per_wheel_1set: 460
-  price_per_wheel_4set: null
+  price_per_wheel_4set: 1840
   forging_process: 6061-T6 forged
   piece_count:
   - 2-piece
@@ -90,10 +90,11 @@ from_quote:
   manufacturing_time: 40 days
   shipping_time: 18 days
   is_manufacturer: true
-  cnc_inhouse: null
+  cnc_inhouse: true
   heat_treat: null
   payment_terms: 50% deposit, 50% before shipping
-  defect_policy: null
+  defect_policy: inspection during production and before shipment, good packaging,
+    damage rarely occurs
   size_chart: null
   weight_kg: null
   load_rating_kg: null
@@ -101,17 +102,17 @@ from_quote:
   quote_construction: null
   certs_claimed:
   - DOT
-  landed_total_usd: null
+  landed_total_usd: 2140
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-08-24'
-  reply_received: '2026-08-24'
-  questions_answered: 9/13
+  reply_received: '2026-08-28'
+  questions_answered: 12/13
   rfq_first_sent: '2026-08-15'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-08-23'
-  reply_count: 2
+  reply_count: 3
   reply_notes:
   - '2026-08-23: Price given as 460 USD per wheel (quantity 1 set assumed); shipping
     300 USD by sea taking 18 days; manufacturing time 40 days; supplier states ''Our
@@ -119,5 +120,8 @@ meta:
   - '2026-08-24: Supplier claims DOT certification but provides no document. States
     both 2-piece and 3-piece can be made but no pricing provided. Heat treatment temper
     stated as T6 but no process detail given.'
+  - '2026-08-28: Price breakdown: 460 USD per wheel × 4 + 300 USD shipping = 2,140
+    USD total. Supplier states they have CNC machines in-house and recently purchased
+    wheel blanks.'
 flags:
 - cert claimed, no document

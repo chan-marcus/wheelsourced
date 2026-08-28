@@ -55,10 +55,13 @@ from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
   forging_process: null
-  piece_count: null
-  cert_document: null
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: provided
   freight_cif_usd: null
-  manufacturing_time: null
+  manufacturing_time: 30 days
   shipping_time: null
   is_manufacturer: true
   cnc_inhouse: null
@@ -75,15 +78,17 @@ from_quote:
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-08-24'
-  reply_received: '2026-08-24'
-  questions_answered: 1/13
+  reply_received: '2026-08-28'
+  questions_answered: 4/13
   rfq_first_sent: '2026-08-15'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-08-24'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-08-24: Supplier stated only ''We are a factory'' with no technical details
     provided'
-flags:
-- constructions offered not confirmed
+  - '2026-08-28: Supplier provided certificate file (公司认证.rar) but no certification
+    names were stated. Buyer expressed interest in forged wheels but supplier did
+    not confirm their forging process or provide pricing.'
+flags: []

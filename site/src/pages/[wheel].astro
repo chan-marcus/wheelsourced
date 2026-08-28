@@ -31,7 +31,11 @@ const quoted = wheel.suppliers.filter((s) => s.replies).length;
 // public domain. Ship only what the page needs: whether the vendor is clean,
 // for the "top" badge.
 const shipped = wheel.suppliers.map(({ flags, ...s }) => ({ ...s, clean: !flags.length }));
-const payload = JSON.stringify({ suppliers: shipped });
+// The slug rides along for the outbound click beacon, which reports which
+// sheet a click came from. Passed explicitly rather than parsed back out of
+// location.pathname, which is the same value only for as long as the route
+// stays /<slug>/.
+const payload = JSON.stringify({ wheel: wheel.slug, suppliers: shipped });
 
 // The rows are built here, at build time, rather than by the script below.
 // See lib/card.js: rendered only in the browser, the entire dataset was
@@ -264,6 +268,46 @@ el("rows").addEventListener("click", (e) => {
   if (!t) return;
   const id = t.dataset.toggle;
   setOpen(t.closest(".v"), id, !open.has(id));
+});
+
+// Outbound clicks on "Open listing", reported to /api/click. The href is left
+// exactly as it is: it stays the real listing URL so a reader can see where an
+// affiliate link goes before taking it, which rules out the usual trick of
+// routing the button through our own domain to count it. See
+// functions/api/click.js for that argument in full.
+//
+// sendBeacon rather than fetch. The button is target="_blank" so this page is
+// not unloading and a fetch would in fact survive, but that is true only for
+// as long as the button opens a new tab: the day it does not, a fetch in flight
+// is cancelled by the navigation and the click is lost. A beacon is queued by
+// the browser and delivered either way, and it cannot be awaited, which is the
+// property that matters here. Counting must not sit between a reader and the
+// listing they asked for.
+//
+// Everything past wheel and supplier is context the server cannot see: how long
+// they had been reading, which sort they had chosen, which row this was under
+// that sort, and whether this supplier's spec sheet was open when they clicked.
+// A click with the details expanded after two minutes on the page is a
+// different event from a click on the top row four seconds in, and the row is
+// the only place that distinction exists.
+const CLICK_ENDPOINT = import.meta.env.DEV ? null : "/api/click";
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("[data-listing]");
+  if (!a || !CLICK_ENDPOINT || !navigator.sendBeacon) return;
+  const id = a.dataset.listing;
+  try {
+    navigator.sendBeacon(CLICK_ENDPOINT, new Blob([JSON.stringify({
+      wheel: D.wheel,
+      supplier: id,
+      sort: sortMode,
+      rank: Number(a.dataset.rank) || null,
+      opened: open.has(id),
+      dwell: Math.round(performance.now() / 1000),
+    })], { type: "application/json" }));
+  } catch {
+    // Never worth interfering with the click itself.
+  }
 });
 
 document.addEventListener("click", (e) => {

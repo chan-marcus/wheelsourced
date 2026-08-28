@@ -98,13 +98,96 @@ async function readDaily(kv, days = 30) {
   return [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]));
 }
 
+// Clicks on the "Open listing" buttons, written by functions/api/click.js.
+//
+// Two questions, answered two different ways on purpose. TOTALS come from key
+// NAMES: the endpoint writes the wheel and the supplier into the key itself,
+// and list() returns names without reading a single value, so every click ever
+// recorded is counted per supplier for zero reads. DETAIL comes from values,
+// and only for the newest few rows that actually get printed. Reading all of
+// them to show forty would be the same waste readFeed exists to avoid.
+//
+// Cursor-paginated rather than trusting one 1000-key page, same as readDaily
+// and for the same reason: a total that silently reads low is worse than one
+// that is missing, because it looks like an answer.
+async function readClicks(kv, detail = 40) {
+  const bySupplier = new Map();
+  const byDay = new Map();
+  const newest = [];
+  let total = 0;
+  let cursor;
+
+  do {
+    const res = await kv.list({ prefix: "clk:", cursor, limit: 1000 });
+    for (const k of res.keys) {
+      // clk:<invertedTimestamp>:<wheel>:<supplier>:<rand>. Both slugs are
+      // matched against /^[a-z0-9-]+$/ before they are ever written, so
+      // splitting on ":" cannot be thrown off by a value containing one.
+      const [, inv, wheel, supplier] = k.name.split(":");
+      if (!supplier) continue;
+      total++;
+      const pair = `${wheel}/${supplier}`;
+      bySupplier.set(pair, (bySupplier.get(pair) || 0) + 1);
+      const day = new Date(1e15 - Number(inv)).toISOString().slice(0, 10);
+      byDay.set(day, (byDay.get(day) || 0) + 1);
+      // The inverted timestamp means lexicographic order IS newest-first, so
+      // the first keys seen are the newest ones and no sort is needed.
+      if (newest.length < detail) newest.push(k.name);
+    }
+    cursor = res.list_complete ? null : res.cursor;
+  } while (cursor);
+
+  const rows = (await Promise.all(newest.map((n) => kv.get(n, "json")))).filter(Boolean);
+
+  return {
+    total,
+    rows,
+    today: byDay.get(new Date().toISOString().slice(0, 10)) || 0,
+    people: new Set(rows.map((r) => r.vid).filter(Boolean)).size,
+    bySupplier: [...bySupplier.entries()].sort((a, b) => b[1] - a[1]),
+  };
+}
+
+// What is known about each visitor from the pageview feed, keyed by visitor id.
+// This is what turns a click from a tally mark into a person: the click record
+// itself knows where they were and what they took, and this knows what they
+// read on the way there and where they arrived from.
+//
+// Built from the same 100 rows readFeed already fetched, so it costs nothing
+// extra -- and it is bounded by that, which is a real limit worth knowing:
+// a click from someone whose pageviews have already scrolled out of the
+// window shows its own fields and an empty session, rather than a wrong one.
+function visitorIndex(feed) {
+  const m = new Map();
+  // Walked oldest-first. The feed arrives newest-first because that is the
+  // order the page prints it in, but a session is a journey and every field
+  // built here is about its ORDER: the path list should read the way they
+  // browsed it, and the referrer worth keeping is the one they arrived on,
+  // not whichever off-site link they touched most recently. Reversing once
+  // here is what makes both of those the plain reading of the loop instead of
+  // two separate off-by-one arguments in comments.
+  for (const v of [...feed].reverse()) {
+    let e = m.get(v.vid);
+    if (!e) m.set(v.vid, (e = { views: 0, paths: [], isNew: false, ref: null }));
+    e.views++;
+    if (!e.paths.includes(v.path)) e.paths.push(v.path);
+    if (v.isNew) e.isNew = true;
+    if (v.ref && !e.ref) e.ref = v.ref;
+  }
+  return m;
+}
+
 async function readTraffic(kv) {
   if (!kv) return null;
-  const [feed, daily] = await Promise.all([readFeed(kv), readDaily(kv)]);
+  const [feed, daily, clicks] = await Promise.all([
+    readFeed(kv), readDaily(kv), readClicks(kv),
+  ]);
   const today = new Date().toISOString().slice(0, 10);
   return {
     feed,
     daily,
+    clicks,
+    visitors: visitorIndex(feed),
     uniquesToday: daily.find(([d]) => d === today)?.[1] || 0,
     uniques30: daily.reduce((t, [, n]) => t + n, 0),
     // Distinct people in the feed window, which the stable visitor id makes
@@ -182,6 +265,24 @@ tr.child.hidden{display:none}
   border:1px solid var(--rule);border-bottom:none;background:var(--stock2)}
 .tab.on{color:var(--ink);background:var(--stock);border-color:var(--ink);
   position:relative;top:2px}
+/* Supplier names are long slugs, so the click chart needs a far wider label
+   column than the date labels the day chart was built for. */
+.bars.wide .bar{grid-template-columns:minmax(0,330px) 1fr 60px}
+.bars.wide .bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars.wide .bar span em{font-style:normal;color:var(--bronze)}
+/* The expanded half of a click row: everything that did not fit in six
+   columns, which is most of what makes the click worth reading. */
+.detail{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));
+  gap:11px 26px;margin:0;padding:4px 0 10px}
+.detail dt{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:3px}
+.detail dd{margin:0;font-size:12.5px;word-break:break-word}
+.detail dd.q{color:var(--soft)}
+.hot{color:var(--bronze)}
+/* td sets word-break:break-word so a long referrer URL cannot widen the
+   table. A slug is not a URL and must not be broken mid-word: "lmgt4" wrapped
+   to "lmgt" over "4" and read as a different wheel. */
+td.slug{white-space:nowrap}
 </style></head><body><div class="sheet">
 <header><a class="logo" href="/">Wheel<em>Sourced</em></a>${body.showLogout ? '<a class="logout" href="/stats?logout=1">Log out</a>' : ""}</header>
 ${body.tabs || ""}
@@ -277,8 +378,11 @@ export async function onRequestGet({ request, env }) {
     // person with anyone else's view between them still get their own group
     // -- "grouped" means "consecutive", not "this hash already appeared
     // somewhere above".
+    // One timestamp formatter for both tables. Pinned to Pacific because the
+    // person reading this page is in it; the stored value is UTC.
     const when = (v) => esc(new Date(v.ts).toLocaleString("en-US", {
       timeZone: "America/Los_Angeles", dateStyle: "short", timeStyle: "medium" }));
+
     const ref = (v) => v.ref ? `<a href="${esc(v.ref)}" rel="noopener nofollow">${esc(v.ref)}</a>` : "Direct";
 
     const rowsHtml = [];
@@ -316,6 +420,117 @@ export async function onRequestGet({ request, env }) {
     }
     const feedRows = rowsHtml.join("");
 
+    // ---- Open listing clicks -------------------------------------------
+    //
+    // The section that answers "who", not just "how many". A click on its own
+    // is a tally mark; a click next to how long they had been reading, which
+    // sort they had chosen, which row they took under it, whether they had the
+    // spec sheet open, and what else they read that session is a prospect with
+    // a shape. All of it comes from two places already paid for: the click
+    // record itself, and the pageview feed above joined on the visitor id.
+    const C = traffic.clicks;
+
+    // Seconds to something readable. Not a duration library: the only two
+    // cases are "under a minute" and "over one".
+    const dur = (n) => n == null ? null
+      : n < 60 ? `${n}s` : `${Math.floor(n / 60)}m ${String(n % 60).padStart(2, "0")}s`;
+    const place = (c) => [c.city, c.region, c.country].filter(Boolean).join(", ") || null;
+    // Sort keys as the reader saw them, not as the <select> stores them.
+    const SORTS = { vetting: "best vetted", price: "cheapest", rating: "store rating",
+                    age: "store age", reorder: "reorder rate" };
+    const dim = (v) => v ? esc(v) : '<span style="color:var(--soft)">not recorded</span>';
+
+    let clicksHtml;
+    if (!C.total) {
+      clicksHtml = `
+      <h1>Open listing clicks</h1>
+      <p class="empty">No listing clicks recorded yet. Counting starts from the
+        next click on an Open listing button.</p>`;
+    } else {
+      const maxC = Math.max(...C.bySupplier.map(([, n]) => n), 1);
+      const supplierBars = C.bySupplier.slice(0, 12).map(([pair, n]) => {
+        const [wheel, supplier] = pair.split("/");
+        return `
+        <div class="bar"><span title="${esc(pair)}"><em>${esc(wheel)}</em> ${esc(supplier)}</span>
+          <div class="track"><div class="fill" style="width:${Math.round((n / maxC) * 100)}%"></div></div>
+          <div class="n"><b>${n}</b></div></div>`;
+      }).join("");
+
+      const clickRows = C.rows.map((c, i) => {
+        const who = c.vid ? traffic.visitors.get(c.vid) : null;
+        const g = `c${i}`;
+        // A visitor is called New off the pageview feed rather than off the
+        // click, because the click endpoint deliberately does not do the KV
+        // read that would answer it: _middleware.js already did, one request
+        // earlier, for this same person.
+        const isNew = who?.isNew;
+        // The two signals worth surfacing without expanding the row. Opening
+        // the spec sheet is the one that says the vetting was actually read,
+        // which is the entire premise of the site, so it gets the accent.
+        const signal = [
+          c.opened ? '<span class="hot">read specs</span>' : null,
+          dur(c.dwell) ? `${esc(dur(c.dwell))} on page` : null,
+        ].filter(Boolean).join(", ") || "not recorded";
+
+        return `
+      <tr class="group-toggle ${isNew ? "new" : ""}" data-group="${g}">
+        <td class="vid"><span class="arrow">&#9656;</span>${c.vid ? esc(c.vid) : "unknown"}${
+          isNew ? '<span class="badge">New</span>' : ""}</td>
+        <td>${esc(c.supplier)}</td>
+        <td class="dim slug">${esc(c.wheel)}</td>
+        <td class="when dim">${when(c)}</td>
+        <td class="dim">${signal}</td>
+        <td class="dim">${dim(place(c))}</td>
+      </tr>
+      <tr class="child hidden" data-group="${g}">
+        <td colspan="6">
+          <dl class="detail">
+            <div><dt>Row taken</dt><dd>${
+              c.rank ? `#${c.rank} of the list` : '<span class="q">not recorded</span>'}${
+              c.sort ? `, sorted by ${esc(SORTS[c.sort] || c.sort)}` : ""}</dd></div>
+            <div><dt>Spec sheet</dt><dd>${
+              c.opened ? "expanded before clicking" : '<span class="q">not opened</span>'}</dd></div>
+            <div><dt>Time on page</dt><dd>${dim(dur(c.dwell))}</dd></div>
+            <div><dt>Device</dt><dd>${dim(c.device)}</dd></div>
+            <div><dt>Network</dt><dd>${dim(c.network)}</dd></div>
+            <div><dt>Arrived from</dt><dd>${
+              who?.ref ? `<a href="${esc(who.ref)}" rel="noopener nofollow">${esc(who.ref)}</a>`
+                       : '<span class="q">Direct, or outside the feed window</span>'}</dd></div>
+            <div style="grid-column:1/-1"><dt>Pages read this session</dt><dd>${
+              who?.paths?.length
+                ? `${who.views} view${who.views === 1 ? "" : "s"}: ${esc(who.paths.join(" \u2192 "))}`
+                : '<span class="q">Their pageviews have scrolled out of the feed window</span>'}</dd></div>
+          </dl>
+        </td>
+      </tr>`;
+      }).join("");
+
+      clicksHtml = `
+      <h1>Open listing clicks</h1>
+      <dl class="tiles">
+        <div class="tile key"><dt>Clicks today</dt><dd>${C.today}</dd></div>
+        <div class="tile key"><dt>Clicks <small>(90d)</small></dt><dd>${C.total}</dd></div>
+        <div class="tile"><dt>Visitors who clicked <small>(last ${C.rows.length})</small></dt><dd>${C.people}</dd></div>
+        <div class="tile"><dt>Suppliers clicked</dt><dd>${C.bySupplier.length}</dd></div>
+      </dl>
+      <p style="font-size:11.5px;color:var(--soft);margin:0 0 22px">
+        A click is one press of an Open listing button, counted by the page
+        rather than by a redirect, so the button still goes straight to the
+        listing it names. Clicks from readers running no JavaScript are not
+        counted. <b style="color:var(--bronze)">read specs</b> means the
+        supplier's spec sheet was expanded at the moment they clicked.</p>
+
+      <h1>Clicks by supplier</h1>
+      <div class="bars wide">${supplierBars}</div>
+
+      <h1>Recent clicks</h1>
+      <p style="font-size:11.5px;color:var(--soft);margin:-6px 0 14px">
+        Click a row for what the visitor did before taking the link.</p>
+      <table><thead><tr><th>Visitor ID</th><th>Supplier</th><th>Wheel</th>
+        <th>Clicked at</th><th>Engagement</th><th>Where</th></tr></thead>
+      <tbody>${clickRows}</tbody></table>`;
+    }
+
     trafficHtml = `
       <dl class="tiles">
         <div class="tile key"><dt>Unique visitors today</dt><dd>${traffic.uniquesToday}</dd></div>
@@ -332,11 +547,17 @@ export async function onRequestGet({ request, env }) {
       <h1>Unique visitors by day</h1>
       <div class="bars">${traffic.daily.map(([day, n]) => bar(day, n, maxU)).join("")}</div>
 
+      ${clicksHtml}
+
       <h1>Recent page views</h1>
       <table id="feed"><thead><tr><th>Visitor ID</th><th>Path</th><th>Visited at</th><th>Referrer</th><th>Country</th></tr></thead>
       <tbody>${feedRows}</tbody></table>
       <script>
-      document.getElementById('feed').addEventListener('click', (e) => {
+      // Delegated on document rather than on #feed, because there are two
+      // expandable tables now: grouped pageviews and the click rows above.
+      // Group ids are unique per table (g0.. and c0..) so one handler cannot
+      // open the wrong table's children.
+      document.addEventListener('click', (e) => {
         const tr = e.target.closest('tr.group-toggle');
         if (!tr) return;
         const g = tr.dataset.group;

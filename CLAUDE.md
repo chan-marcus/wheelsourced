@@ -250,6 +250,29 @@ holds email addresses typed into a public form by people who are not us.
 `wheel_requests.json` predates that decision and is tracked, and it already has
 an address in it.
 
+**Outbound clicks are counted by the page, not by a redirect.** "Open listing"
+posts to `/api/click` with `sendBeacon` and the href stays the real affiliate
+URL. The obvious alternative, pointing the button at `/go/<supplier>` and
+redirecting, catches every click including the JS-disabled ones, and it is not
+available here: the href IS the disclosure, and hiding where an affiliate link
+goes is the one thing this site cannot do to buy a few percent of coverage.
+Clicks from readers running no JS are not counted, on purpose.
+
+It writes to `SITE_STATS`, the namespace `_middleware.js` already uses, so
+there is no new binding. There IS a new draw on the free plan's 1,000 writes a
+day, which is account-wide and shared with both forms: one write per click.
+That is why there is no separate per-supplier rollup key. The wheel and the
+supplier are written INTO the key (`clk:<inv>:<wheel>:<supplier>:<rand>`), and
+`kv.list()` returns key names without reading values, so `/stats` totals every
+click per supplier for zero reads and one write covers both the feed and the
+counts. Both slugs are matched against `/^[a-z0-9-]+$/` before the key is
+built, which is what makes splitting on ":" safe to read back.
+
+Unlike the forms, a failed write returns 204 anyway. `sendBeacon` discards the
+response and the reader is already on their way to Alibaba, so there is nobody
+to tell; `console.error` is the only trace. Nothing is tracked under
+`astro dev`, so dev clicks cannot land in production numbers.
+
 **`backfill` fills one field from the archive without churning the rest.**
 Adding a field to `REPLY_SCHEMA` leaves it null on every record parsed before
 it existed, and `ingest --force` is a bad way to fix that: it re-reads every

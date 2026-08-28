@@ -85,7 +85,8 @@ from_listing:
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
-  forging_process: 6061-T6 aluminum, flow-formed types also offered
+  forging_process: 6061-T6 aluminum, forged (1-piece, 2-piece, 3-piece) and flow-formed
+    types
   piece_count:
   - monoblock
   - 2-piece
@@ -96,13 +97,13 @@ from_quote:
   shipping_time: null
   is_manufacturer: true
   cnc_inhouse: null
-  heat_treat: 6061-T6
+  heat_treat: T6
   payment_terms: null
   defect_policy: null
-  size_chart: 18x9.5J, ET+22, 5x114.3
+  size_chart: 18x9.5J, ET+22, 5x114.3; customization available
   weight_kg: null
   load_rating_kg: null
-  forged_confirmed: false
+  forged_confirmed: true
   quote_construction: null
   certs_claimed:
   - DOT
@@ -112,19 +113,27 @@ from_quote:
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-08-24'
-  reply_received: '2026-08-24'
+  reply_received: '2026-08-28'
   questions_answered: 5/13
   rfq_first_sent: '2026-08-15'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-08-24'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-08-24: Supplier claims 6061-T6 forged wheels and separately mentions flow-formed
     types; flow-forming indicates cast centre, so forged_confirmed is false. Pricing
     and LA shipping costs promised but not yet provided. Customization available.'
+  - '2026-08-28: Supplier stated they will provide accurate quotation and answer all
+    detailed questions (pricing, shipping to LA, lead times, CNC in-house status,
+    payment terms, defect policy) after confirming center cap style and wheel hub
+    cap details. No prices, shipping costs, or policy details provided in this thread
+    yet. Claimed capability for monoblock, 2-piece, 3-piece, and flow-formed; flow-formed
+    means cast centre with spun barrel.'
   factory_address: Room 201, No. 788, Nanhe Road, Kunshan
+  revisions:
+  - '2026-08-28 forged_confirmed: False -> True'
 flags:
 - cert claimed, no document
-- listing says forged, supplier says not forged
 - flow formed, cast centre, not press forged
+- changed answer between rounds

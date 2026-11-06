@@ -35,7 +35,7 @@ const SUGGEST_ENDPOINT =
     </a>
   </header>
 
-  <div class="preamble" style="margin-top:26px;">
+  <div class="preamble" style="margin-top:1.625rem;">
     <p><b>Don't see a wheel you're after, or know where to find one?</b> Two ways to point us at it: name the style you want, or send the listing yourself if you've already found a factory making it. Either way it goes into the same vetting queue as everything else here — nothing is published until it has been asked the same questions.</p>
   </div>
 
@@ -45,44 +45,44 @@ const SUGGEST_ENDPOINT =
       <div><label for="wheel-name">Wheel name</label>
         <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required /></div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
-      <input id="wheel-alert" type="checkbox" style="width:16px;height:16px;cursor:pointer;" />
-      <label for="wheel-alert" style="font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me once it's vetted</label>
+    <div style="display:flex;align-items:center;gap:.625rem;margin-top:.875rem;">
+      <input id="wheel-alert" type="checkbox" style="width:1rem;height:1rem;cursor:pointer;" />
+      <label for="wheel-alert" style="font-family:'IBM Plex Mono';font-size:.59375rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me once it's vetted</label>
     </div>
-    <div id="wheel-emailfield" class="mgrid" style="display:none;margin-top:12px;">
+    <div id="wheel-emailfield" class="mgrid" style="display:none;margin-top:.75rem;">
       <div><label for="wheel-email">Email</label>
         <input id="wheel-email" type="email" placeholder="you@example.com" />
-        <div style="font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:6px;">We'll email you once we have vetted vendors for this wheel.</div></div>
+        <div style="font-family:'IBM Plex Mono';font-size:.6875rem;color:var(--soft);margin-top:.375rem;">We'll email you once we have vetted vendors for this wheel.</div></div>
     </div>
-    <div id="wheel-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--chop);border:1px solid var(--chop);padding:8px 10px;margin-top:14px;"></div>
+    <div id="wheel-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:.71875rem;color:var(--chop);border:1px solid var(--chop);padding:.5rem .625rem;margin-top:.875rem;"></div>
     <div class="mfoot"><button class="btn" type="submit">Submit request</button></div>
   </form>
 
-  <div class="band" style="margin-top:44px;">Suggest a supplier</div>
-  <p class="mhint" style="margin-top:-6px;">An Alibaba or 1688 listing, for a wheel we don't have a page for yet. We do the vetting, so the listing is a starting point rather than a recommendation.</p>
+  <div class="band" style="margin-top:2.75rem;">Suggest a supplier</div>
+  <p class="mhint" style="margin-top:-.375rem;">An Alibaba or 1688 listing, for a wheel we don't have a page for yet. We do the vetting, so the listing is a starting point rather than a recommendation.</p>
   <form id="sg-form" data-endpoint={SUGGEST_ENDPOINT}>
     <div class="mgrid">
       <div><label for="sg-url">Listing URL</label>
         <input id="sg-url" type="url" required placeholder="https://www.alibaba.com/product-detail/..." /></div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
-      <input id="sg-alert" type="checkbox" style="width:16px;height:16px;cursor:pointer;" />
-      <label for="sg-alert" style="font-family:'IBM Plex Mono';font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me when it is vetted</label>
+    <div style="display:flex;align-items:center;gap:.625rem;margin-top:.875rem;">
+      <input id="sg-alert" type="checkbox" style="width:1rem;height:1rem;cursor:pointer;" />
+      <label for="sg-alert" style="font-family:'IBM Plex Mono';font-size:.59375rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin:0;">Alert me when it is vetted</label>
     </div>
-    <div id="sg-emailfield" class="mgrid" style="display:none;margin-top:12px;">
+    <div id="sg-emailfield" class="mgrid" style="display:none;margin-top:.75rem;">
       <div><label for="sg-email">Email</label>
         <input id="sg-email" type="email" placeholder="you@example.com" />
-        <div style="font-family:'IBM Plex Mono';font-size:11px;color:var(--soft);margin-top:6px;">Used once, to tell you the verdict on this listing.</div></div>
+        <div style="font-family:'IBM Plex Mono';font-size:.6875rem;color:var(--soft);margin-top:.375rem;">Used once, to tell you the verdict on this listing.</div></div>
     </div>
-    <div id="sg-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:11.5px;color:var(--chop);border:1px solid var(--chop);padding:8px 10px;margin-top:14px;"></div>
+    <div id="sg-error" role="alert" style="display:none;font-family:'IBM Plex Mono';font-size:.71875rem;color:var(--chop);border:1px solid var(--chop);padding:.5rem .625rem;margin-top:.875rem;"></div>
     <div class="mfoot"><button class="btn" type="submit">Send suggestion</button></div>
   </form>
 
-  <div id="banner" hidden style="position:fixed;top:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--stock);padding:14px 22px;font-family:'IBM Plex Mono';font-size:12.5px;z-index:2000;max-width:90%;text-align:center;"></div>
+  <div id="banner" hidden style="position:fixed;top:1.5rem;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--stock);padding:.875rem 1.375rem;font-family:'IBM Plex Mono';font-size:.78125rem;z-index:2000;max-width:90%;text-align:center;"></div>
 
-  <footer style="margin-top:70px;padding:40px 20px;border-top:1px solid var(--ink);text-align:center;color:var(--soft);">
-    <p style="font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px;">WheelSourced © 2026.</p>
-    <p style="font-size:13px;margin:0;max-width:600px;margin-left:auto;margin-right:auto;">A curated sourcing site for aftermarket wheels made by Chinese factories.</p>
+  <footer style="margin-top:4.375rem;padding:2.5rem 1.25rem;border-top:1px solid var(--ink);text-align:center;color:var(--soft);">
+    <p style="font-family:'IBM Plex Mono';font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;margin:0 0 .75rem;">WheelSourced © 2026.</p>
+    <p style="font-size:.8125rem;margin:0;max-width:37.5rem;margin-left:auto;margin-right:auto;">A curated sourcing site for aftermarket wheels made by Chinese factories.</p>
   </footer>
 
 </div>

@@ -74,53 +74,53 @@ const orgSchema = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px 20px;
+    padding: 2.5rem 1.25rem;
   }
   .landing-content {
-    max-width: 800px;
+    max-width: 50rem;
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 3.75rem;
   }
   /* The h1 is the hero now that the wordmark repeat is gone, so it takes the
      display size the wordmark had rather than sitting under it as a subhead. */
   .landing h1 {
     font-family: 'Barlow Condensed';
-    font-size: clamp(38px, 7vw, 68px);
+    font-size: clamp(2.375rem, 7vw, 4.25rem);
     font-weight: 700;
-    margin: 0 0 24px;
+    margin: 0 0 1.5rem;
     line-height: 0.95;
     text-transform: uppercase;
     letter-spacing: 0.01em;
   }
   .landing p.lede {
-    font-size: 16px;
-    max-width: 620px;
+    font-size: 1rem;
+    max-width: 38.75rem;
     margin-left: auto;
     margin-right: auto;
   }
   .landing p.lede a {
     display: inline-block;
-    margin-top: 8px;
+    margin-top: .5rem;
     color: var(--bronze);
     font-family: 'IBM Plex Mono';
-    font-size: 11.5px;
+    font-size: .71875rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
   .landing p {
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 1.6;
     color: var(--soft);
-    margin: 0 0 40px;
+    margin: 0 0 2.5rem;
   }
   .wheels-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 1.5rem;
     width: 100%;
-    max-width: 1200px;
-    margin: 40px auto 0;
+    max-width: 75rem;
+    margin: 2.5rem auto 0;
   }
   @media (max-width: 1024px) {
     .wheels-grid {
@@ -134,27 +134,27 @@ const orgSchema = {
   }
   .wheel-card {
     border: 2px solid var(--ink);
-    padding: 32px 24px;
+    padding: 2rem 1.5rem;
     background: transparent;
     transition: background var(--trans-smooth),transform var(--trans-smooth),box-shadow var(--trans-smooth);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: .75rem;
     align-items: center;
     text-align: center;
   }
   .wheel-image {
-    width: 125px;
-    height: 125px;
+    width: 7.8125rem;
+    height: 7.8125rem;
     object-fit: contain;
-    margin-bottom: 12px;
+    margin-bottom: .75rem;
     transition: transform var(--trans-smooth);
     /* No background of its own. The card is transparent at rest and --stock2
        on hover, so a fixed --stock matte behind the wheel matched the page
        until the card darkened and then sat there as a pale square. A
        transparent PNG should take whatever is behind it. The radius stays for
        a future wheel shot that is an opaque photo rather than line art. */
-    border-radius: 4px;
+    border-radius: .25rem;
   }
   .wheel-card:hover {
     background: var(--stock2);
@@ -168,7 +168,7 @@ const orgSchema = {
   }
   .wheel-card h2 {
     font-family: 'Barlow Condensed';
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: 700;
     margin: 0;
     text-transform: uppercase;
@@ -176,32 +176,32 @@ const orgSchema = {
   }
   .wheel-card .meta {
     font-family: 'IBM Plex Mono';
-    font-size: 12px;
+    font-size: .75rem;
     color: var(--soft);
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
   .wheel-card .count {
     font-family: 'IBM Plex Mono';
-    font-size: 13px;
+    font-size: .8125rem;
     color: var(--ink);
-    margin-top: 8px;
+    margin-top: .5rem;
   }
   .wheel-card a {
     display: inline-block;
     font-family: 'IBM Plex Mono';
-    font-size: 11.5px;
+    font-size: .71875rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 9px 14px;
+    padding: .5625rem .875rem;
     border: 1px solid var(--ink);
     background: var(--ink);
     color: var(--stock);
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s;
-    margin-top: 12px;
+    margin-top: .75rem;
     text-align: center;
   }
   .wheel-card a:hover {
@@ -210,18 +210,18 @@ const orgSchema = {
   }
   .empty-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 3.75rem 1.25rem;
   }
   .empty-state p {
-    font-size: 18px;
+    font-size: 1.125rem;
     color: var(--soft);
-    margin: 20px 0;
+    margin: 1.25rem 0;
   }
 </style>
 </head>
 <body>
 <div class="sheet landing">
-  <header class="masthead" style="width: 100%; max-width: 900px; margin-bottom: 40px;">
+  <header class="masthead" style="width: 100%; max-width: 56.25rem; margin-bottom: 2.5rem;">
     <a class="logo" href="/" aria-label="WheelSourced home">
       <span class="word">Wheel<em>Sourced</em></span>
     </a>
@@ -270,46 +270,46 @@ const orgSchema = {
     </div>
   )}
 
-  <div class="landing-content" style="margin-top: 80px; margin-bottom: 40px;">
-    <p style="font-size: 18px; color: var(--soft);">Don't see a wheel you're interested in?</p>
-    <button onclick="document.getElementById('request-modal').style.display = 'flex'" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; cursor: pointer; transition: all 0.2s;">Request here</button>
+  <div class="landing-content" style="margin-top: 5rem; margin-bottom: 2.5rem;">
+    <p style="font-size: 1.125rem; color: var(--soft);">Don't see a wheel you're interested in?</p>
+    <button onclick="document.getElementById('request-modal').style.display = 'flex'" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: .71875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: .5625rem .875rem; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); text-decoration: none; cursor: pointer; transition: all 0.2s;">Request here</button>
   </div>
 
   <div id="request-modal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;">
-    <div class="modalbox" style="background: var(--stock); border: 2px solid var(--ink); padding: 40px; max-width: 500px; width: 90%;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="margin: 0; font-family: 'Barlow Condensed'; font-size: 24px; font-weight: 700; text-transform: uppercase;">Request a wheel</h2>
-        <button onclick="document.getElementById('request-modal').style.display = 'none'" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+    <div class="modalbox" style="background: var(--stock); border: 2px solid var(--ink); padding: 2.5rem; max-width: 31.25rem; width: 90%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-family: 'Barlow Condensed'; font-size: 1.5rem; font-weight: 700; text-transform: uppercase;">Request a wheel</h2>
+        <button onclick="document.getElementById('request-modal').style.display = 'none'" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
       </div>
-      <form id="wheel-request-form" data-endpoint={REQUEST_ENDPOINT} onsubmit="submitWheelRequest(event)" style="display: flex; flex-direction: column; gap: 16px;">
+      <form id="wheel-request-form" data-endpoint={REQUEST_ENDPOINT} onsubmit="submitWheelRequest(event)" style="display: flex; flex-direction: column; gap: 1rem;">
         <div>
-          <label for="wheel-name" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Wheel name</label>
-          <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
+          <label for="wheel-name" style="display: block; font-family: 'IBM Plex Mono'; font-size: .75rem; font-weight: 600; text-transform: uppercase; margin-bottom: .5rem;">Wheel name</label>
+          <input id="wheel-name" type="text" placeholder="e.g., OZ Futura, Rotiform RSE" required style="width: 100%; padding: .5rem .75rem; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: .875rem; box-sizing: border-box;" />
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <input id="wheel-alert-checkbox" type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" />
-          <label for="wheel-alert-checkbox" style="font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; cursor: pointer; margin: 0;">Alert me</label>
+        <div style="display: flex; align-items: center; gap: .625rem;">
+          <input id="wheel-alert-checkbox" type="checkbox" style="width: 1rem; height: 1rem; cursor: pointer;" />
+          <label for="wheel-alert-checkbox" style="font-family: 'IBM Plex Mono'; font-size: .75rem; font-weight: 600; text-transform: uppercase; cursor: pointer; margin: 0;">Alert me</label>
         </div>
         <div id="wheel-email-field" style="display: none;">
-          <label for="wheel-email" style="display: block; font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Email</label>
-          <input id="wheel-email" type="email" placeholder="you@example.com" style="width: 100%; padding: 8px 12px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 14px; box-sizing: border-box;" />
-          <div style="font-family: 'IBM Plex Mono'; font-size: 11px; color: var(--soft); margin-top: 6px;">We'll alert you once we have vetted vendors for this wheel</div>
+          <label for="wheel-email" style="display: block; font-family: 'IBM Plex Mono'; font-size: .75rem; font-weight: 600; text-transform: uppercase; margin-bottom: .5rem;">Email</label>
+          <input id="wheel-email" type="email" placeholder="you@example.com" style="width: 100%; padding: .5rem .75rem; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: .875rem; box-sizing: border-box;" />
+          <div style="font-family: 'IBM Plex Mono'; font-size: .6875rem; color: var(--soft); margin-top: .375rem;">We'll alert you once we have vetted vendors for this wheel</div>
         </div>
-        <div id="wheel-request-error" role="alert" style="display: none; font-family: 'IBM Plex Mono'; font-size: 11.5px; color: var(--chop); border: 1px solid var(--chop); padding: 8px 10px;"></div>
-        <button type="submit" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); cursor: pointer; transition: all 0.2s;">Submit request</button>
+        <div id="wheel-request-error" role="alert" style="display: none; font-family: 'IBM Plex Mono'; font-size: .71875rem; color: var(--chop); border: 1px solid var(--chop); padding: .5rem .625rem;"></div>
+        <button type="submit" style="display: inline-block; font-family: 'IBM Plex Mono'; font-size: .71875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: .5625rem .875rem; border: 1px solid var(--ink); background: var(--ink); color: var(--stock); cursor: pointer; transition: all 0.2s;">Submit request</button>
       </form>
     </div>
   </div>
 
-  <div id="confirmation" style="position: fixed; top: 40px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--stock); padding: 16px 24px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: 13px; display: none; z-index: 2000; max-width: 90%; text-align: center; animation: slideDown 0.3s ease-out;">
+  <div id="confirmation" style="position: fixed; top: 2.5rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--stock); padding: 1rem 1.5rem; border: 1px solid var(--ink); font-family: 'IBM Plex Mono'; font-size: .8125rem; display: none; z-index: 2000; max-width: 90%; text-align: center; animation: slideDown 0.3s ease-out;">
     Wheel request submitted
   </div>
 
-  <footer style="margin-top: 120px; padding: 40px 20px; border-top: 1px solid var(--ink); text-align: center; color: var(--soft);">
-    <p style="font-family: 'IBM Plex Mono'; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 12px;">
+  <footer style="margin-top: 7.5rem; padding: 2.5rem 1.25rem; border-top: 1px solid var(--ink); text-align: center; color: var(--soft);">
+    <p style="font-family: 'IBM Plex Mono'; font-size: .6875rem; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 .75rem;">
       WheelSourced © 2026.
     </p>
-    <p style="font-size: 13px; margin: 0; max-width: 600px; margin-left: auto; margin-right: auto;">
+    <p style="font-size: .8125rem; margin: 0; max-width: 37.5rem; margin-left: auto; margin-right: auto;">
       A curated sourcing site for aftermarket wheels made by Chinese factories.
     </p>
   </footer>

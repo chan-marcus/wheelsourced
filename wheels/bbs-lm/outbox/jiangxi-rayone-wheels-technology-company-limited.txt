@@ -8,7 +8,6 @@ Reference spec for all pricing:
 Could you confirm:
 
   - Price for one wheel, and for a set of 4.
-  - How is it made: press-forged, or flow-formed (rotary forged)? What press tonnage? Which alloy?
   - How much is the shipping to Los Angeles CA 90210, USA? Please give the shipping cost by itself. Do not include the price of the wheels. Include duty, port fees and tariffs.
   - How many days to make the wheels? How many days to ship them to Los Angeles CA 90210, USA?
   - Do you do the CNC machining in your own factory, or outsource it?

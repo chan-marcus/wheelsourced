@@ -79,7 +79,10 @@ from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
   forging_process: null
-  piece_count: null
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
   cert_document: null
   freight_cif_usd: null
   manufacturing_time: null
@@ -94,15 +97,29 @@ from_quote:
   load_rating_kg: null
   forged_confirmed: null
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - DOT
+  - JWL
+  - VIA
+  - ECE
+  - CE
   landed_total_usd: null
 meta:
   listing_seen: '2026-11-06'
   rfq_sent: '2026-11-06'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-11-06'
+  questions_answered: 1/13
   rfq_first_sent: '2026-11-06'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-flags:
-- constructions offered not confirmed
+  first_reply: '2026-11-06'
+  reply_count: 1
+  reply_notes:
+  - '2026-11-06: Supplier lists build capabilities and certification claims without
+    documentation or pricing details.'
+  source_notes:
+    piece_count: From the 12:42 reply carrying the seller-side auto-reply (sparkle)
+      marker, not a human message. Entered on Marcus's instruction 2026-11-07.
+    certs_claimed: Same auto-reply source as piece_count. No certificate was sent,
+      so cert_document is left empty rather than recorded as claimed without document.
+flags: []

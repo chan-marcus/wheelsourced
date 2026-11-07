@@ -3,7 +3,7 @@ wheel: ce28
 listings:
 - https://www.alibaba.com/product-detail/Forged-Wheel-18x9-5-38-5x112_1601811240284.html?spm=a2700.image-text-search.normal_offer.d_title.706a67afnsLuKZ&priceId=a7677ee7f2e64d68a088d13ee9c212bd
 supplier_url: https://xdwheel.en.alibaba.com/
-affiliate_url: null
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601811240284
 from_listing:
   supplier_name: Anhui Xingda Auto Parts Technology Co., Ltd.
   business_type: manufacturer
@@ -61,7 +61,7 @@ from_listing:
   units_sold: 10
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
+  price_per_wheel_1set: 260
   price_per_wheel_4set: null
   forging_process: 6061-T6 forged
   piece_count:
@@ -69,9 +69,9 @@ from_quote:
   - 2-piece
   - 3-piece
   cert_document: claimed without document
-  freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
+  freight_cif_usd: 310
+  manufacturing_time: 20 days
+  shipping_time: 18 days
   is_manufacturer: true
   cnc_inhouse: true
   heat_treat: null
@@ -89,8 +89,8 @@ from_quote:
 meta:
   listing_seen: '2026-11-06'
   rfq_sent: '2026-11-06'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-11-06'
+  questions_answered: 11/13
   rfq_first_sent: '2026-11-06'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
@@ -104,5 +104,10 @@ meta:
     cnc_inhouse: bbs-lm (2026-08-28)
     payment_terms: bbs-lm (2026-08-28)
     defect_policy: bbs-lm (2026-08-28)
+  first_reply: '2026-11-06'
+  reply_count: 1
+  reply_notes:
+  - '2026-11-06: Price quoted per single wheel; sea freight cost 310 USD to port with
+    18-day transit; manufacturing time 20 days.'
 flags:
 - cert claimed, no document

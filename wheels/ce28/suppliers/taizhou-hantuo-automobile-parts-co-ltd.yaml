@@ -78,8 +78,8 @@ from_quote:
   - 3-piece
   cert_document: promised
   freight_cif_usd: 253
-  manufacturing_time: 15 days
-  shipping_time: null
+  manufacturing_time: 25 days
+  shipping_time: 35 days
   is_manufacturer: true
   cnc_inhouse: true
   heat_treat: low-temperature tempering process
@@ -96,8 +96,8 @@ from_quote:
 meta:
   listing_seen: '2026-11-06'
   rfq_sent: '2026-11-06'
-  reply_received: '2026-11-06'
-  questions_answered: 12/13
+  reply_received: '2026-11-07'
+  questions_answered: 13/13
   rfq_first_sent: '2026-11-06'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
@@ -112,15 +112,19 @@ meta:
     payment_terms: bbs-lm (2026-08-28)
     defect_policy: bbs-lm (2026-08-28)
   first_reply: '2026-11-06'
-  reply_count: 2
+  reply_count: 3
   reply_notes:
   - '2026-11-06: Only production time provided; no pricing, specifications, or other
     details given.'
   - '2026-11-06: Quoted $220 per wheel, $880 for 4, sea freight $253, "total of $1133"
     (the sum of wheels and sea freight). Duty and port fees not mentioned, so this
     is not recorded as an all-in total.'
+  - '2026-11-07: Only production and shipping timelines provided; no pricing or technical
+    specifications stated.'
   source_notes:
-    manufacturing_time: Sentence from the 12:42 reply carrying the seller-side auto-reply
-      (sparkle) marker, not a later human message. Entered on Marcus's instruction
-      2026-11-06.
+    manufacturing_time: 'Human reply 2026-11-07 16:59: 25 days. This replaced an earlier
+      15 days taken from the seller-side auto-reply (sparkle) bubble, which the human
+      answer contradicts. The 15 was never a human answer, so it is not a revision.'
+    shipping_time: Human reply 2026-11-07 16:59, written "35- days" (looks cut off,
+      so possibly 35 or more). Stored as 35 days.
 flags: []

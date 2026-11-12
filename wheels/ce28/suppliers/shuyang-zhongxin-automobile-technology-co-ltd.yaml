@@ -83,7 +83,7 @@ from_quote:
   - monoblock
   - 2-piece
   - 3-piece
-  cert_document: claimed without document
+  cert_document: provided
   freight_cif_usd: 260
   manufacturing_time: 25 days
   shipping_time: 18-22 days
@@ -91,7 +91,8 @@ from_quote:
   cnc_inhouse: true
   heat_treat: null
   payment_terms: null
-  defect_policy: null
+  defect_policy: five-year warranty; replacement provided if deformation or crack
+    is not due to human error or accident
   size_chart: null
   weight_kg: null
   load_rating_kg: null
@@ -105,27 +106,36 @@ from_quote:
 meta:
   listing_seen: '2026-11-06'
   rfq_sent: '2026-11-06'
-  reply_received: '2026-11-08'
-  questions_answered: 10/13
+  reply_received: '2026-11-11'
+  questions_answered: 11/13
   rfq_first_sent: '2026-11-06'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-11-06'
-  reply_count: 2
+  reply_count: 3
   reply_notes:
   - '2026-11-06: Supplier lists build capabilities and certification claims without
     documentation or pricing details.'
   - '2026-11-08: Shipping cost of 260 USD stated as door-to-door including taxes with
     no additional fees. Supplier claims capability to make monoblock, 2-piece, 3-piece,
     beadlock, and truck wheels, but no specific construction stated for quoted prices.'
+  - '2026-11-11: Only warranty and payment availability stated; no product specifications
+    provided'
   source_notes:
     piece_count: Human reply 2026-11-08 17:42 confirms monoblock, two-piece and three-piece
       (plus beadlock and truck wheels, not tracked). This replaces an earlier entry
       taken from the auto-reply bubble on 2026-11-07.
     certs_claimed: 'Human reply 2026-11-08: DOT, JWL and VIA. ECE and CE came only
-      from the auto-reply and were removed. No certificate file was sent.'
+      from the auto-reply and were removed.'
+    cert_document: 'Human images 2026-11-11 16:24: a DOT compliance certificate (FMVSS
+      110/120 rim registration, Manufacturer ID 23717), a JWTC certificate of accreditation
+      for her test equipment (VIA A-396, B-352, C-439), and a Verified Pro supplier
+      certificate. The JWTC page accredits test equipment, not a product JWL or VIA
+      certificate.'
+    payment_terms: She sent an Alibaba payment-protection card and wrote "These are
+      the payment methods we support." No deposit or balance terms were given, so
+      this stays empty.
     is_manufacturer: Human reply says "We are a top-ranked factory ... Our factory
       is in Anhui". The auto-reply had said trading company; the human answer is used.
   factory_address: Anhui, China
-flags:
-- cert claimed, no document
+flags: []

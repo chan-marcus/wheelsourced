@@ -89,8 +89,11 @@ from_listing:
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
-  forging_process: null
-  piece_count: null
+  forging_process: press forged from 6061-T6 aerospace-grade aluminium billet
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
   cert_document: null
   freight_cif_usd: null
   manufacturing_time: null
@@ -103,16 +106,39 @@ from_quote:
   size_chart: null
   weight_kg: null
   load_rating_kg: null
-  forged_confirmed: null
+  forged_confirmed: true
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - DOT
+  - JWL
+  - VIA
+  - TUV
+  - CE
   landed_total_usd: null
 meta:
   listing_seen: '2026-11-12'
   rfq_sent: '2026-11-12'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-11-12'
+  questions_answered: 2/13
   rfq_first_sent: '2026-11-12'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
+  first_reply: '2026-11-12'
+  reply_count: 1
+  reply_notes:
+  - '2026-11-12: No pricing provided. Supplier claims certifications (JWL, VIA, DOT,
+    TÜV, CE) but does not offer or attach documents. Forging process stated without
+    specific press tonnage.'
+  source_notes:
+    forging_process: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
+      not a human message. Entered on Marcus's instruction 2026-11-12.
+    piece_count: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
+      not a human message. Entered on Marcus's instruction 2026-11-12.
+    certs_claimed: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
+      not a human message. Entered on Marcus's instruction 2026-11-12. Copies are
+      issued per batch and none was sent, so cert_document is left empty.
+    forged_confirmed: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
+      not a human message. Entered on Marcus's instruction 2026-11-12.
+    is_manufacturer: The auto-reply called them a trading company; their listing says
+      manufacturer plus trading. Left empty until a human answers.
 flags: []

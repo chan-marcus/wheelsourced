@@ -91,7 +91,7 @@ from_listing:
   transit_time: Est. 17-24 days
 from_quote:
   price_per_wheel_1set: 350
-  price_per_wheel_4set: 1740
+  price_per_wheel_4set: null
   forging_process: not stated clearly
   piece_count:
   - monoblock
@@ -131,7 +131,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-08'
   reply_count: 3
-  questions_answered: 11/13
+  questions_answered: 10/13
   reply_notes:
   - '2026-08-08: Price $350/wheel is for 18in size. Polished option adds $30/wheel.
     Door-to-door shipping $340 quoted. Supplier confirmed they do monoblock and 2-piece
@@ -146,6 +146,10 @@ meta:
     type not confirmed by supplier.'
   factory_address: No. 99, Industrial Concentration Zone, Zhangdian Town, Taizhou,
     China
+  source_notes:
+    price: '350 USD each (polish +30 each), door to door shipping 340 USD. The stored
+      1,740 USD was wheels + shipping (4 x 350 + 340), so shipping was counted twice
+      in the landed figure. Set price is now derived: 4 x 350 = 1,400.'
 flags:
 - cert claimed, no document
 - forging process not actually described

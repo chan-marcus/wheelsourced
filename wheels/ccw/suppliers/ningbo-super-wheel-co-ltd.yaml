@@ -89,7 +89,7 @@ from_listing:
   units_sold: null
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: 480
+  price_per_wheel_1set: null
   price_per_wheel_4set: 1660
   forging_process: Solution treatment 530°C for 3-5 hours, rapid water quenching within
     15 seconds, artificial aging 170-175°C for 6-8 hours
@@ -134,7 +134,7 @@ meta:
   first_reply: '2026-08-08'
   reply_received: '2026-08-13'
   reply_count: 6
-  questions_answered: 11/13
+  questions_answered: 10/13
   reply_notes:
   - '2026-08-08: Price per wheel (480 USD) stated for 1 set of 4 wheels; weight given
     as 13-14kg range for unspecified dimensions; load capacity 750-900kg per wheel
@@ -157,9 +157,13 @@ meta:
   - '2026-08-13: Technical specification document describing post-machining heat treatment
     and coating procedures; no supplier identification or commercial terms provided'
   factory_address: Zhejiang
-  revisions:
-  - '2026-08-13 price_per_wheel_4set: 1920 -> 1660'
+  revisions: []
+  source_notes:
+    price: The 480 USD per piece / 1,920 USD set is a 3-piece quote (kept in off_basis_quotes).
+      Their 2-piece price is 1,660 USD for a set (all polish, no centre caps), so
+      per wheel is derived. The '1920 -> 1660' revision was a different construction,
+      not a changed answer.
 flags:
+- quoted 3-piece, no 2-piece price
 - forging process not actually described
-- changed answer between rounds
 affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601363897866

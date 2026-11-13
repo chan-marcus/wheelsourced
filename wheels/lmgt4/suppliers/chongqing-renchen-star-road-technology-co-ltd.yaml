@@ -68,7 +68,7 @@ from_quote:
   weight_kg: null
   load_rating_kg: null
   forged_confirmed: null
-  quote_construction: null
+  quote_construction: monoblock
   certs_claimed: null
   landed_total_usd: null
 meta:
@@ -79,16 +79,6 @@ meta:
   rfq_first_sent: '2026-08-08'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
-  off_basis_quotes:
-  - construction: monoblock
-    seen: '2026-08-09'
-    price_per_wheel_1set: 740
-    price_per_wheel_4set: 740
-    freight_cif_usd: 240
-  - construction: monoblock
-    seen: '2026-08-09'
-    price_per_wheel_4set: 740
-    freight_cif_usd: 240
   first_reply: '2026-08-10'
   reply_count: 2
   reply_notes:
@@ -98,5 +88,8 @@ meta:
     = 1020 USD total for 4 wheels.'
   - '2026-08-10: Price of 740 USD is for 4 wheels (LMGT4 monoblock). Freight 240 USD
     is included in CIF. Caps 40 USD additional. No price given for single wheel.'
-flags:
-- quoted monoblock, no 2-piece price
+  source_notes:
+    price: Vendor confirmed LMGT4 is a 1-piece design. 740 USD for 4 wheels (+40 caps),
+      240 USD sea freight 'includes customs clearance, duties, and door-to-door delivery'.
+      Compared on monoblock (wheels/lmgt4/wheel.yaml).
+flags: []

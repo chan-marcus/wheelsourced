@@ -52,7 +52,7 @@ from_listing:
   transit_time: Est. 20-28 days
 from_quote:
   price_per_wheel_1set: 367
-  price_per_wheel_4set: 1,468
+  price_per_wheel_4set: 1468
   forging_process: fully forged, 6061-T6, 12000 tons press
   piece_count:
   - monoblock
@@ -77,7 +77,7 @@ from_quote:
   certs_claimed:
   - JWL
   - VIA
-  landed_total_usd: 1933
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-08-24'
@@ -114,9 +114,12 @@ meta:
     in-house with production video offered'
   catalog_offered: true
   factory_address: Taizhou, Jiangsu province
-  revisions:
-  - '2026-08-23 landed_total_usd: 1773 -> 1933'
-  - '2026-08-28 price_per_wheel_4set: 1468 -> 367'
+  revisions: []
+  source_notes:
+    price: '2-piece: 367 x 4 = 1,468 USD, sea 305 USD door to door incl. tax. Their
+      1,933 USD total adds optional finishes (lip polish and brushed, 20 USD x 4 each),
+      so it is not stored. The 1,773 USD total is just wheels + freight. Earlier revisions
+      (1773 -> 1933, 1468 -> 367) came from parsing, not from the vendor changing
+      the price.'
 flags:
 - cert claimed, no document
-- changed answer between rounds

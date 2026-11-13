@@ -85,13 +85,13 @@ from_listing:
   units_sold: 18
   transit_time: Est. 16-23 days
 from_quote:
-  price_per_wheel_1set: 289
-  price_per_wheel_4set: 1156
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
   forging_process: 6061-T6
   piece_count:
   - monoblock
   cert_document: claimed without document
-  freight_cif_usd: 300
+  freight_cif_usd: null
   is_manufacturer: true
   cnc_inhouse: true
   heat_treat: 6061-T6
@@ -103,7 +103,7 @@ from_quote:
   weight_kg: null
   load_rating_kg: null
   forged_confirmed: true
-  quote_construction: 2-piece
+  quote_construction: null
   certs_claimed:
   - DOT
   manufacturing_time: 30-40 days
@@ -113,7 +113,7 @@ meta:
   listing_seen: '2026-08-09'
   rfq_sent: '2026-08-08'
   reply_received: '2026-08-08'
-  questions_answered: 13/13
+  questions_answered: 10/13
   rfq_first_sent: '2026-08-07'
   rfq_round: 2
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
@@ -130,8 +130,19 @@ meta:
   - '2026-08-08: Message addresses only defect policy and insurance; no product specifications
     provided'
   factory_address: Ningbo, Zhejiang
+  off_basis_quotes:
+  - construction: 2-piece
+    seen: '2026-08-08'
+    price_per_wheel_1set: 289
+    price_per_wheel_4set: 1156
+    freight_cif_usd: 300
+  source_notes:
+    price: Their 289 USD each / 300 USD freight was quoted against an RFQ whose spec
+      line read '2-piece' (old wording). LMGT4 is monoblock only, so the price is
+      set aside as off-basis until they quote the monoblock.
 flags:
 - cert claimed, no document
 - claims factory, profile says trading
+- quoted 2-piece, no monoblock price
 - forging process not actually described
 affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1600579015054

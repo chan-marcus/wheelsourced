@@ -103,7 +103,7 @@ from_quote:
   quote_construction: null
   certs_claimed:
   - DOT
-  landed_total_usd: 2140
+  landed_total_usd: null
 meta:
   listing_seen: '2026-08-15'
   rfq_sent: '2026-10-25'
@@ -127,5 +127,8 @@ meta:
   - '2026-08-28: Price per wheel quoted as 460 USD; total for 4 wheels stated as 2,140
     USD (460*4+300). Supplier claims they are a factory. Heat treatment process not
     stated despite being asked twice.'
+  source_notes:
+    landed_total_usd: Their 'Total 460*4+300=2,140' is wheels plus freight, not an
+      all-in figure, so it is derived by the site rather than stored.
 flags:
 - cert claimed, no document

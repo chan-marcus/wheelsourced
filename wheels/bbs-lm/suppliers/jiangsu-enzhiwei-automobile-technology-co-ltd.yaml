@@ -69,11 +69,11 @@ from_listing:
   - Silver Polish
   construction: forged
   certs_claimed:
-  - CE
   - DOT
-  - ECE
   - JWL
   - VIA
+  - ECE
+  - CE
   main_image_url: null
   store_rating: 4.8
   review_count: 65

@@ -70,14 +70,14 @@ from_listing:
   - Silver
   construction: forged
   certs_claimed:
-  - CE
   - DOT
+  - JWL
+  - VIA
+  - TUV
+  - SFI
   - IATF 16949
   - ISO 9001
-  - JWL
-  - SFI
-  - TUV
-  - VIA
+  - CE
   main_image_url: null
   store_rating: 4.8
   review_count: 95

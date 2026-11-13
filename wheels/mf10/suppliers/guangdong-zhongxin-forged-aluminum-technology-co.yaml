@@ -72,15 +72,15 @@ from_listing:
   units_sold: null
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
+  price_per_wheel_1set: 253
+  price_per_wheel_4set: 1012
   forging_process: 12,000-ton forging press, 6061-T6 aluminum alloy
   piece_count:
   - monoblock
   - 2-piece
   - 3-piece
   cert_document: not available
-  freight_cif_usd: null
+  freight_cif_usd: 330
   manufacturing_time: 30 days
   shipping_time: 35 days
   is_manufacturer: true
@@ -92,7 +92,7 @@ from_quote:
   weight_kg: null
   load_rating_kg: null
   forged_confirmed: true
-  quote_construction: null
+  quote_construction: monoblock
   certs_claimed:
   - DOT
   - JWL
@@ -103,7 +103,7 @@ meta:
   listing_seen: '2026-11-12'
   rfq_sent: '2026-11-12'
   reply_received: '2026-11-12'
-  questions_answered: 6/13
+  questions_answered: 9/13
   rfq_first_sent: '2026-11-12'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
@@ -113,11 +113,10 @@ meta:
   - '2026-11-12: Supplier confirms MF10 as monoblock but states they are checking
     factory whether 2-piece and 3-piece are also available; currently only monoblock
     capability confirmed. Press tonnage to be confirmed for 18x9.5J size.'
-  - '2026-11-12: Price for single wheel (1 set) is 344 USD; price per wheel in 4-wheel
-    set is 253 USD. Shipping 330 USD DDP, not included in wheel prices. Certifications
-    require costly testing (approx. 50,000 USD per model); supplier has factory qualification
-    documents and standard testing reports but no issued certifications for this specific
-    model.'
+  - '2026-11-12: Quoted monoblock forged, 253 USD per wheel, 1,012 USD for 4 (344
+    USD for a single wheel). Shipping 330 USD DDP, about 35 days. Production about
+    30 days. Certifications: factory qualification documents only, not per-model certificates
+    (about 50,000 USD to certify a model).'
   source_notes:
     forging_process: 'Human message 2026-11-12 18:13: 6061-T6 aluminium and a 12,000-ton
       forging press. Replaces the earlier auto-reply wording.'
@@ -143,17 +142,9 @@ meta:
     manufacturing_time: 'Human 18:20: production approximately 30 days, plus 3D rendering
       within 3 days after order confirmation.'
     shipping_time: 'Human 18:23: approximately 35 days, DDP.'
-    price: 'Human quote 18:20 is explicitly for Monoblock Forged, so take_quote()
-      set it aside (not a 2-piece price). Stored in meta.off_basis_quotes: 253 USD
-      per wheel for 4 (202 basic + 31 custom centre cap + 20 for 9.5J or wider), 1,012
-      USD for 4, 344 USD if one wheel; shipping 330 USD DDP (duty included). 3-piece
-      and 2-piece prices have not been quoted.'
-  off_basis_quotes:
-  - construction: monoblock
-    seen: '2026-11-10'
-    price_per_wheel_1set: 344
-    price_per_wheel_4set: 253
-    freight_cif_usd: 330
+    price: 'Human quote 2026-11-12 18:20, monoblock forged: 253 USD per wheel for
+      4 (202 basic + 31 custom centre cap + 20 for 9.5J or wider), 1,012 USD for 4.
+      A single-wheel order would be 344 USD; that is not stored. Shipping 330 USD
+      DDP, which includes duty. MF10 is compared on monoblock (wheels/mf10/wheel.yaml).'
 flags:
-- quoted monoblock, no 2-piece price
 - under 3 years listed

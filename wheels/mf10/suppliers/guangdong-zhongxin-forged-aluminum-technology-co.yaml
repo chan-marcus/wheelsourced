@@ -74,15 +74,16 @@ from_listing:
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null
-  forging_process: forged blank, CNC-machined from aerospace-grade 6061-T6 aluminum
-    alloy
+  forging_process: 12,000-ton forging press, 6061-T6 aluminum alloy
   piece_count:
   - monoblock
-  cert_document: null
+  - 2-piece
+  - 3-piece
+  cert_document: not available
   freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
-  is_manufacturer: null
+  manufacturing_time: 30 days
+  shipping_time: 35 days
+  is_manufacturer: true
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
@@ -97,37 +98,62 @@ from_quote:
   - JWL
   - VIA
   - TUV
-  - ECE
-  - IATF 16949
-  - ISO 9001
   landed_total_usd: null
 meta:
   listing_seen: '2026-11-12'
   rfq_sent: '2026-11-12'
   reply_received: '2026-11-12'
-  questions_answered: 2/13
+  questions_answered: 6/13
   rfq_first_sent: '2026-11-12'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-11-12'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-11-12: Supplier confirms MF10 as monoblock but states they are checking
     factory whether 2-piece and 3-piece are also available; currently only monoblock
     capability confirmed. Press tonnage to be confirmed for 18x9.5J size.'
+  - '2026-11-12: Price for single wheel (1 set) is 344 USD; price per wheel in 4-wheel
+    set is 253 USD. Shipping 330 USD DDP, not included in wheel prices. Certifications
+    require costly testing (approx. 50,000 USD per model); supplier has factory qualification
+    documents and standard testing reports but no issued certifications for this specific
+    model.'
   source_notes:
-    forging_process: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
-      not a human message. Entered on Marcus's instruction 2026-11-12.
+    forging_process: 'Human message 2026-11-12 18:13: 6061-T6 aluminium and a 12,000-ton
+      forging press. Replaces the earlier auto-reply wording.'
     piece_count: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
       not a human message. Entered on Marcus's instruction 2026-11-12. Only monoblock
       is confirmed; 2-piece and 3-piece were left for a human to confirm.
-    certs_claimed: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
-      not a human message. Entered on Marcus's instruction 2026-11-12. No certificate
-      file was sent, so cert_document is left empty.
+    certs_claimed: Human message 2026-11-12 18:14 names DOT, JWL, VIA and TUV, as
+      factory qualification documents and standard testing documentation for those
+      requirements, not certifications issued for this model. ECE, IATF 16949 and
+      ISO 9001 came only from the earlier auto-reply and were removed.
     forged_confirmed: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
       not a human message. Entered on Marcus's instruction 2026-11-12. The auto-reply
       said the trading-company status and address, which are not recorded.
     cnc_inhouse: The auto-reply said CNC-machined but not whether in-house, so this
       stays empty.
+    cert_document: 'Human 18:14: a model-specific JWL/VIA/TUV report is not available
+      without testing (about 50,000 USD per model). She offered existing factory qualification
+      documents and on 18:48 sent images of a JWTC certificate of accreditation (test
+      equipment) and a Verified Supplier Certificate. No product certificate was sent.'
+    is_manufacturer: 'Human 18:13: ''We directly participate in the manufacturing
+      process rather than simply purchasing finished wheels from other suppliers.''
+      Their listing also says manufacturer.'
+    manufacturing_time: 'Human 18:20: production approximately 30 days, plus 3D rendering
+      within 3 days after order confirmation.'
+    shipping_time: 'Human 18:23: approximately 35 days, DDP.'
+    price: 'Human quote 18:20 is explicitly for Monoblock Forged, so take_quote()
+      set it aside (not a 2-piece price). Stored in meta.off_basis_quotes: 253 USD
+      per wheel for 4 (202 basic + 31 custom centre cap + 20 for 9.5J or wider), 1,012
+      USD for 4, 344 USD if one wheel; shipping 330 USD DDP (duty included). 3-piece
+      and 2-piece prices have not been quoted.'
+  off_basis_quotes:
+  - construction: monoblock
+    seen: '2026-11-10'
+    price_per_wheel_1set: 344
+    price_per_wheel_4set: 253
+    freight_cif_usd: 330
 flags:
+- quoted monoblock, no 2-piece price
 - under 3 years listed

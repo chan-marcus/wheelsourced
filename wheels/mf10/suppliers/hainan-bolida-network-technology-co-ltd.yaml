@@ -87,17 +87,17 @@ from_listing:
   units_sold: 343
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  forging_process: press forged from 6061-T6 aerospace-grade aluminium billet
+  price_per_wheel_1set: 175
+  price_per_wheel_4set: 700
+  forging_process: forged aluminum alloy 6061
   piece_count:
   - monoblock
   - 2-piece
   - 3-piece
   cert_document: null
-  freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
+  freight_cif_usd: 293
+  manufacturing_time: 30-40 days
+  shipping_time: 30-40 days
   is_manufacturer: null
   cnc_inhouse: null
   heat_treat: null
@@ -119,19 +119,23 @@ meta:
   listing_seen: '2026-11-12'
   rfq_sent: '2026-11-12'
   reply_received: '2026-11-12'
-  questions_answered: 2/13
+  questions_answered: 7/13
   rfq_first_sent: '2026-11-12'
   rfq_round: 1
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   first_reply: '2026-11-12'
-  reply_count: 1
+  reply_count: 2
   reply_notes:
   - '2026-11-12: No pricing provided. Supplier claims certifications (JWL, VIA, DOT,
     TÜV, CE) but does not offer or attach documents. Forging process stated without
     specific press tonnage.'
+  - '2026-11-12: Quoted 175 USD per wheel, 700 USD for 4 (bronze, 6061 forged aluminium),
+    30-40 days production, shipping to Los Angeles 293 USD including customs clearance,
+    insurance and tax, 30-40 days by sea. Stated total 993 USD is the sum of wheels
+    and shipping.'
   source_notes:
-    forging_process: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
-      not a human message. Entered on Marcus's instruction 2026-11-12.
+    forging_process: 'Human quote 2026-11-12 17:17: ''Forged aluminum alloy 6061 material''.
+      This replaces the longer auto-reply wording.'
     piece_count: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
       not a human message. Entered on Marcus's instruction 2026-11-12.
     certs_claimed: From the seller-side auto-reply (sparkle) bubbles of 2026-11-12,
@@ -141,4 +145,12 @@ meta:
       not a human message. Entered on Marcus's instruction 2026-11-12.
     is_manufacturer: The auto-reply called them a trading company; their listing says
       manufacturer plus trading. Left empty until a human answers.
+    price: Human quote 2026-11-12 17:17 (Bolida, serena wang). The message does not
+      name a construction, so quote_construction is left empty rather than guessed.
+      Their listing is a monoblock.
+    freight_cif_usd: 'Human quote: 293 USD to Los Angeles CA 90210 ''includes customs
+      clearance insurance and tax''. Stored as freight only. The stated total of 993
+      USD is wheels plus freight, not stored as an all-in figure.'
+    manufacturing_time: 'Human quote 2026-11-12: production 30-40 days.'
+    shipping_time: 'Human quote 2026-11-12: ocean shipping 30-40 days.'
 flags: []

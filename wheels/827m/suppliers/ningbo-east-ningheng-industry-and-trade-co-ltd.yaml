@@ -70,7 +70,7 @@ from_listing:
   review_count: 689
   response_time: ≤2h
   on_time_dispatch: 99.4%
-  reorder_rate: 19.9%
+  reorder_rate: 13.9%
   units_sold: 2
   transit_time: Est. 17-24 days
   dispute_rate: 0.3%

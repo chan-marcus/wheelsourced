@@ -18,27 +18,44 @@ from_listing:
   moq: 4 pieces
   listed_lead_time: 20 days
   sizes_offered:
+  - 15 inch
   - 15"
+  - 16 inch
   - 16"
+  - 17 inch
   - 17"
+  - 18 inch
   - 18"
+  - 19 inch
   - 19"
+  - 20 inch
   - 20"
+  - 21 inch
   - 21"
+  - 22 inch
   - 22"
+  - 23 inch
   - 23"
+  - 24 inch
   - 24"
   - 25"
   - 26"
   bolt_patterns:
+  - 100 mm
   - 100mm
+  - 108 mm
   - 108mm
+  - 112 mm
   - 112mm
   - 114.3mm
+  - 115 mm
   - 115mm
+  - 120 mm
   - 120.65mm
   - 120mm
+  - 127 mm
   - 127mm
+  - 130 mm
   - 130mm
   - '4'
   - '5'
@@ -46,16 +63,23 @@ from_listing:
   offsets_offered:
   - 0mm
   - 10mm
+  - 15 mm
   - 15mm
   - 20mm
   - 25mm
+  - 30 mm
   - 30mm
+  - 35 mm
   - 35mm
+  - 40 mm
   - 40mm
+  - 42 mm
   - 42mm
+  - 45 mm
   - 45mm
   finishes:
   - Bronze
+  - Custom Colors
   - Custom Colors Available
   - Silver
   construction: forged
@@ -71,6 +95,7 @@ from_listing:
   reorder_rate: null
   units_sold: null
   transit_time: Est. 17-24 days
+  dispute_rate: null
 from_quote:
   price_per_wheel_1set: 253
   price_per_wheel_4set: 1012
@@ -100,7 +125,7 @@ from_quote:
   - TUV
   landed_total_usd: null
 meta:
-  listing_seen: '2026-11-12'
+  listing_seen: '2026-11-13'
   rfq_sent: '2026-11-12'
   reply_received: '2026-11-12'
   questions_answered: 9/13

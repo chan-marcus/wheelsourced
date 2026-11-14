@@ -12,7 +12,7 @@ from_listing:
   factory_area_sqm: null
   verified_supplier: true
   trade_assurance: true
-  response_rate: null
+  response_rate: ≤2h
   listed_price_low: 176
   listed_price_high: 219
   moq: 4 pieces
@@ -86,6 +86,7 @@ from_listing:
   reorder_rate: null
   units_sold: 343
   transit_time: Est. 17-24 days
+  dispute_rate: null
 from_quote:
   price_per_wheel_1set: 175
   price_per_wheel_4set: 700
@@ -116,7 +117,7 @@ from_quote:
   - CE
   landed_total_usd: null
 meta:
-  listing_seen: '2026-11-12'
+  listing_seen: '2026-11-13'
   rfq_sent: '2026-11-12'
   reply_received: '2026-11-12'
   questions_answered: 7/13

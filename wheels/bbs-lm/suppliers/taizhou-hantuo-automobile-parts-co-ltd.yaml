@@ -86,6 +86,7 @@ from_listing:
   reorder_rate: 17%
   units_sold: 4
   transit_time: Est. 17-24 days
+  dispute_rate: 1.5%
 from_quote:
   price_per_wheel_1set: 440
   price_per_wheel_4set: 1760

@@ -67,9 +67,9 @@ from_listing:
   construction: forged
   certs_claimed:
   - DOT
-  - TS 16949
-  - TUV
   - VIA
+  - TUV
+  - TS 16949
   main_image_url: https://s.alicdn.com/@sc04/kf/Hd6ffe97908264b5fb16c903a35ec7805C.png_300x300.jpg
   store_rating: 4.9
   review_count: 256

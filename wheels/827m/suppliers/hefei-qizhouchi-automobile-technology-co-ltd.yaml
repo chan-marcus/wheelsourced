@@ -36,10 +36,10 @@ from_listing:
   - Bronze
   construction: forged
   certs_claimed:
-  - CE
   - JWL
-  - TUV
   - VIA
+  - TUV
+  - CE
   main_image_url: https://s.alicdn.com/@sc04/kf/H8186291777d048d790c4e7a11a6fa66a4.png_300x300.jpg
   store_rating: 4.8
   review_count: 53

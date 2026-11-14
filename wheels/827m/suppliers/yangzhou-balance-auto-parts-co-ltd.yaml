@@ -58,18 +58,18 @@ from_listing:
   - polished
   construction: forged
   certs_claimed:
-  - CE
   - DOT
-  - IATF 16949
   - JWL
-  - TUV
   - VIA
+  - TUV
+  - IATF 16949
+  - CE
   main_image_url: https://s.alicdn.com/@sc04/kf/H9b2c17d387224b6da767ab41ee666e8ab.jpg_300x300.jpg
   store_rating: 4.9
   review_count: 34
   response_time: ≤2h
   on_time_dispatch: 98.9%
-  reorder_rate: 19.9%
+  reorder_rate: 6.3%
   units_sold: null
   transit_time: Est. 17-24 days
   dispute_rate: 0.4%

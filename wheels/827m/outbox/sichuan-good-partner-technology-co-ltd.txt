@@ -3,7 +3,7 @@ Hello,
 I'm looking at your wheels for my own car and would like a quote.
 
 Reference spec for all pricing:
-  20x10.5J · ET+22 · 5x112
+  20x10.5J ET+22 5x112
 
 Could you confirm:
 

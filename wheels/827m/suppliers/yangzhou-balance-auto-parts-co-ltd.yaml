@@ -100,5 +100,7 @@ meta:
   questions_answered: null
   rfq_first_sent: '2026-11-13'
   rfq_round: 1
-  ref_spec: 20x10.5J ET+22 5x112 2-piece
-flags: []
+  ref_spec: 20x10.5J ET+22 5x112 monoblock
+flags:
+- constructions offered not confirmed
+- under 3 years listed

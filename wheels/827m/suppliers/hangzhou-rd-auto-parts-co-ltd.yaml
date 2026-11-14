@@ -66,15 +66,18 @@ from_listing:
   units_sold: null
   transit_time: Est. 17-24 days
 from_quote:
-  price_per_wheel_1set: null
-  price_per_wheel_4set: null
-  forging_process: null
-  piece_count: null
-  cert_document: null
-  freight_cif_usd: null
-  manufacturing_time: null
-  shipping_time: null
-  is_manufacturer: null
+  price_per_wheel_1set: 250
+  price_per_wheel_4set: 1000
+  forging_process: 12,000-ton high-pressure forged aluminum alloy
+  piece_count:
+  - monoblock
+  - 2-piece
+  - 3-piece
+  cert_document: claimed without document
+  freight_cif_usd: 280
+  manufacturing_time: 15 days
+  shipping_time: 30-45 days
+  is_manufacturer: true
   cnc_inhouse: null
   heat_treat: null
   payment_terms: null
@@ -82,16 +85,44 @@ from_quote:
   size_chart: null
   weight_kg: null
   load_rating_kg: null
-  forged_confirmed: null
+  forged_confirmed: true
   quote_construction: null
-  certs_claimed: null
+  certs_claimed:
+  - DOT
+  - JWL
+  - VIA
   landed_total_usd: null
 meta:
   listing_seen: '2026-11-13'
   rfq_sent: '2026-11-13'
-  reply_received: null
-  questions_answered: null
+  reply_received: '2026-11-13'
+  questions_answered: 9/13
   rfq_first_sent: '2026-11-13'
   rfq_round: 1
-  ref_spec: 20x10.5J ET+22 5x112 2-piece
-flags: []
+  ref_spec: 20x10.5J ET+22 5x112 monoblock
+  first_reply: '2026-11-13'
+  reply_count: 1
+  reply_notes:
+  - '2026-11-13: Quoted 250 USD per wheel (4 x 250 = 1,000 USD, hubcaps included)
+    and 280 USD DDP door-to-door shipping, total 1,280 USD (the sum). 12,000-ton forged
+    aluminium, monoblock/2-piece/3-piece, JWL/VIA/DOT claimed with no certificate
+    sent. Quote does not name a construction.'
+  factory_address: Anhui
+  source_notes:
+    price: 'Human message 2026-11-13 20:50: ''Wheels and hubcaps: 4 x $250 = $1000'',
+      ''DDP Shipping costs (door-to-door): $280'', total $1,280. Price includes hubcaps.
+      Stored as wheel price and freight; the 1,280 total is just their sum, so not
+      stored as an all-in figure. Construction not stated, so quote_construction left
+      empty.'
+    manufacturing_time: 'Human message 20:50, answer 5: ''Does it take 15 days to
+      produce the wheels?'' Worded as a question, probably a template slip. Taken
+      at face value as 15 days, which also matches their listing.'
+    is_manufacturer: 'Human message 20:50: ''We are a factory, and the factory address
+      is in Anhui.'' An earlier auto-reply (sparkle bubble, 20:48) said trading company
+      in Hangzhou, and the listing says manufacturer+trading in Hangzhou. The human
+      answer is used; the contradiction is unresolved.'
+    shipping_time: 'Human message 20:50: Shipping to Los Angeles takes 30-45 days.'
+flags:
+- cert claimed, no document
+- claims factory, profile says trading
+- under 3 years listed

@@ -30,18 +30,21 @@ from_listing:
   - 24"
   - 26"
   bolt_patterns:
-  - 5x120
-  - 5x112
-  - 5x130
+  - 4x100
+  - 5x100
   - 5x108
+  - 5x112
   - 5x114.3
   - 5x115
-  - 5x127
-  - 5x100
-  - 5x98
-  - 5x139.7
+  - 5x120
   - 5x120.65
+  - 5x127
+  - 5x130
+  - 5x139.7
   - 5x143.1
+  - 5x98
+  - 6x135
+  - 6x139.7
   offsets_offered:
   - 0mm
   - 10mm
@@ -56,8 +59,9 @@ from_listing:
   - 45mm
   - 50mm
   finishes:
-  - Golden Bronze
   - Customized
+  - Golden
+  - Golden Bronze
   construction: forged
   certs_claimed:
   - DOT
@@ -66,9 +70,10 @@ from_listing:
   review_count: 689
   response_time: ≤2h
   on_time_dispatch: 99.4%
-  reorder_rate: null
+  reorder_rate: 19.9%
   units_sold: 2
   transit_time: Est. 17-24 days
+  dispute_rate: 0.3%
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null

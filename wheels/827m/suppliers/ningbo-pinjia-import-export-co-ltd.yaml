@@ -12,59 +12,79 @@ from_listing:
   factory_area_sqm: 1830
   verified_supplier: true
   trade_assurance: true
-  response_rate: null
+  response_rate: ≤2h
   listed_price_low: 260
   listed_price_high: 350
   moq: 4 pieces
   listed_lead_time: Est. 17-24 days
   sizes_offered:
   - 19 inch
+  - 19"
   - 20 inch
+  - 20"
   - 21 inch
+  - 21"
   - 22 inch
+  - 22"
   bolt_patterns:
+  - 100 mm
+  - 108 mm
+  - 114.3 mm
+  - 115 mm
+  - 120 mm
+  - 120.65 mm
+  - 127 mm
+  - 130 mm
+  - 139.7 mm
+  - 143.1 mm
+  - 165.1 mm
+  - 5x100
   - 5x112
   - 5x114.3
   - 5x120
   - 5x130
   - 6x139.7
-  - 130 mm
-  - 120 mm
-  - 108 mm
-  - 115 mm
-  - 127 mm
-  - 100 mm
-  - 139.7 mm
   - 98 mm
-  - 165.1 mm
-  - 114.3 mm
-  - 120.65 mm
-  - 143.1 mm
   offsets_offered:
-  - 10 mm
-  - 15 mm
-  - 18 mm
-  - 20 mm
-  - 25 mm
-  - 30 mm
-  - 35 mm
-  - 40 mm
-  - 42 mm
-  - 45 mm
-  - 50 mm
   - 0 mm
+  - 0mm
+  - 10 mm
+  - 10mm
+  - 15 mm
+  - 15mm
+  - 18 mm
+  - 18mm
+  - 20 mm
+  - 20mm
+  - 25 mm
+  - 25mm
+  - 30 mm
+  - 30mm
+  - 35 mm
+  - 35mm
+  - 40 mm
+  - 40mm
+  - 42 mm
+  - 42mm
+  - 45 mm
+  - 45mm
+  - 50 mm
+  - 50mm
   finishes:
-  - Satin Bronze
-  - Powder Coating
   - Brushed
-  - Polished
+  - Chrome Plate
+  - Chrome plate
   - Chromeplate
   - Lettering
+  - Polished
+  - Powder Coating
+  - Satin Bronze
+  - Satin bronze
   construction: forged
   certs_claimed:
+  - CE
   - DOT
   - ECE
-  - CE
   main_image_url: https://s.alicdn.com/@sc04/kf/H85377a448a30488cb103df2f28c8049aO.jpg_300x300.jpg
   store_rating: 4.7
   review_count: 84
@@ -73,6 +93,7 @@ from_listing:
   reorder_rate: null
   units_sold: 6
   transit_time: Est. 17-24 days
+  dispute_rate: 2.7%
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null

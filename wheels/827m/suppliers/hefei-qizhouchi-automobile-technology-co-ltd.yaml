@@ -18,10 +18,15 @@ from_listing:
   moq: 4 pieces
   listed_lead_time: 31 days
   sizes_offered:
+  - 18 inch
   - 18"
+  - 19 inch
   - 19"
+  - 20 inch
   - 20"
+  - 21 inch
   - 21"
+  - 22 inch
   - 22"
   bolt_patterns:
   - 5x112
@@ -31,17 +36,19 @@ from_listing:
   - Bronze
   construction: forged
   certs_claimed:
+  - CE
   - JWL
-  - VIA
   - TUV
+  - VIA
   main_image_url: https://s.alicdn.com/@sc04/kf/H8186291777d048d790c4e7a11a6fa66a4.png_300x300.jpg
   store_rating: 4.8
   review_count: 53
   response_time: ≤1h
   on_time_dispatch: 100.0%
-  reorder_rate: null
+  reorder_rate: 17.9%
   units_sold: 1
   transit_time: Est. 17-24 days
+  dispute_rate: 1.0%
 from_quote:
   price_per_wheel_1set: 225
   price_per_wheel_4set: null

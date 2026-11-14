@@ -26,15 +26,15 @@ from_listing:
   - 21"
   - 22"
   bolt_patterns:
-  - 5x120
+  - 5x100
+  - 5x108
   - 5x112
   - 5x114.3
-  - 5x100
-  - 5x98
+  - 5x115
+  - 5x120
   - 5x120.65
   - 5x130
-  - 5x108
-  - 5x115
+  - 5x98
   offsets_offered:
   - 0mm
   - 10mm
@@ -49,29 +49,30 @@ from_listing:
   - 45mm
   - 50mm
   finishes:
+  - bronze
+  - chrome
   - customized
   - frozen gold
-  - bronze
-  - polished
-  - chrome
-  - matte black
   - gunmetal grey
+  - matte black
+  - polished
   construction: forged
   certs_claimed:
-  - DOT
-  - JWL
-  - VIA
-  - TUV
-  - IATF 16949
   - CE
+  - DOT
+  - IATF 16949
+  - JWL
+  - TUV
+  - VIA
   main_image_url: https://s.alicdn.com/@sc04/kf/H9b2c17d387224b6da767ab41ee666e8ab.jpg_300x300.jpg
   store_rating: 4.9
   review_count: 34
   response_time: ≤2h
   on_time_dispatch: 98.9%
-  reorder_rate: null
+  reorder_rate: 19.9%
   units_sold: null
   transit_time: Est. 17-24 days
+  dispute_rate: 0.4%
 from_quote:
   price_per_wheel_1set: null
   price_per_wheel_4set: null

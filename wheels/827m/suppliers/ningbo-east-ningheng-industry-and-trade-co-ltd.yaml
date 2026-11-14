@@ -1,0 +1,101 @@
+id: ningbo-east-ningheng-industry-and-trade-co-ltd
+wheel: 827m
+listings:
+- https://www.alibaba.com/product-detail/HADISON-827m-Style-Alloy-Wheels-Golden_1601572650035.html
+supplier_url: https://dynh.en.alibaba.com/
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601572650035
+from_listing:
+  supplier_name: Ningbo East & Ningheng Industry and Trade Co., Ltd.
+  business_type: manufacturer+trading
+  years_on_platform: 5
+  staff_count: null
+  factory_area_sqm: null
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 199
+  listed_price_high: 259
+  moq: 4 pieces
+  listed_lead_time: 31 days (1-4 pieces)
+  sizes_offered:
+  - 15"
+  - 16"
+  - 17"
+  - 18"
+  - 19"
+  - 20"
+  - 21"
+  - 22"
+  - 23"
+  - 24"
+  - 26"
+  bolt_patterns:
+  - 5x120
+  - 5x112
+  - 5x130
+  - 5x108
+  - 5x114.3
+  - 5x115
+  - 5x127
+  - 5x100
+  - 5x98
+  - 5x139.7
+  - 5x120.65
+  - 5x143.1
+  offsets_offered:
+  - 0mm
+  - 10mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 40mm
+  - 42mm
+  - 45mm
+  - 50mm
+  finishes:
+  - Golden Bronze
+  - Customized
+  construction: forged
+  certs_claimed:
+  - DOT
+  main_image_url: https://s.alicdn.com/@sc04/kf/H2d1c71b44a4b4460aba9650a7bc1c9cbc.jpg_300x300.jpg
+  store_rating: 4.9
+  review_count: 689
+  response_time: ≤2h
+  on_time_dispatch: 99.4%
+  reorder_rate: null
+  units_sold: 2
+  transit_time: Est. 17-24 days
+from_quote:
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  forging_process: null
+  piece_count: null
+  cert_document: null
+  freight_cif_usd: null
+  manufacturing_time: null
+  shipping_time: null
+  is_manufacturer: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+  size_chart: null
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: null
+  quote_construction: null
+  certs_claimed: null
+  landed_total_usd: null
+meta:
+  listing_seen: '2026-11-13'
+  rfq_sent: '2026-11-13'
+  reply_received: null
+  questions_answered: null
+  rfq_first_sent: '2026-11-13'
+  rfq_round: 1
+  ref_spec: 20x10.5J ET+22 5x112 2-piece
+flags: []

@@ -1,0 +1,101 @@
+id: sichuan-good-partner-technology-co-ltd
+wheel: 827m
+listings:
+- https://www.alibaba.com/product-detail/GPW-Custom-18-19-20-21_1601688372895.html
+supplier_url: https://goodpart.en.alibaba.com/
+affiliate_url: https://offer.alibaba.com/cps/92829apm?bm=cps&src=saf&productId=1601688372895
+from_listing:
+  supplier_name: Sichuan Good Partner Technology Co., Ltd.
+  business_type: manufacturer+trading
+  years_on_platform: 3
+  staff_count: 30
+  factory_area_sqm: 500
+  verified_supplier: true
+  trade_assurance: true
+  response_rate: null
+  listed_price_low: 170
+  listed_price_high: 260
+  moq: 4 pieces
+  listed_lead_time: 15-20 days for monoblock forged wheel
+  sizes_offered:
+  - 17"
+  - 18"
+  - 19"
+  - 20"
+  - 21"
+  - 22"
+  bolt_patterns:
+  - 5x112
+  - 5x120
+  - 5x114.3
+  - 5x130
+  - 5x127
+  - 5x108
+  - 5x100
+  - Custom
+  offsets_offered:
+  - 0mm
+  - 10mm
+  - 15mm
+  - 18mm
+  - 20mm
+  - 25mm
+  - 30mm
+  - 35mm
+  - 36mm
+  - 40mm
+  - 42mm
+  - 45mm
+  - 50mm
+  - Custom
+  finishes:
+  - Bronze
+  - Polished
+  - Brushed
+  - Chrome plating
+  - Powder coating
+  - Custom
+  construction: forged
+  certs_claimed:
+  - DOT
+  - VIA
+  - TUV
+  - TS 16949
+  main_image_url: https://s.alicdn.com/@sc04/kf/Hd6ffe97908264b5fb16c903a35ec7805C.png_300x300.jpg
+  store_rating: 4.9
+  review_count: 256
+  response_time: ≤1h
+  on_time_dispatch: 100.0%
+  reorder_rate: null
+  units_sold: 72
+  transit_time: Est. 17-24 days
+from_quote:
+  price_per_wheel_1set: null
+  price_per_wheel_4set: null
+  forging_process: null
+  piece_count: null
+  cert_document: null
+  freight_cif_usd: null
+  manufacturing_time: null
+  shipping_time: null
+  is_manufacturer: null
+  cnc_inhouse: null
+  heat_treat: null
+  payment_terms: null
+  defect_policy: null
+  size_chart: null
+  weight_kg: null
+  load_rating_kg: null
+  forged_confirmed: null
+  quote_construction: null
+  certs_claimed: null
+  landed_total_usd: null
+meta:
+  listing_seen: '2026-11-13'
+  rfq_sent: '2026-11-13'
+  reply_received: null
+  questions_answered: null
+  rfq_first_sent: '2026-11-13'
+  rfq_round: 1
+  ref_spec: 20x10.5J ET+22 5x112 2-piece
+flags: []

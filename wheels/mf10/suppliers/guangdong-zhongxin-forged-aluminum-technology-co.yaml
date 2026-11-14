@@ -92,10 +92,10 @@ from_listing:
   review_count: 62
   response_time: <=1h
   on_time_dispatch: 100.0%
-  reorder_rate: null
+  reorder_rate: 9.4%
   units_sold: null
   transit_time: Est. 17-24 days
-  dispute_rate: null
+  dispute_rate: 3.7%
 from_quote:
   price_per_wheel_1set: 253
   price_per_wheel_4set: 1012

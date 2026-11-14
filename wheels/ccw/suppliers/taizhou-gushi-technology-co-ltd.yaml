@@ -61,15 +61,21 @@ from_listing:
   - 68mm
   - 70mm
   finishes:
+  - Black
+  - Brown
   - Brushed
+  - Chrome
+  - Golden
+  - Gray
   - High Polishing
   - Polished
+  - Silver
   construction: forged
   certs_claimed:
   - DOT
   - TUV
   - FMVSS
-  main_image_url: null
+  main_image_url: https://s.alicdn.com/@sc04/kf/H3e649c47bc3c47279ec17d24a47a37a1w.png_300x300.jpg
   store_rating: 4.4
   review_count: 14
   response_time: <=2h
@@ -77,6 +83,7 @@ from_listing:
   reorder_rate: 46%
   units_sold: null
   transit_time: Est. 20-28 days
+  dispute_rate: 2.2%
 from_quote:
   price_per_wheel_1set: 380
   price_per_wheel_4set: 1520
@@ -102,7 +109,7 @@ from_quote:
   shipping_time: 25 days by sea, 15 days by air
   landed_total_usd: null
 meta:
-  listing_seen: '2026-08-05'
+  listing_seen: '2026-11-13'
   rfq_sent: '2026-08-12'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'

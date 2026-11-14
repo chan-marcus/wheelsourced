@@ -26,6 +26,7 @@ from_listing:
   - 21"
   - 22"
   bolt_patterns:
+  - 10 hole
   - 100 mm
   - 108 mm
   - 10x127
@@ -36,9 +37,11 @@ from_listing:
   - 127 mm
   - 130 mm
   - 139.7 mm
+  - 4 hole
   - 4x100
   - 4x108
   - 4x115
+  - 5 hole
   - 5x100
   - 5x108
   - 5x112
@@ -48,8 +51,10 @@ from_listing:
   - 5x127
   - 5x130
   - 5x139.7
+  - 6 hole
   - 6x108
   - 6x130
+  - 8 hole
   - 8x100
   - 8x115
   - 8x130
@@ -83,10 +88,10 @@ from_listing:
   review_count: 106
   response_time: <=2h
   on_time_dispatch: 93.9%
-  reorder_rate: null
+  reorder_rate: 15.5%
   units_sold: 343
   transit_time: Est. 17-24 days
-  dispute_rate: null
+  dispute_rate: 3.1%
 from_quote:
   price_per_wheel_1set: 175
   price_per_wheel_4set: 700

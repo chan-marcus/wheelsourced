@@ -17,6 +17,7 @@ from_listing:
   moq: 1 piece
   listed_lead_time: 30 days for 1-4 pieces; negotiable for >4 pieces
   sizes_offered:
+  - 16"
   - '17'
   - 17"
   - '18'
@@ -52,23 +53,35 @@ from_listing:
   - 5x115
   - 5x120
   - 5x120.65
+  - 5x127
   - 5x130
+  - 6x139.7
   - 98mm
   offsets_offered:
+  - 15 mm
   - 15mm
+  - 20 mm
   - 20mm
+  - 25 mm
   - 25mm
+  - 30 mm
   - 30mm
+  - 35 mm
   - 35mm
+  - 40 mm
   - 40mm
+  - 42 mm
   - 42mm
+  - 45 mm
   - 45mm
   finishes:
+  - Black
   - Gloss Black with Machine Face
   - Painting
   - Plating
   - Polishing
   - Powder Coating
+  - Silver
   construction: forged
   certs_claimed:
   - DOT
@@ -76,7 +89,7 @@ from_listing:
   - ECE
   - IATF 16949
   - ISO 9001
-  main_image_url: null
+  main_image_url: https://sc04.alicdn.com/kf/H16a3d488f30846efb37ddcca6fb2c7c1A.jpg
   store_rating: 4.7
   review_count: 319
   response_time: <=3h
@@ -84,6 +97,7 @@ from_listing:
   reorder_rate: 5%
   units_sold: 8
   transit_time: Est. 16-23 days
+  dispute_rate: 3.0%
 from_quote:
   price_per_wheel_1set: 500
   price_per_wheel_4set: 2000
@@ -113,7 +127,7 @@ from_quote:
   shipping_time: 30 days
   landed_total_usd: null
 meta:
-  listing_seen: '2026-08-05'
+  listing_seen: '2026-11-13'
   rfq_sent: '2026-08-12'
   ref_spec: 18x9.5J ET+22 5x114.3 2-piece
   rfq_first_sent: '2026-08-06'
